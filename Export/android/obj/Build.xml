@@ -563,6 +563,20 @@
    <depend name="include/haxe/BaseCode.h"/>
    <depend name="include/haxe/io/Bytes.h"/>
   </file>
+  <file name="src/fr/hyperfiction/FbCallback.cpp">
+   <depend name="include/fr/hyperfiction/FbCallback.h"/>
+  </file>
+  <file name="src/fr/hyperfiction/Facebook.cpp">
+   <depend name="include/Type.h"/>
+   <depend name="include/fr/hyperfiction/Facebook.h"/>
+   <depend name="include/fr/hyperfiction/FbCallback.h"/>
+   <depend name="include/haxe/Log.h"/>
+   <depend name="include/neash/JNI.h"/>
+   <depend name="include/neash/Lib.h"/>
+   <depend name="include/neash/errors/Error.h"/>
+   <depend name="include/org/shoebox/utils/system/ASignal.h"/>
+   <depend name="include/org/shoebox/utils/system/Signal1.h"/>
+  </file>
   <file name="src/cpp/zip/Uncompress.cpp">
    <depend name="include/cpp/Lib.h"/>
    <depend name="include/cpp/zip/Flush.h"/>
@@ -592,35 +606,19 @@
   <file name="src/ValueType.cpp">
    <depend name="include/ValueType.h"/>
   </file>
-  <file name="src/TestCB.cpp">
-   <depend name="include/TestCB.h"/>
+  <file name="src/TestFacebook.cpp">
+   <depend name="include/TestFacebook.h"/>
+   <depend name="include/fr/hyperfiction/Facebook.h"/>
    <depend name="include/haxe/Log.h"/>
-   <depend name="include/org/shoebox/utils/system/ASignal.h"/>
-   <depend name="include/org/shoebox/utils/system/Signal1.h"/>
-  </file>
-  <file name="src/TestNativeGestures.cpp">
-   <depend name="include/TestCB.h"/>
-   <depend name="include/TestNativeGestures.h"/>
-   <depend name="include/haxe/Log.h"/>
-   <depend name="include/neash/JNI.h"/>
    <depend name="include/neash/Lib.h"/>
-   <depend name="include/neash/display/Bitmap.h"/>
-   <depend name="include/neash/display/BitmapData.h"/>
    <depend name="include/neash/display/DisplayObject.h"/>
    <depend name="include/neash/display/DisplayObjectContainer.h"/>
    <depend name="include/neash/display/IBitmapDrawable.h"/>
    <depend name="include/neash/display/InteractiveObject.h"/>
    <depend name="include/neash/display/MovieClip.h"/>
-   <depend name="include/neash/display/PixelSnapping.h"/>
    <depend name="include/neash/display/Sprite.h"/>
-   <depend name="include/neash/display/Stage.h"/>
-   <depend name="include/neash/display/StageAlign.h"/>
-   <depend name="include/neash/display/StageScaleMode.h"/>
-   <depend name="include/neash/events/Event.h"/>
    <depend name="include/neash/events/EventDispatcher.h"/>
    <depend name="include/neash/events/IEventDispatcher.h"/>
-   <depend name="include/neash/events/MouseEvent.h"/>
-   <depend name="include/nme/installer/Assets.h"/>
    <depend name="include/org/shoebox/utils/system/ASignal.h"/>
    <depend name="include/org/shoebox/utils/system/Signal1.h"/>
   </file>
@@ -755,7 +753,7 @@
   <file name="src/ApplicationMain.cpp">
    <depend name="include/ApplicationMain.h"/>
    <depend name="include/Reflect.h"/>
-   <depend name="include/TestNativeGestures.h"/>
+   <depend name="include/TestFacebook.h"/>
    <depend name="include/Type.h"/>
    <depend name="include/haxe/io/Bytes.h"/>
    <depend name="include/neash/Lib.h"/>

@@ -44,9 +44,11 @@ class TestFacebook extends Sprite{
 
 			var fb = Facebook.getInstance( );
 				fb.init('397904743584044');
+			#if android
+				fb.generateKeyHash( 'fr.hyperfiction.Tests' );
+			#end
 				fb.onConnect.connect( _on_fb_connected );
 				fb.connect( );
-			trace( fb );
 			
 		}
 
@@ -59,7 +61,8 @@ class TestFacebook extends Sprite{
 		private function _on_fb_connected( sToken : String ) : Void{
 			trace('_on_fb_connected ::: '+sToken);
 			//Facebook.getInstance( ).appRequest('Hello','World','100');
-			Facebook.getInstance( ).feed( 'Hello World title' , 'hello world caption' , 'description de test' , 'http://www.hyperfiction.fr','http://hyperfiction.fr/LogoHyperfiction.png');
+			//Facebook.getInstance( ).feed( 'Hello World title' , 'hello world caption' , 'description de test' , 'http://www.hyperfiction.fr','http://hyperfiction.fr/LogoHyperfiction.png');
+			Facebook.getInstance( ).appRequest( 'Hello !!! ' , 'from android' );
 		}
 
 	// -------o misc

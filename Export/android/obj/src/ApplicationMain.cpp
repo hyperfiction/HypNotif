@@ -6,8 +6,8 @@
 #ifndef INCLUDED_Reflect
 #include <Reflect.h>
 #endif
-#ifndef INCLUDED_TestNativeGestures
-#include <TestNativeGestures.h>
+#ifndef INCLUDED_TestFacebook
+#include <TestFacebook.h>
 #endif
 #ifndef INCLUDED_Type
 #include <Type.h>
@@ -91,7 +91,7 @@ Void ApplicationMain_obj::main( ){
 				{
 					HX_SOURCE_POS("Export/android/haxe/ApplicationMain.hx",49)
 					int _g = (int)0;
-					Array< ::String > _g1 = ::Type_obj::getClassFields(hx::ClassOf< ::TestNativeGestures >());
+					Array< ::String > _g1 = ::Type_obj::getClassFields(hx::ClassOf< ::TestFacebook >());
 					HX_SOURCE_POS("Export/android/haxe/ApplicationMain.hx",49)
 					while(((_g < _g1->length))){
 						HX_SOURCE_POS("Export/android/haxe/ApplicationMain.hx",49)
@@ -110,11 +110,11 @@ Void ApplicationMain_obj::main( ){
 				HX_SOURCE_POS("Export/android/haxe/ApplicationMain.hx",58)
 				if ((hasMain)){
 					HX_SOURCE_POS("Export/android/haxe/ApplicationMain.hx",59)
-					::Reflect_obj::callMethod(hx::ClassOf< ::TestNativeGestures >(),::Reflect_obj::field(hx::ClassOf< ::TestNativeGestures >(),HX_CSTRING("main")),Dynamic( Array_obj<Dynamic>::__new()));
+					::Reflect_obj::callMethod(hx::ClassOf< ::TestFacebook >(),::Reflect_obj::field(hx::ClassOf< ::TestFacebook >(),HX_CSTRING("main")),Dynamic( Array_obj<Dynamic>::__new()));
 				}
 				else{
 					HX_SOURCE_POS("Export/android/haxe/ApplicationMain.hx",63)
-					::neash::Lib_obj::nmeGetCurrent()->addChild(hx::TCast< neash::display::DisplayObject >::cast(::Type_obj::createInstance(hx::ClassOf< ::TestNativeGestures >(),Dynamic( Array_obj<Dynamic>::__new()))));
+					::neash::Lib_obj::nmeGetCurrent()->addChild(hx::TCast< neash::display::DisplayObject >::cast(::Type_obj::createInstance(hx::ClassOf< ::TestFacebook >(),Dynamic( Array_obj<Dynamic>::__new()))));
 				}
 			}
 			return null();

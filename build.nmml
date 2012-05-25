@@ -24,8 +24,7 @@
 	<ndll name="zlib" />	
 	<ndll name="nme" haxelib="nme" />
 
-	<!--<extension name="HyperTest" path="extensions/HyperTest" />-->
-	<extension name="fb" path="extensions/fb" />
+	<include path="extensions/fb" />
 
 	<set name="SHOW_CONSOLE" value="1" if="cpp"/>
 	<haxedef name="SHOW_CONSOLE" if="cpp"/>

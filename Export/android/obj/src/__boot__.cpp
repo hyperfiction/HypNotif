@@ -89,14 +89,15 @@
 #include <haxe/Timer.h>
 #include <haxe/Log.h>
 #include <haxe/BaseCode.h>
+#include <fr/hyperfiction/FbCallback.h>
+#include <fr/hyperfiction/Facebook.h>
 #include <cpp/zip/Uncompress.h>
 #include <cpp/zip/Flush.h>
 #include <cpp/zip/Compress.h>
 #include <cpp/rtti/FieldNumericIntegerLookup.h>
 #include <Type.h>
 #include <ValueType.h>
-#include <TestCB.h>
-#include <TestNativeGestures.h>
+#include <TestFacebook.h>
 #include <neash/display/Sprite.h>
 #include <neash/display/DisplayObjectContainer.h>
 #include <neash/display/InteractiveObject.h>
@@ -210,14 +211,15 @@ hx::RegisterResources( hx::GetResources() );
 ::haxe::Timer_obj::__register();
 ::haxe::Log_obj::__register();
 ::haxe::BaseCode_obj::__register();
+::fr::hyperfiction::FbCallback_obj::__register();
+::fr::hyperfiction::Facebook_obj::__register();
 ::cpp::zip::Uncompress_obj::__register();
 ::cpp::zip::Flush_obj::__register();
 ::cpp::zip::Compress_obj::__register();
 ::cpp::rtti::FieldNumericIntegerLookup_obj::__register();
 ::Type_obj::__register();
 ::ValueType_obj::__register();
-::TestCB_obj::__register();
-::TestNativeGestures_obj::__register();
+::TestFacebook_obj::__register();
 ::neash::display::Sprite_obj::__register();
 ::neash::display::DisplayObjectContainer_obj::__register();
 ::neash::display::InteractiveObject_obj::__register();
@@ -264,10 +266,11 @@ hx::RegisterResources( hx::GetResources() );
 ::neash::display::InteractiveObject_obj::__boot();
 ::neash::display::DisplayObjectContainer_obj::__boot();
 ::neash::display::Sprite_obj::__boot();
-::TestNativeGestures_obj::__boot();
-::TestCB_obj::__boot();
+::TestFacebook_obj::__boot();
 ::ValueType_obj::__boot();
 ::Type_obj::__boot();
+::fr::hyperfiction::Facebook_obj::__boot();
+::fr::hyperfiction::FbCallback_obj::__boot();
 ::haxe::BaseCode_obj::__boot();
 ::haxe::Timer_obj::__boot();
 ::haxe::io::Bytes_obj::__boot();

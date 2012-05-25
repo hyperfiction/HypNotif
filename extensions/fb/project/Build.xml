@@ -1,4 +1,5 @@
 <xml>
+
 <set name="no_thirdparty_extras" value="1"/>
 <set name="tool" value="static"/>
 <set name="mobile" value="1"/>

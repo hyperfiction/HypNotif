@@ -18,10 +18,12 @@ extern "C"{
 		//nme_extensions_main( );
 		return 0;
 	}
-
+	#ifdef IPHONE
 	void callback( const char* cbType , const char* data ){
 		val_call2( eval_onConnect->get( ), alloc_string( cbType ) , alloc_string( data ) );
 	}
+	#endif
+
 }
 
 /* Device
@@ -32,6 +34,7 @@ value hyp_fb_os(){
 }
 DEFINE_PRIM(hyp_fb_os,0);
 */
+#ifdef IPHONE
 
 value hyp_fb_init( value token ){
 	return alloc_bool( fbInit( val_string( token ) ) );
@@ -80,3 +83,6 @@ static value hypfb_feed(
 	return alloc_null( );
 }
 DEFINE_PRIM( hypfb_feed , 5 );
+
+#endif
+

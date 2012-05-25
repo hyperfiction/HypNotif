@@ -10,7 +10,7 @@ namespace collections{
 Void PrioQueueIterator_obj::__construct(Dynamic content)
 {
 {
-	HX_SOURCE_POS("../inthebox/src/org/shoebox/collections/PriorityQueue.hx",225)
+	HX_SOURCE_POS("../inthebox/src/org/shoebox/collections/PriorityQueue.hx",268)
 	this->_aContent = content->__Field(HX_CSTRING("copy"),true)();
 }
 ;
@@ -33,7 +33,7 @@ Dynamic PrioQueueIterator_obj::__Create(hx::DynamicArray inArgs)
 Void PrioQueueIterator_obj::reset( ){
 {
 		HX_SOURCE_PUSH("PrioQueueIterator_obj::reset")
-		HX_SOURCE_POS("../inthebox/src/org/shoebox/collections/PriorityQueue.hx",237)
+		HX_SOURCE_POS("../inthebox/src/org/shoebox/collections/PriorityQueue.hx",280)
 		this->inc = (int)0;
 	}
 return null();
@@ -44,7 +44,7 @@ HX_DEFINE_DYNAMIC_FUNC0(PrioQueueIterator_obj,reset,(void))
 
 bool PrioQueueIterator_obj::hasNext( ){
 	HX_SOURCE_PUSH("PrioQueueIterator_obj::hasNext")
-	HX_SOURCE_POS("../inthebox/src/org/shoebox/collections/PriorityQueue.hx",247)
+	HX_SOURCE_POS("../inthebox/src/org/shoebox/collections/PriorityQueue.hx",290)
 	return (this->inc < this->_aContent->__Field(HX_CSTRING("length"),true));
 }
 
@@ -53,7 +53,7 @@ HX_DEFINE_DYNAMIC_FUNC0(PrioQueueIterator_obj,hasNext,return )
 
 Dynamic PrioQueueIterator_obj::next( ){
 	HX_SOURCE_PUSH("PrioQueueIterator_obj::next")
-	HX_SOURCE_POS("../inthebox/src/org/shoebox/collections/PriorityQueue.hx",257)
+	HX_SOURCE_POS("../inthebox/src/org/shoebox/collections/PriorityQueue.hx",300)
 	return this->_aContent->__GetItem((this->inc)++)->__Field(HX_CSTRING("content"),true);
 }
 

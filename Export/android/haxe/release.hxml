@@ -5,6 +5,7 @@
 -lib actuate
 -lib nme
 -lib polygonal
+-cp ./extensions/fb
 -D mobile
 -cp Export/android/haxe
 -cpp Export/android/obj

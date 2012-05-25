@@ -1,5 +1,6 @@
 package fr.hyperfiction;
 
+import nme.JNI;
 import nme.errors.Error;
 import org.shoebox.utils.system.Signal1;
 
@@ -27,6 +28,16 @@ class Facebook{
 	static var hyp_fb_apprequest_to_user = nme.Loader.load( "hyp_fb_apprequest_to_user" , 3 );
 	static var hyp_fb_feed 				 = nme.Loader.load( "hypfb_feed" , 5 );
 	#end
+
+	#if android
+	static private var hyp_fb_init   : Dynamic;
+	static private var hypfb_connect : Dynamic;
+	static private var hypfb_feed    : Dynamic;
+	static private var hypfb_request : Dynamic;
+	
+	public static inline var ANDROID_CLASS : String = 'fr.hyperfiction.HypFacebook';
+	#end
+
 
 	// -------o constructor
 		
@@ -81,6 +92,10 @@ class Facebook{
 					hyp_fb_apprequest( sTitle , sMessage );
 				else
 					hyp_fb_apprequest_to_user( sTitle , sMessage , toUser);
+			#else
+				if( hypfb_request == null )
+					hypfb_request = JNI.createStaticMethod( 'fr.hyperfiction.HypFacebook' , 'hypfb_apprequest' , "(Ljava/lang/String;Ljava/lang/String;)V" );
+					hypfb_request( sTitle , sMessage );
 			#end
 			
 		}	
@@ -99,9 +114,30 @@ class Facebook{
 								sPictureUrl  : String 
 							) : Void {
 			#if iphone
-			hyp_fb_feed( sTitle , sCaption , sDescription , sLink , sPictureUrl );
+				hyp_fb_feed( sTitle , sCaption , sDescription , sLink , sPictureUrl );
+			#else
+				if( hypfb_feed == null )
+					hypfb_feed = JNI.createStaticMethod( 'fr.hyperfiction.HypFacebook' , 'hypfb_feed' , "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V" );
+					hypfb_feed( sTitle , sCaption , sDescription , sLink , sPictureUrl );
+											
 			#end
 		}
+
+		#if android
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		public function generateKeyHash( sPackageName : String ) : Void {
+			trace('generateKeyHash ::: '+sPackageName);
+			var hyp_key : Dynamic = JNI.createStaticMethod( 'fr.hyperfiction.HypFacebook' , 'hypfb_key_hash' , "(Ljava/lang/String;)V" );
+				hyp_key( sPackageName );
+		}
+		
+		#end
 
 	// -------o protected
 	
@@ -114,13 +150,20 @@ class Facebook{
 		* @return	void
 		*/
 		private function _init( sAppId : String ) : Void{
-			
+			trace( 'init ::: ' + sAppId );
 			_sAppID = sAppId;
 
-			//
-				#if iphone
+			#if iphone
 				hyp_fb_init( _sAppID );
-				#end
+			#else
+				if( hyp_fb_init == null )
+					hyp_fb_init = JNI.createStaticMethod( 'fr.hyperfiction.HypFacebook' , 'hypfb_init' , "(Ljava/lang/String;Lorg/haxe/nme/HaxeObject;)V" );
+					nme.Lib.postUICallback( 
+											function() { 
+												hyp_fb_init( _sAppID , this );
+											});
+					
+			#end
 		}
 
 		/**
@@ -132,10 +175,16 @@ class Facebook{
 		private function _connect( ) : Void{
 
 			//
-				#if iphone
+			#if iphone
 				hypfb_set_callback( _onCallback );
 				hypfb_connect( );
-				#end
+			#else
+				if( hypfb_connect == null )
+					hypfb_connect = JNI.createStaticMethod( 'fr.hyperfiction.HypFacebook' , 'hypfb_connect' , "()V" );
+					nme.Lib.postUICallback( function() { 
+						hypfb_connect( );
+					});
+			#end
 		}
 
 		/**
@@ -145,6 +194,7 @@ class Facebook{
 		* @return	void
 		*/
 		private function _onCallback( sType : String , arg = null ) : Void{
+			trace('_onCallback ::: '+sType+' - '+arg);
 			var type = Type.createEnum( FbCallback , sType );
 			switch( Type.createEnum( FbCallback , sType ) ){
 				
@@ -152,8 +202,15 @@ class Facebook{
 					session_token = arg;
 					_bConnected = true;
 					onConnect.emit( session_token );
-					trace('onLogin ::: token : '+session_token );
+				
+				case ON_ERROR:
+					trace('ON_ERROR ::: '+arg );
 
+				case ON_FACEBOOK_ERROR:
+					trace('ON_FACEBOOK_ERROR ::: '+arg );
+
+				case ON_CANCEL:
+					trace('ON_CANCEL ::: '+arg );
 			}
 		}
 
@@ -178,4 +235,7 @@ class Facebook{
 
 enum FbCallback{
 	ON_LOGIN;
+	ON_ERROR;
+	ON_CANCEL;
+	ON_FACEBOOK_ERROR;
 }

@@ -87,14 +87,15 @@ obj/android-debug/src/haxe/io/Bytes.obj
 obj/android-debug/src/haxe/Timer.obj
 obj/android-debug/src/haxe/Log.obj
 obj/android-debug/src/haxe/BaseCode.obj
+obj/android-debug/src/fr/hyperfiction/FbCallback.obj
+obj/android-debug/src/fr/hyperfiction/Facebook.obj
 obj/android-debug/src/cpp/zip/Uncompress.obj
 obj/android-debug/src/cpp/zip/Flush.obj
 obj/android-debug/src/cpp/zip/Compress.obj
 obj/android-debug/src/cpp/rtti/FieldNumericIntegerLookup.obj
 obj/android-debug/src/Type.obj
 obj/android-debug/src/ValueType.obj
-obj/android-debug/src/TestCB.obj
-obj/android-debug/src/TestNativeGestures.obj
+obj/android-debug/src/TestFacebook.obj
 obj/android-debug/src/neash/display/Sprite.obj
 obj/android-debug/src/neash/display/DisplayObjectContainer.obj
 obj/android-debug/src/neash/display/InteractiveObject.obj

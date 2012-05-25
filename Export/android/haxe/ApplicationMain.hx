@@ -26,7 +26,7 @@ class ApplicationMain
 			var stage = wx.NMEStage.create(frame, null, null, { width: 1024, height: 768 });
 			#end
 			
-			TestNativeGestures.main();
+			TestFacebook.main();
 			
 			if (autoShowFrame)
 			{
@@ -46,7 +46,7 @@ class ApplicationMain
 				
 				var hasMain = false;
 				
-				for (methodName in Type.getClassFields(TestNativeGestures))
+				for (methodName in Type.getClassFields(TestFacebook))
 				{
 					if (methodName == "main")
 					{
@@ -57,11 +57,11 @@ class ApplicationMain
 				
 				if (hasMain)
 				{
-					Reflect.callMethod (TestNativeGestures, Reflect.field (TestNativeGestures, "main"), []);
+					Reflect.callMethod (TestFacebook, Reflect.field (TestFacebook, "main"), []);
 				}
 				else
 				{
-					nme.Lib.current.addChild(cast (Type.createInstance(TestNativeGestures, []), nme.display.DisplayObject));	
+					nme.Lib.current.addChild(cast (Type.createInstance(TestFacebook, []), nme.display.DisplayObject));	
 				}
 			},
 			1024, 768, 
