@@ -1,0 +1,13 @@
+HXCPP_ARMV6
+actuate
+cpp
+haxe_209
+iphone
+iphoneos
+mobile
+nme
+nme_install_tool
+polygonal
+sys
+true
+/usr/lib/haxe/lib/hxcpp/2,09,1/
