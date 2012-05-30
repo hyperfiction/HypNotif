@@ -25,7 +25,25 @@ class ApplicationMain
 					nme.Lib.current.stage.scaleMode = nme.display.StageScaleMode.NO_SCALE;
 				}
 				
-				TestFacebook.main();
+				var hasMain = false;
+				
+				for (methodName in Type.getClassFields(TestTouch))
+				{
+					if (methodName == "main")
+					{
+						hasMain = true;
+						break;
+					}
+				}
+				
+				if (hasMain)
+				{
+					Reflect.callMethod (TestTouch, Reflect.field (TestTouch, "main"), []);
+				}
+				else
+				{
+					nme.Lib.current.addChild(cast (Type.createInstance(TestTouch, []), nme.display.DisplayObject));	
+				}
 			},
 			1024, 768,
 			60,

@@ -10,7 +10,6 @@ import fr.hyperfiction.Facebook;
  * ...
  * @author shoe[box]
  */
-
 class TestFacebook extends Sprite{
 
 	private static var hyp_fb_connect : Dynamic;

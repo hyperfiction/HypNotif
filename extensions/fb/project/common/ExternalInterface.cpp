@@ -9,12 +9,12 @@ AutoGCRoot *eval_onConnect = 0;
 extern "C"{
 
 	void nme_extensions_main(){
-		printf("nme_extensions_main()\n");
+		printf("fb_extensions_main()\n");
 	}
 	//DEFINE_ENTRY_POINT(nme_extensions_main);
 	
 	int fb_register_prims(){
-		printf("nmex: register_prims()\n");
+		printf("fb: register_prims()\n");
 		//nme_extensions_main( );
 		return 0;
 	}

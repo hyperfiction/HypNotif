@@ -1,6 +1,9 @@
 package fr.hyperfiction;
 
+#if android
 import nme.JNI;
+#end
+
 import nme.errors.Error;
 import org.shoebox.utils.system.Signal1;
 

@@ -33,7 +33,7 @@ extern "C" void hxcpp_set_top_of_stack();
   
 
   
-     extern "C" int fb_register_prims();
+     extern "C" int hypertouch_register_prims();
   
 
   
@@ -68,7 +68,7 @@ extern "C" int main(int argc, char *argv[])
      
    
      
-        fb_register_prims();
+        hypertouch_register_prims();
      
    
      

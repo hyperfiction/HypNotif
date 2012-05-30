@@ -5,7 +5,8 @@
 -lib actuate
 -lib nme
 -lib polygonal
--cp extensions/fb
+-cp ./extensions/hypertouch
+-cp ./extensions/hypertouch/.
 -D web
 -swf-version 10.1
 -swf9 Export/flash/bin/hypertest.swf

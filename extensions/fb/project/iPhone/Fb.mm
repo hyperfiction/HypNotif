@@ -41,9 +41,11 @@ typedef void( *FunctionType)( );
 			- (void)fbDidExtendToken:(NSString*)accessToken expiresAt:(NSDate*)expiresAt{
 				NSLog( @"fbDidExtendToken" );
 			}
+			
 			- (void)fbSessionInvalidated{
 				NSLog( @"fbSessionInvalidated" );
 			}
+
 			- (void)fbDidLogin{
 				NSLog( @"fbDidLogin" );
 				onFbLogin( );

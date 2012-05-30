@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
 	
-	<!--<ndll name="fb" />-->
+	<ndll name="fb" />
+	<classpath name="." />
 	<java path="project/android" />
 
 </project>

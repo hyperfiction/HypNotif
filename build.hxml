@@ -5,7 +5,7 @@
 -lib actuate
 -lib nme
 -lib polygonal
--D web
+-D iphone
 -swf-version 10.1
 -swf9 Export/flash/bin/gnarks.swf
 -swf-header 760:640:60:FFFFFF

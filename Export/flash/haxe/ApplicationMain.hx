@@ -1,4 +1,4 @@
-import TestFacebook;
+import TestTouch;
 import nme.Assets;
 import nme.events.Event;
 
@@ -35,7 +35,7 @@ class ApplicationMain {
 		
 		var hasMain = false;
 		
-		for (methodName in Type.getClassFields(TestFacebook))
+		for (methodName in Type.getClassFields(TestTouch))
 		{
 			if (methodName == "main")
 			{
@@ -46,11 +46,11 @@ class ApplicationMain {
 		
 		if (hasMain)
 		{
-			Reflect.callMethod (TestFacebook, Reflect.field (TestFacebook, "main"), []);
+			Reflect.callMethod (TestTouch, Reflect.field (TestTouch, "main"), []);
 		}
 		else
 		{
-			nme.Lib.current.addChild(cast (Type.createInstance(TestFacebook, []), nme.display.DisplayObject));	
+			nme.Lib.current.addChild(cast (Type.createInstance(TestTouch, []), nme.display.DisplayObject));	
 		}
 		
 	}
