@@ -161,6 +161,7 @@ class HyperTouch{
 		* @return	boolean
 		*/
 		public function addPanListener( minTouch : Int , maxTouch : Int ) : Bool {
+			trace('addPanListener ::: '+minTouch+' - '+maxTouch);
 			return hyp_touch_add_pan( minTouch , maxTouch );
 		}
 
@@ -273,9 +274,9 @@ class HyperTouch{
 				return b;
 
 			if( b )
-				hyp_touch_add_tap( 1 , 2 );
+				hyp_touch_add_tap( 2 , 1 );
 			else
-				hyp_touch_rem_tap( 1 , 2 );	
+				hyp_touch_rem_tap( 2 , 1 );	
 
 			return this.allowTwoFingersTap = b;
 		}
@@ -325,6 +326,7 @@ class HyperTouch{
 		* @return	void
 		*/
 		private function _onRotCallback( fRotation : Float , fVelocity : Float ) : Void{
+			trace('_onRotCallback ::: '+fRotation+' - '+fVelocity);
 			onRotation.emit( fRotation , fVelocity );
 		}
 
@@ -350,7 +352,7 @@ class HyperTouch{
 			
 			var touches : Int = Std.int( args[ 0 ] );
 			var fingers : Int = Std.int( args[ 1 ] );
-
+			trace('_onTapCallback ::: '+touches+' - '+fingers);
 			var res = _convert( args[ 2 ] , args[ 3 ] );
 			
 			if( fingers == 1 ){

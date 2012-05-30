@@ -84,8 +84,7 @@ class TestTouch extends Sprite{
 
 				hyp.addSwipeListener( 1 , HyperTouch.SWIPE_DIRECTION_L );
 				hyp.addSwipeListener( 1 , HyperTouch.SWIPE_DIRECTION_R );
-				hyp.addPanListener( 2 , 2 );
-
+				
 			#end
 			//Lib.current.stage.addEventListener( Event.ENTER_FRAME , _onFrame , false);
 			addChild( new Perf( ) );
