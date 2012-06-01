@@ -7,15 +7,15 @@
 
 HX_DECLARE_CLASS0(Hash)
 HX_DECLARE_CLASS2(haxe,io,Bytes)
-HX_DECLARE_CLASS2(nme,display,BitmapData)
-HX_DECLARE_CLASS2(nme,display,IBitmapDrawable)
-HX_DECLARE_CLASS2(nme,events,EventDispatcher)
-HX_DECLARE_CLASS2(nme,events,IEventDispatcher)
+HX_DECLARE_CLASS2(neash,display,BitmapData)
+HX_DECLARE_CLASS2(neash,display,IBitmapDrawable)
+HX_DECLARE_CLASS2(neash,events,EventDispatcher)
+HX_DECLARE_CLASS2(neash,events,IEventDispatcher)
+HX_DECLARE_CLASS2(neash,media,Sound)
+HX_DECLARE_CLASS2(neash,text,Font)
+HX_DECLARE_CLASS2(neash,utils,ByteArray)
+HX_DECLARE_CLASS2(neash,utils,IDataInput)
 HX_DECLARE_CLASS2(nme,installer,Assets)
-HX_DECLARE_CLASS2(nme,media,Sound)
-HX_DECLARE_CLASS2(nme,text,Font)
-HX_DECLARE_CLASS2(nme,utils,ByteArray)
-HX_DECLARE_CLASS2(nme,utils,IDataInput)
 namespace nme{
 namespace installer{
 
@@ -49,16 +49,16 @@ class Assets_obj : public hx::Object{
 		static ::String getResourceName( ::String id);
 		static Dynamic getResourceName_dyn();
 
-		static ::nme::display::BitmapData getBitmapData( ::String id,hx::Null< bool >  useCache);
+		static ::neash::display::BitmapData getBitmapData( ::String id,hx::Null< bool >  useCache);
 		static Dynamic getBitmapData_dyn();
 
-		static ::nme::utils::ByteArray getBytes( ::String id);
+		static ::neash::utils::ByteArray getBytes( ::String id);
 		static Dynamic getBytes_dyn();
 
-		static ::nme::text::Font getFont( ::String id);
+		static ::neash::text::Font getFont( ::String id);
 		static Dynamic getFont_dyn();
 
-		static ::nme::media::Sound getSound( ::String id);
+		static ::neash::media::Sound getSound( ::String id);
 		static Dynamic getSound_dyn();
 
 		static ::String getText( ::String id);

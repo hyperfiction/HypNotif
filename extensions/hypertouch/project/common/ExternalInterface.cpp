@@ -25,10 +25,10 @@ extern "C"{
 
 	#ifdef IPHONE
 
-	void callbackTap( int touches , int fingers , float fx , float fy ){
+	void callbackTap( int touches , int taps , float fx , float fy ){
 		value args = alloc_array( 4 );
 		val_array_set_i( args , 0 , alloc_int( touches ) );
-		val_array_set_i( args , 1 , alloc_int( fingers ) );
+		val_array_set_i( args , 1 , alloc_int( taps ) );
 		val_array_set_i( args , 2 , alloc_float( fx ) );
 		val_array_set_i( args , 3 , alloc_float( fy ) );
    		val_call1( eval_callback_tap -> get( ) , args ); 
@@ -161,6 +161,12 @@ extern "C"{
 			return alloc_bool( removePinchRecognize( ) );
 		}
 		DEFINE_PRIM( hyp_touch_remove_pinch , 0 );
+
+		static value HypTouch_get_orientation( ){
+			return alloc_int( getOrientation( ) );
+		}
+		DEFINE_PRIM( HypTouch_get_orientation , 0 );
+		
 
 #endif
 

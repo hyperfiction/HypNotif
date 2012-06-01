@@ -21,6 +21,28 @@
 		@property (nonatomic ) FunctionType fOnRot;
 		@property (nonatomic ) FunctionType fOnPan;
 		@property (nonatomic ) FunctionType fOnPinch;
+
+		-( bool ) addPan : ( int ) minTouch andMax : ( int ) maxTouch;
+		-( bool ) addPinch;
+		-( bool ) addRotation;
+		-( bool ) addSwipe : ( int ) iFingers andDirection : ( int ) iDirection;
+		-( bool ) addTap : ( int ) fingersCount withTapsCount: ( int ) tapsCount;
+		-( bool ) removeGestureByCodeName : ( NSString* ) codeName;
+		-( bool ) removePan : ( int ) minTouch andMax : ( int ) maxTouch;
+		-( bool ) removePinch;
+		-( bool ) removeRotation;
+		-( bool ) removeSwipe : ( int ) iFingers andDirection : ( int ) iDirection;
+		-( bool ) removeTap : ( int ) fingersCount withTapsCount: ( int ) tapsCount;
+		-( bool ) testGesture : ( NSString* ) codeName;
+		-( int ) getOrientation;
+		-( void ) handlePan:( UIPanGestureRecognizer * ) recognizer;
+		-( void ) handlePinch:( UIPinchGestureRecognizer * ) recognizer;
+		-( void ) handleRot:( UIRotationGestureRecognizer *) recognizer;
+		-( void ) handleSwipe:( UISwipeGestureRecognizer *)recognizer;
+		-( void ) handleTap : ( UITapGestureRecognizer *) recognizer;
+		-( void ) pushGesture : ( NSString* ) codeName withValue : ( UIGestureRecognizer* ) gestureValue;
+		-( void ) testView;
+		//-( BOOL )gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer ;
 	@end
 
 // Implementation
@@ -28,7 +50,7 @@
 	@implementation TouchDelegate
 
 		static NSMutableDictionary *gestures = [[NSMutableDictionary alloc] init];
-
+		UIView *refView;
 		@synthesize fOnTap;
 		@synthesize fOnSwipe;
 		@synthesize fOnRot;
@@ -43,6 +65,16 @@
 
 			- ( void ) dealloc {
 				[ super dealloc ];
+			}
+
+			- (void ) testView{
+				refView = [[UIView alloc] initWithFrame:CGRectMake(0,0,2,2)];
+		        refView.alpha = 0;
+		        [[[UIApplication sharedApplication] keyWindow] addSubview:refView];
+			}
+
+			- ( int ) getOrientation{
+				return [UIApplication sharedApplication].statusBarOrientation;
 			}
 
 		
@@ -69,8 +101,8 @@
 			    	[ g setNumberOfTapsRequired 	: tapsCount ];
 			    	[ g setNumberOfTouchesRequired 	: fingersCount ];
 
-				[[[UIApplication sharedApplication] keyWindow] addGestureRecognizer:g];
-
+				//[[[UIApplication sharedApplication] keyWindow] addGestureRecognizer:g];
+			    [[[[[UIApplication sharedApplication] keyWindow] subviews] objectAtIndex:0 ] addGestureRecognizer:g];
 				[ self pushGesture:codeName withValue : g ];
 				[codeName release];
 				
@@ -109,26 +141,28 @@
 
     			//TBLR
     				switch( iDirection ){
-    					
-    					case 0:
-    						[ g setDirection : UISwipeGestureRecognizerDirectionUp ];
-    						break;
 
     					case 1:
-    						[ g setDirection : UISwipeGestureRecognizerDirectionDown ];
+    						[ g setDirection : UISwipeGestureRecognizerDirectionRight ];
     						break;
-
+    					
     					case 2:
     						[ g setDirection : UISwipeGestureRecognizerDirectionLeft ];
     						break;
 
-    					case 3:
-    						[ g setDirection : UISwipeGestureRecognizerDirectionRight ];
+    					case 4:
+    						[ g setDirection : UISwipeGestureRecognizerDirectionUp ];
     						break;
+
+    					case 8:
+    						[ g setDirection : UISwipeGestureRecognizerDirectionDown ];
+    						break;
+
     				}
 
     			[ g setNumberOfTouchesRequired : iFingers ];
-				[[[UIApplication sharedApplication] keyWindow] addGestureRecognizer:g];
+				//[[[UIApplication sharedApplication] keyWindow] addGestureRecognizer:g];
+				[[[[[UIApplication sharedApplication] keyWindow] subviews] objectAtIndex:0]addGestureRecognizer:g];
 				[ self pushGesture : codeName withValue : g ];
 				[codeName release];
 				return true;
@@ -157,7 +191,8 @@
 																action:@selector(handleRot:)
 															];
     											g.delegate = self;
-    			[[[UIApplication sharedApplication] keyWindow] addGestureRecognizer:g];
+    			//[[[UIApplication sharedApplication] keyWindow] addGestureRecognizer:g];
+    			[[[[[UIApplication sharedApplication] keyWindow] subviews] objectAtIndex:0]addGestureRecognizer:g];
 				[ self pushGesture : @"ROT" withValue : g ];
 				return true;
 			}
@@ -188,7 +223,8 @@
    											g.delegate = self;
    											g.minimumNumberOfTouches = minTouch;
    											g.maximumNumberOfTouches = maxTouch;
-    			[[[UIApplication sharedApplication] keyWindow] addGestureRecognizer:g];
+    			//[[[UIApplication sharedApplication] keyWindow] addGestureRecognizer:g];
+				[[[[[UIApplication sharedApplication] keyWindow] subviews] objectAtIndex:0]addGestureRecognizer:g];   											
 				[ self pushGesture : codeName withValue : g ];
 				[codeName release];
 				return true;
@@ -212,7 +248,8 @@
 													action:@selector(handlePinch:)
 												];
     										g.delegate = self;
-    			[[[UIApplication sharedApplication] keyWindow] addGestureRecognizer:g];
+    			//[[[UIApplication sharedApplication] keyWindow] addGestureRecognizer:g];
+    			[[[[[UIApplication sharedApplication] keyWindow] subviews] objectAtIndex:0]addGestureRecognizer:g];
 				[ self pushGesture : @"PINCH" withValue : g ];
 				return true;
 			}
@@ -248,7 +285,9 @@
 										g.enabled = FALSE;
 				
 				[ gestures removeObjectForKey : codeName ];										
-				[[[UIApplication sharedApplication] keyWindow] removeGestureRecognizer:g];
+				//
+				//[[[UIApplication sharedApplication] keyWindow] removeGestureRecognizer:g];
+				[[[[[UIApplication sharedApplication] keyWindow] subviews] objectAtIndex:0]removeGestureRecognizer:g];
 				[ g release ];
 				[ codeName release ];
 				return true;
@@ -257,20 +296,19 @@
 		//---------------------------------------------------------------------------------------------------
 		
 			- ( void ) handleTap : ( UITapGestureRecognizer *) recognizer { 
-				//CGPoint touchPoint = [ recognizer locationOfTouch : 0 inView:recognizer.view ];
-				CGPoint touchPoint = [recognizer translationInView:nil];//recognizer.view];
-				CGPoint touchPoint = [recognizer locationOfTouch:0 inView:nil];
 
-				//CGPoint translatedPoint = [ (UIPanGestureRecognizer*) sender translationInView:self.view];
-
-				//NSLog( @"handleTap at position x : %f y : %f with taps : %i fingers : %i" , touchPoint.x , touchPoint.y , recognizer.numberOfTapsRequired , recognizer.numberOfTouchesRequired );
+				CGPoint tapPoint = [ 
+										recognizer locationInView:[UIApplication sharedApplication].keyWindow.rootViewController.view
+									];
+				//NSLog(@"handleTap : %@ direction touches : %i taps : %i",NSStringFromCGPoint( tapPoint ) ,recognizer.numberOfTouchesRequired , recognizer.numberOfTapsRequired);
 
 				callbackTap( 
 								recognizer.numberOfTouchesRequired , 
 								recognizer.numberOfTapsRequired , 
-								touchPoint.x , 
-								touchPoint.y 
+								tapPoint.x , 
+								tapPoint.y 
 							);
+				
 			}
 
 			- (void)handleSwipe:( UISwipeGestureRecognizer *)recognizer {
@@ -331,6 +369,7 @@
 			void init_hyp_touch( ){
 				NSLog( @"init" );
 				td = [ TouchDelegate alloc ];
+				[ td testView ];
 			}
 
 
@@ -388,6 +427,10 @@
 
 			void onLogin( ){
 				//callback( "ON_LOGIN" , ( const char *) [[ fbInstance accessToken] UTF8String] );
+			}
+
+			int getOrientation( ){
+				return [ td getOrientation ];
 			}
 
 

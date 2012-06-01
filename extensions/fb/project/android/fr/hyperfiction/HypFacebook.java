@@ -16,6 +16,7 @@ import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.DialogError;
 import com.facebook.android.Facebook.DialogListener;
 import com.facebook.android.Facebook.DialogListener;
+import com.facebook.android.Facebook.DialogListener;
 import com.facebook.android.Facebook;
 import com.facebook.android.FacebookError;
 import com.facebook.android.SessionEvents.AuthListener;
@@ -28,7 +29,6 @@ import java.security.NoSuchAlgorithmException;
 import org.haxe.nme.GameActivity;
 import org.haxe.nme.HaxeObject;
 import org.haxe.nme.NME;
-  import com.facebook.android.Facebook.DialogListener;
 
 public class HypFacebook implements DialogListener{
 	

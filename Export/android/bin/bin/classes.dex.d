@@ -23,10 +23,16 @@ C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\bin\classes\fr\
 C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\bin\classes\fr\hyperfiction\Base64$InputStream.class \
 C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\bin\classes\fr\hyperfiction\Base64$OutputStream.class \
 C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\bin\classes\fr\hyperfiction\Base64.class \
+C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\bin\classes\fr\hyperfiction\HyperTouch$1.class \
+C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\bin\classes\fr\hyperfiction\HyperTouch$GlAppGestureListener.class \
+C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\bin\classes\fr\hyperfiction\HyperTouch.class \
+C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\bin\classes\fr\hyperfiction\HyperTouchJava.class \
 C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\bin\classes\fr\hyperfiction\HypFacebook$BaseDialogListener.class \
 C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\bin\classes\fr\hyperfiction\HypFacebook$Dialog_listener.class \
 C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\bin\classes\fr\hyperfiction\HypFacebook$UpdateStatusListener.class \
 C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\bin\classes\fr\hyperfiction\HypFacebook.class \
+C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\bin\classes\fr\hyperfiction\SimpleGestureFilter$SimpleGestureListener.class \
+C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\bin\classes\fr\hyperfiction\SimpleGestureFilter.class \
 C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\bin\classes\fr\hyperfiction\Tests\MainActivity.class \
 C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\bin\classes\fr\hyperfiction\Tests\R$attr.class \
 C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\bin\classes\fr\hyperfiction\Tests\R$drawable.class \

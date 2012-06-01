@@ -62,6 +62,56 @@
   <file name="src/sys/_FileSystem/FileKind.cpp">
    <depend name="include/sys/_FileSystem/FileKind.h"/>
   </file>
+  <file name="src/org/shoebox/utils/system/flashevents/InteractiveObjectEv.cpp">
+   <depend name="include/neash/display/DisplayObject.h"/>
+   <depend name="include/neash/display/IBitmapDrawable.h"/>
+   <depend name="include/neash/display/InteractiveObject.h"/>
+   <depend name="include/neash/events/Event.h"/>
+   <depend name="include/neash/events/EventDispatcher.h"/>
+   <depend name="include/neash/events/IEventDispatcher.h"/>
+   <depend name="include/neash/events/MouseEvent.h"/>
+   <depend name="include/neash/events/TouchEvent.h"/>
+   <depend name="include/org/shoebox/utils/system/ASignal.h"/>
+   <depend name="include/org/shoebox/utils/system/Signal1.h"/>
+   <depend name="include/org/shoebox/utils/system/SignalEvent.h"/>
+   <depend name="include/org/shoebox/utils/system/flashevents/FlashEventsCache.h"/>
+   <depend name="include/org/shoebox/utils/system/flashevents/InteractiveObjectEv.h"/>
+  </file>
+  <file name="src/org/shoebox/utils/system/flashevents/FlashEventsCache.cpp">
+   <depend name="include/Hash.h"/>
+   <depend name="include/IntHash.h"/>
+   <depend name="include/neash/events/EventDispatcher.h"/>
+   <depend name="include/neash/events/IEventDispatcher.h"/>
+   <depend name="include/org/shoebox/utils/system/ASignal.h"/>
+   <depend name="include/org/shoebox/utils/system/Signal1.h"/>
+   <depend name="include/org/shoebox/utils/system/SignalEvent.h"/>
+   <depend name="include/org/shoebox/utils/system/flashevents/FlashEventsCache.h"/>
+  </file>
+  <file name="src/org/shoebox/utils/system/flashevents/EvChannels.cpp">
+   <depend name="include/org/shoebox/utils/system/flashevents/EvChannels.h"/>
+  </file>
+  <file name="src/org/shoebox/utils/system/SignalEvent.cpp">
+   <depend name="include/neash/events/EventDispatcher.h"/>
+   <depend name="include/neash/events/IEventDispatcher.h"/>
+   <depend name="include/org/shoebox/collections/PriorityQueue.h"/>
+   <depend name="include/org/shoebox/utils/system/ASignal.h"/>
+   <depend name="include/org/shoebox/utils/system/Signal1.h"/>
+   <depend name="include/org/shoebox/utils/system/SignalEvent.h"/>
+  </file>
+  <file name="src/org/shoebox/utils/system/Signal4.cpp">
+   <depend name="include/haxe/Log.h"/>
+   <depend name="include/org/shoebox/collections/PrioQueueIterator.h"/>
+   <depend name="include/org/shoebox/collections/PriorityQueue.h"/>
+   <depend name="include/org/shoebox/utils/system/ASignal.h"/>
+   <depend name="include/org/shoebox/utils/system/Signal4.h"/>
+  </file>
+  <file name="src/org/shoebox/utils/system/Signal2.cpp">
+   <depend name="include/haxe/Log.h"/>
+   <depend name="include/org/shoebox/collections/PrioQueueIterator.h"/>
+   <depend name="include/org/shoebox/collections/PriorityQueue.h"/>
+   <depend name="include/org/shoebox/utils/system/ASignal.h"/>
+   <depend name="include/org/shoebox/utils/system/Signal2.h"/>
+  </file>
   <file name="src/org/shoebox/utils/system/Signal1.cpp">
    <depend name="include/org/shoebox/collections/PrioQueueIterator.h"/>
    <depend name="include/org/shoebox/collections/PriorityQueue.h"/>
@@ -71,6 +121,62 @@
   <file name="src/org/shoebox/utils/system/ASignal.cpp">
    <depend name="include/org/shoebox/collections/PriorityQueue.h"/>
    <depend name="include/org/shoebox/utils/system/ASignal.h"/>
+  </file>
+  <file name="src/org/shoebox/utils/Perf.cpp">
+   <depend name="include/haxe/Timer.h"/>
+   <depend name="include/neash/Lib.h"/>
+   <depend name="include/neash/display/Bitmap.h"/>
+   <depend name="include/neash/display/BitmapData.h"/>
+   <depend name="include/neash/display/DisplayObject.h"/>
+   <depend name="include/neash/display/DisplayObjectContainer.h"/>
+   <depend name="include/neash/display/IBitmapDrawable.h"/>
+   <depend name="include/neash/display/InteractiveObject.h"/>
+   <depend name="include/neash/display/MovieClip.h"/>
+   <depend name="include/neash/display/PixelSnapping.h"/>
+   <depend name="include/neash/display/Sprite.h"/>
+   <depend name="include/neash/display/Stage.h"/>
+   <depend name="include/neash/events/Event.h"/>
+   <depend name="include/neash/events/EventDispatcher.h"/>
+   <depend name="include/neash/events/IEventDispatcher.h"/>
+   <depend name="include/neash/system/System.h"/>
+   <depend name="include/neash/text/TextField.h"/>
+   <depend name="include/neash/text/TextFormat.h"/>
+   <depend name="include/org/shoebox/utils/Perf.h"/>
+   <depend name="include/org/shoebox/utils/system/ASignal.h"/>
+   <depend name="include/org/shoebox/utils/system/Signal1.h"/>
+   <depend name="include/org/shoebox/utils/system/SignalEvent.h"/>
+   <depend name="include/org/shoebox/utils/system/flashevents/InteractiveObjectEv.h"/>
+  </file>
+  <file name="src/org/shoebox/utils/FrameTimer.cpp">
+   <depend name="include/Std.h"/>
+   <depend name="include/haxe/Log.h"/>
+   <depend name="include/neash/Lib.h"/>
+   <depend name="include/neash/display/DisplayObject.h"/>
+   <depend name="include/neash/display/DisplayObjectContainer.h"/>
+   <depend name="include/neash/display/IBitmapDrawable.h"/>
+   <depend name="include/neash/display/InteractiveObject.h"/>
+   <depend name="include/neash/display/MovieClip.h"/>
+   <depend name="include/neash/display/Sprite.h"/>
+   <depend name="include/neash/display/Stage.h"/>
+   <depend name="include/neash/events/Event.h"/>
+   <depend name="include/neash/events/EventDispatcher.h"/>
+   <depend name="include/neash/events/IEventDispatcher.h"/>
+   <depend name="include/neash/events/TimerEvent.h"/>
+   <depend name="include/neash/utils/Timer.h"/>
+   <depend name="include/org/shoebox/utils/FrameTimer.h"/>
+  </file>
+  <file name="src/org/shoebox/geom/AABB.cpp">
+   <depend name="include/neash/display/Graphics.h"/>
+   <depend name="include/neash/geom/Rectangle.h"/>
+   <depend name="include/org/shoebox/geom/AABB.h"/>
+  </file>
+  <file name="src/org/shoebox/core/Vector2D.cpp">
+   <depend name="include/org/shoebox/core/Vector2D.h"/>
+  </file>
+  <file name="src/org/shoebox/core/BoxMath.cpp">
+   <depend name="include/Std.h"/>
+   <depend name="include/org/shoebox/core/BoxMath.h"/>
+   <depend name="include/org/shoebox/core/Vector2D.h"/>
   </file>
   <file name="src/org/shoebox/collections/PrioQueueIterator.cpp">
    <depend name="include/org/shoebox/collections/PrioQueueIterator.h"/>
@@ -99,6 +205,15 @@
    <depend name="include/neash/Loader.h"/>
    <depend name="include/neash/utils/WeakRef.h"/>
   </file>
+  <file name="src/neash/utils/Timer.cpp">
+   <depend name="include/haxe/Timer.h"/>
+   <depend name="include/neash/errors/Error.h"/>
+   <depend name="include/neash/events/Event.h"/>
+   <depend name="include/neash/events/EventDispatcher.h"/>
+   <depend name="include/neash/events/IEventDispatcher.h"/>
+   <depend name="include/neash/events/TimerEvent.h"/>
+   <depend name="include/neash/utils/Timer.h"/>
+  </file>
   <file name="src/neash/utils/Endian.cpp">
    <depend name="include/neash/utils/Endian.h"/>
   </file>
@@ -118,6 +233,30 @@
    <depend name="include/neash/utils/ByteArray.h"/>
    <depend name="include/neash/utils/IDataInput.h"/>
   </file>
+  <file name="src/neash/text/TextFormat.cpp">
+   <depend name="include/neash/text/TextFormat.h"/>
+  </file>
+  <file name="src/neash/text/TextFieldType.cpp">
+   <depend name="include/neash/text/TextFieldType.h"/>
+  </file>
+  <file name="src/neash/text/TextFieldAutoSize.cpp">
+   <depend name="include/neash/text/TextFieldAutoSize.h"/>
+  </file>
+  <file name="src/neash/text/TextField.cpp">
+   <depend name="include/StringTools.h"/>
+   <depend name="include/Type.h"/>
+   <depend name="include/neash/Loader.h"/>
+   <depend name="include/neash/display/DisplayObject.h"/>
+   <depend name="include/neash/display/IBitmapDrawable.h"/>
+   <depend name="include/neash/display/InteractiveObject.h"/>
+   <depend name="include/neash/events/EventDispatcher.h"/>
+   <depend name="include/neash/events/IEventDispatcher.h"/>
+   <depend name="include/neash/text/AntiAliasType.h"/>
+   <depend name="include/neash/text/TextField.h"/>
+   <depend name="include/neash/text/TextFieldAutoSize.h"/>
+   <depend name="include/neash/text/TextFieldType.h"/>
+   <depend name="include/neash/text/TextFormat.h"/>
+  </file>
   <file name="src/neash/text/FontType.cpp">
    <depend name="include/neash/text/FontType.h"/>
   </file>
@@ -129,6 +268,15 @@
    <depend name="include/neash/text/Font.h"/>
    <depend name="include/neash/text/FontStyle.h"/>
    <depend name="include/neash/text/FontType.h"/>
+  </file>
+  <file name="src/neash/text/AntiAliasType.cpp">
+   <depend name="include/neash/text/AntiAliasType.h"/>
+  </file>
+  <file name="src/neash/system/System.cpp">
+   <depend name="include/cpp/vm/Gc.h"/>
+   <depend name="include/neash/Lib.h"/>
+   <depend name="include/neash/Loader.h"/>
+   <depend name="include/neash/system/System.h"/>
   </file>
   <file name="src/neash/net/URLVariables.cpp">
    <depend name="include/Reflect.h"/>
@@ -237,6 +385,10 @@
   </file>
   <file name="src/neash/filters/BitmapFilter.cpp">
    <depend name="include/neash/filters/BitmapFilter.h"/>
+  </file>
+  <file name="src/neash/events/TimerEvent.cpp">
+   <depend name="include/neash/events/Event.h"/>
+   <depend name="include/neash/events/TimerEvent.h"/>
   </file>
   <file name="src/neash/events/SampleDataEvent.cpp">
    <depend name="include/haxe/io/Bytes.h"/>
@@ -486,6 +638,12 @@
    <depend name="include/neash/events/IEventDispatcher.h"/>
    <depend name="include/neash/geom/Matrix.h"/>
   </file>
+  <file name="src/neash/Memory.cpp">
+   <depend name="include/haxe/io/Bytes.h"/>
+   <depend name="include/neash/Memory.h"/>
+   <depend name="include/neash/utils/ByteArray.h"/>
+   <depend name="include/neash/utils/IDataInput.h"/>
+  </file>
   <file name="src/neash/Lib.cpp">
    <depend name="include/Std.h"/>
    <depend name="include/Sys.h"/>
@@ -563,19 +721,24 @@
    <depend name="include/haxe/BaseCode.h"/>
    <depend name="include/haxe/io/Bytes.h"/>
   </file>
-  <file name="src/fr/hyperfiction/FbCallback.cpp">
-   <depend name="include/fr/hyperfiction/FbCallback.h"/>
+  <file name="src/fr/hyperfiction/AndroidCallback.cpp">
+   <depend name="include/fr/hyperfiction/AndroidCallback.h"/>
+   <depend name="include/fr/hyperfiction/HyperTouch.h"/>
+   <depend name="include/haxe/Log.h"/>
+   <depend name="include/org/shoebox/utils/system/ASignal.h"/>
+   <depend name="include/org/shoebox/utils/system/Signal1.h"/>
+   <depend name="include/org/shoebox/utils/system/Signal2.h"/>
   </file>
-  <file name="src/fr/hyperfiction/Facebook.cpp">
-   <depend name="include/Type.h"/>
-   <depend name="include/fr/hyperfiction/Facebook.h"/>
-   <depend name="include/fr/hyperfiction/FbCallback.h"/>
+  <file name="src/fr/hyperfiction/HyperTouch.cpp">
+   <depend name="include/fr/hyperfiction/AndroidCallback.h"/>
+   <depend name="include/fr/hyperfiction/HyperTouch.h"/>
    <depend name="include/haxe/Log.h"/>
    <depend name="include/neash/JNI.h"/>
    <depend name="include/neash/Lib.h"/>
-   <depend name="include/neash/errors/Error.h"/>
    <depend name="include/org/shoebox/utils/system/ASignal.h"/>
    <depend name="include/org/shoebox/utils/system/Signal1.h"/>
+   <depend name="include/org/shoebox/utils/system/Signal2.h"/>
+   <depend name="include/org/shoebox/utils/system/Signal4.h"/>
   </file>
   <file name="src/cpp/zip/Uncompress.cpp">
    <depend name="include/cpp/Lib.h"/>
@@ -595,6 +758,9 @@
    <depend name="include/cpp/zip/Flush.h"/>
    <depend name="include/haxe/io/Bytes.h"/>
   </file>
+  <file name="src/cpp/vm/Gc.cpp">
+   <depend name="include/cpp/vm/Gc.h"/>
+  </file>
   <file name="src/cpp/rtti/FieldNumericIntegerLookup.cpp">
    <depend name="include/cpp/rtti/FieldNumericIntegerLookup.h"/>
   </file>
@@ -606,19 +772,31 @@
   <file name="src/ValueType.cpp">
    <depend name="include/ValueType.h"/>
   </file>
-  <file name="src/TestFacebook.cpp">
-   <depend name="include/TestFacebook.h"/>
-   <depend name="include/fr/hyperfiction/Facebook.h"/>
+  <file name="src/TestTouch.cpp">
+   <depend name="include/TestTouch.h"/>
+   <depend name="include/fr/hyperfiction/HyperTouch.h"/>
    <depend name="include/haxe/Log.h"/>
+   <depend name="include/haxe/Timer.h"/>
    <depend name="include/neash/Lib.h"/>
+   <depend name="include/neash/display/CapsStyle.h"/>
    <depend name="include/neash/display/DisplayObject.h"/>
    <depend name="include/neash/display/DisplayObjectContainer.h"/>
+   <depend name="include/neash/display/Graphics.h"/>
    <depend name="include/neash/display/IBitmapDrawable.h"/>
    <depend name="include/neash/display/InteractiveObject.h"/>
+   <depend name="include/neash/display/JointStyle.h"/>
+   <depend name="include/neash/display/LineScaleMode.h"/>
    <depend name="include/neash/display/MovieClip.h"/>
    <depend name="include/neash/display/Sprite.h"/>
+   <depend name="include/neash/display/Stage.h"/>
+   <depend name="include/neash/display/StageAlign.h"/>
+   <depend name="include/neash/display/StageScaleMode.h"/>
+   <depend name="include/neash/events/Event.h"/>
    <depend name="include/neash/events/EventDispatcher.h"/>
    <depend name="include/neash/events/IEventDispatcher.h"/>
+   <depend name="include/neash/events/MouseEvent.h"/>
+   <depend name="include/org/shoebox/core/BoxMath.h"/>
+   <depend name="include/org/shoebox/utils/Perf.h"/>
    <depend name="include/org/shoebox/utils/system/ASignal.h"/>
    <depend name="include/org/shoebox/utils/system/Signal1.h"/>
   </file>
@@ -753,7 +931,7 @@
   <file name="src/ApplicationMain.cpp">
    <depend name="include/ApplicationMain.h"/>
    <depend name="include/Reflect.h"/>
-   <depend name="include/TestFacebook.h"/>
+   <depend name="include/TestTouch.h"/>
    <depend name="include/Type.h"/>
    <depend name="include/haxe/io/Bytes.h"/>
    <depend name="include/neash/Lib.h"/>

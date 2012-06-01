@@ -27,6 +27,7 @@ namespace Hyperfiction{
 	void callback( const char * type , float* charArray );	
 	void callbackPinch( float scale , float velocity );
 	
+	int getOrientation( );
 }
 
 #endif

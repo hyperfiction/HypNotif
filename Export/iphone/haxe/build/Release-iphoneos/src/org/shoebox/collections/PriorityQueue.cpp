@@ -13,9 +13,9 @@ namespace collections{
 Void PriorityQueue_obj::__construct()
 {
 {
-	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",25)
+	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",56)
 	this->_aContent = Dynamic( Array_obj<Dynamic>::__new());
-	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",26)
+	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",57)
 	this->_bInvalidate = true;
 }
 ;
@@ -50,11 +50,11 @@ int prio = __o_prio.Default(0);
 				return null();
 			}
 		};
-		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",39)
+		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",72)
 		Dynamic desc = _Function_1_1::Block(value,prio);
-		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",41)
+		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",74)
 		this->_add(desc,prio);
-		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",42)
+		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",75)
 		this->_bInvalidate = true;
 	}
 return null();
@@ -67,35 +67,35 @@ bool PriorityQueue_obj::remove( Dynamic value,hx::Null< int >  __o_prio){
 int prio = __o_prio.Default(-1);
 	HX_SOURCE_PUSH("PriorityQueue_obj::remove");
 {
-		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",53)
+		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",88)
 		Dynamic desc;
-		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",54)
+		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",89)
 		bool b = false;
-		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",55)
+		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",90)
 		{
-			HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",55)
+			HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",90)
 			int _g = (int)0;
 			Dynamic _g1 = this->_aContent;
-			HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",55)
+			HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",90)
 			while(((_g < _g1->__Field(HX_CSTRING("length"),true)))){
-				HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",55)
+				HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",90)
 				Dynamic desc1 = _g1->__GetItem(_g);
-				HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",55)
+				HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",90)
 				++(_g);
-				HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",56)
+				HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",91)
 				if (((bool((desc1->__Field(HX_CSTRING("content"),true) == value)) && bool(((bool((prio == (int)-1)) || bool((desc1->__Field(HX_CSTRING("prio"),true) == prio)))))))){
-					HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",57)
+					HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",92)
 					this->_aContent->__Field(HX_CSTRING("remove"),true)(desc1);
-					HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",58)
+					HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",93)
 					b = true;
-					HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",59)
+					HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",94)
 					break;
 				}
 			}
 		}
-		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",62)
+		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",97)
 		this->_bInvalidate = true;
-		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",63)
+		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",98)
 		return b;
 	}
 }
@@ -105,29 +105,29 @@ HX_DEFINE_DYNAMIC_FUNC2(PriorityQueue_obj,remove,return )
 
 bool PriorityQueue_obj::contains( Dynamic value,int prio){
 	HX_SOURCE_PUSH("PriorityQueue_obj::contains")
-	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",74)
+	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",111)
 	bool b = false;
-	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",75)
+	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",112)
 	{
-		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",75)
+		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",112)
 		int _g = (int)0;
 		Dynamic _g1 = this->_aContent;
-		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",75)
+		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",112)
 		while(((_g < _g1->__Field(HX_CSTRING("length"),true)))){
-			HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",75)
+			HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",112)
 			Dynamic desc = _g1->__GetItem(_g);
-			HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",75)
+			HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",112)
 			++(_g);
-			HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",76)
+			HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",113)
 			if (((bool((desc->__Field(HX_CSTRING("content"),true) == value)) && bool((desc->__Field(HX_CSTRING("prio"),true) == prio))))){
-				HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",77)
+				HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",114)
 				b = true;
-				HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",78)
+				HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",115)
 				break;
 			}
 		}
 	}
-	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",82)
+	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",119)
 	return b;
 }
 
@@ -137,7 +137,7 @@ HX_DEFINE_DYNAMIC_FUNC2(PriorityQueue_obj,contains,return )
 Void PriorityQueue_obj::sort( ){
 {
 		HX_SOURCE_PUSH("PriorityQueue_obj::sort")
-		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",91)
+		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",128)
 		this->_sort();
 	}
 return null();
@@ -148,14 +148,14 @@ HX_DEFINE_DYNAMIC_FUNC0(PriorityQueue_obj,sort,(void))
 
 ::org::shoebox::collections::PrioQueueIterator PriorityQueue_obj::iterator( ){
 	HX_SOURCE_PUSH("PriorityQueue_obj::iterator")
-	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",103)
+	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",140)
 	if ((!(this->_bInvalidate))){
-		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",104)
+		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",141)
 		return this->_oIterator;
 	}
-	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",106)
+	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",143)
 	this->_oIterator = ::org::shoebox::collections::PrioQueueIterator_obj::__new(this->_aContent);
-	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",107)
+	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",144)
 	return this->_oIterator;
 }
 
@@ -165,25 +165,25 @@ HX_DEFINE_DYNAMIC_FUNC0(PriorityQueue_obj,iterator,return )
 Void PriorityQueue_obj::setPrioOf( Dynamic value,int prio){
 {
 		HX_SOURCE_PUSH("PriorityQueue_obj::setPrioOf")
-		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",118)
+		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",157)
 		{
-			HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",118)
+			HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",157)
 			int _g = (int)0;
 			Dynamic _g1 = this->_aContent;
-			HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",118)
+			HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",157)
 			while(((_g < _g1->__Field(HX_CSTRING("length"),true)))){
-				HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",118)
+				HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",157)
 				Dynamic o = _g1->__GetItem(_g);
-				HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",118)
+				HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",157)
 				++(_g);
-				HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",119)
+				HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",158)
 				if (((o->__Field(HX_CSTRING("content"),true) == value))){
-					HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",120)
+					HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",159)
 					o->__FieldRef(HX_CSTRING("prio")) = prio;
 				}
 			}
 		}
-		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",122)
+		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",161)
 		this->_sort();
 	}
 return null();
@@ -194,29 +194,29 @@ HX_DEFINE_DYNAMIC_FUNC2(PriorityQueue_obj,setPrioOf,(void))
 
 int PriorityQueue_obj::getPrioOf( Dynamic value){
 	HX_SOURCE_PUSH("PriorityQueue_obj::getPrioOf")
-	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",133)
+	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",174)
 	bool b = false;
-	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",134)
+	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",175)
 	int p = (int)-1;
-	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",135)
+	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",176)
 	{
-		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",135)
+		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",176)
 		int _g = (int)0;
 		Dynamic _g1 = this->_aContent;
-		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",135)
+		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",176)
 		while(((_g < _g1->__Field(HX_CSTRING("length"),true)))){
-			HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",135)
+			HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",176)
 			Dynamic desc = _g1->__GetItem(_g);
-			HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",135)
+			HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",176)
 			++(_g);
-			HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",136)
+			HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",177)
 			if (((desc->__Field(HX_CSTRING("content"),true) == value))){
-				HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",137)
+				HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",178)
 				p = desc->__Field(HX_CSTRING("prio"),true);
 			}
 		}
 	}
-	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",140)
+	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",181)
 	return p;
 }
 
@@ -225,7 +225,7 @@ HX_DEFINE_DYNAMIC_FUNC1(PriorityQueue_obj,getPrioOf,return )
 
 Dynamic PriorityQueue_obj::getContent( ){
 	HX_SOURCE_PUSH("PriorityQueue_obj::getContent")
-	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",149)
+	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",190)
 	return this->_aContent;
 }
 
@@ -235,25 +235,25 @@ HX_DEFINE_DYNAMIC_FUNC0(PriorityQueue_obj,getContent,return )
 Void PriorityQueue_obj::_sort( ){
 {
 		HX_SOURCE_PUSH("PriorityQueue_obj::_sort")
-		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",162)
+		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",203)
 		Dynamic a = this->_aContent->__Field(HX_CSTRING("copy"),true)();
-		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",163)
+		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",204)
 		this->_aContent = Dynamic( Array_obj<Dynamic>::__new());
-		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",164)
+		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",205)
 		{
-			HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",164)
+			HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",205)
 			int _g = (int)0;
-			HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",164)
+			HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",205)
 			while(((_g < a->__Field(HX_CSTRING("length"),true)))){
-				HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",164)
+				HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",205)
 				Dynamic desc = a->__GetItem(_g);
-				HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",164)
+				HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",205)
 				++(_g);
-				HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",165)
+				HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",206)
 				this->_add(desc,desc->__Field(HX_CSTRING("prio"),true));
 			}
 		}
-		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",166)
+		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",207)
 		this->_bInvalidate = true;
 	}
 return null();
@@ -265,17 +265,17 @@ HX_DEFINE_DYNAMIC_FUNC0(PriorityQueue_obj,_sort,(void))
 Void PriorityQueue_obj::_add( Dynamic desc,int prio){
 {
 		HX_SOURCE_PUSH("PriorityQueue_obj::_add")
-		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",176)
+		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",219)
 		int inc = this->_aContent->__Field(HX_CSTRING("length"),true);
-		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",177)
+		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",220)
 		while((((inc)-- > (int)0))){
-			HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",177)
+			HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",220)
 			if (((this->_aContent->__GetItem(inc)->__Field(HX_CSTRING("prio"),true) >= prio))){
-				HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",179)
+				HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",222)
 				break;
 			}
 		}
-		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",182)
+		HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",225)
 		this->_aContent->__Field(HX_CSTRING("insert"),true)((inc + (int)1),desc);
 	}
 return null();
@@ -286,7 +286,7 @@ HX_DEFINE_DYNAMIC_FUNC2(PriorityQueue_obj,_add,(void))
 
 int PriorityQueue_obj::_getLength( ){
 	HX_SOURCE_PUSH("PriorityQueue_obj::_getLength")
-	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",191)
+	HX_SOURCE_POS("/Volumes/workspaceHaxe/inthebox/src/org/shoebox/collections/PriorityQueue.hx",234)
 	return this->_aContent->__Field(HX_CSTRING("length"),true);
 }
 

@@ -10,4 +10,4 @@ nme_install_tool
 polygonal
 sys
 true
-/usr/lib/haxe/lib/hxcpp/2,09,1/
+/usr/lib/haxe/lib/hxcpp/2,09/

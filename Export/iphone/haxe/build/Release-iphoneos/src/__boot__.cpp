@@ -9,75 +9,91 @@
 #include <sys/io/File.h>
 #include <sys/FileSystem.h>
 #include <sys/_FileSystem/FileKind.h>
+#include <org/shoebox/utils/system/flashevents/InteractiveObjectEv.h>
+#include <org/shoebox/utils/system/flashevents/FlashEventsCache.h>
+#include <org/shoebox/utils/system/flashevents/EvChannels.h>
+#include <org/shoebox/utils/system/SignalEvent.h>
+#include <org/shoebox/utils/system/Signal4.h>
+#include <org/shoebox/utils/system/Signal2.h>
 #include <org/shoebox/utils/system/Signal1.h>
 #include <org/shoebox/utils/system/ASignal.h>
+#include <org/shoebox/utils/Perf.h>
+#include <org/shoebox/utils/FrameTimer.h>
 #include <org/shoebox/collections/PrioQueueIterator.h>
 #include <org/shoebox/collections/PriorityQueue.h>
-#include <nme/utils/WeakRef.h>
-#include <nme/utils/Endian.h>
-#include <nme/utils/ByteArray.h>
-#include <nme/utils/IDataInput.h>
-#include <nme/text/FontType.h>
-#include <nme/text/FontStyle.h>
-#include <nme/text/Font.h>
-#include <nme/net/URLVariables.h>
-#include <nme/net/URLRequestMethod.h>
-#include <nme/net/URLRequest.h>
-#include <nme/net/URLLoaderDataFormat.h>
-#include <nme/net/URLLoader.h>
-#include <nme/media/SoundTransform.h>
-#include <nme/media/SoundLoaderContext.h>
-#include <nme/media/SoundChannel.h>
-#include <nme/media/Sound.h>
-#include <nme/media/ID3Info.h>
 #include <nme/installer/Assets.h>
-#include <nme/geom/Transform.h>
-#include <nme/geom/Rectangle.h>
-#include <nme/geom/Point.h>
-#include <nme/geom/Matrix.h>
-#include <nme/geom/ColorTransform.h>
-#include <nme/filters/BitmapFilter.h>
-#include <nme/events/SampleDataEvent.h>
-#include <nme/events/ProgressEvent.h>
-#include <nme/events/KeyboardEvent.h>
-#include <nme/events/JoystickEvent.h>
-#include <nme/events/IOErrorEvent.h>
-#include <nme/events/HTTPStatusEvent.h>
-#include <nme/events/FocusEvent.h>
-#include <nme/events/EventPhase.h>
-#include <nme/events/Listener.h>
-#include <nme/events/ErrorEvent.h>
-#include <nme/events/TextEvent.h>
-#include <nme/errors/RangeError.h>
-#include <nme/errors/EOFError.h>
-#include <nme/errors/ArgumentError.h>
-#include <nme/errors/Error.h>
-#include <nme/display/TriangleCulling.h>
-#include <nme/display/Tilesheet.h>
-#include <nme/display/StageScaleMode.h>
-#include <nme/display/StageQuality.h>
-#include <nme/display/StageDisplayState.h>
-#include <nme/display/StageAlign.h>
-#include <nme/display/TouchInfo.h>
-#include <nme/display/SpreadMethod.h>
-#include <nme/display/PixelSnapping.h>
-#include <nme/display/MovieClip.h>
-#include <nme/display/ManagedStage.h>
-#include <nme/display/Stage.h>
-#include <nme/events/TouchEvent.h>
-#include <nme/events/MouseEvent.h>
-#include <nme/events/Event.h>
-#include <nme/display/LineScaleMode.h>
-#include <nme/display/JointStyle.h>
-#include <nme/display/InterpolationMethod.h>
-#include <nme/display/IGraphicsData.h>
-#include <nme/display/Graphics.h>
-#include <nme/display/GradientType.h>
-#include <nme/display/CapsStyle.h>
-#include <nme/display/BlendMode.h>
-#include <nme/display/BitmapData.h>
-#include <nme/display/Bitmap.h>
-#include <nme/Lib.h>
+#include <neash/utils/WeakRef.h>
+#include <neash/utils/Timer.h>
+#include <neash/utils/Endian.h>
+#include <neash/utils/ByteArray.h>
+#include <neash/utils/IDataInput.h>
+#include <neash/text/TextFormat.h>
+#include <neash/text/TextFieldType.h>
+#include <neash/text/TextFieldAutoSize.h>
+#include <neash/text/TextField.h>
+#include <neash/text/FontType.h>
+#include <neash/text/FontStyle.h>
+#include <neash/text/Font.h>
+#include <neash/text/AntiAliasType.h>
+#include <neash/system/System.h>
+#include <neash/net/URLVariables.h>
+#include <neash/net/URLRequestMethod.h>
+#include <neash/net/URLRequest.h>
+#include <neash/net/URLLoaderDataFormat.h>
+#include <neash/net/URLLoader.h>
+#include <neash/media/SoundTransform.h>
+#include <neash/media/SoundLoaderContext.h>
+#include <neash/media/SoundChannel.h>
+#include <neash/media/Sound.h>
+#include <neash/media/ID3Info.h>
+#include <neash/geom/Transform.h>
+#include <neash/geom/Rectangle.h>
+#include <neash/geom/Point.h>
+#include <neash/geom/Matrix.h>
+#include <neash/geom/ColorTransform.h>
+#include <neash/filters/BitmapFilter.h>
+#include <neash/events/TimerEvent.h>
+#include <neash/events/SampleDataEvent.h>
+#include <neash/events/ProgressEvent.h>
+#include <neash/events/KeyboardEvent.h>
+#include <neash/events/JoystickEvent.h>
+#include <neash/events/IOErrorEvent.h>
+#include <neash/events/HTTPStatusEvent.h>
+#include <neash/events/FocusEvent.h>
+#include <neash/events/EventPhase.h>
+#include <neash/events/Listener.h>
+#include <neash/events/ErrorEvent.h>
+#include <neash/events/TextEvent.h>
+#include <neash/errors/RangeError.h>
+#include <neash/errors/EOFError.h>
+#include <neash/errors/ArgumentError.h>
+#include <neash/errors/Error.h>
+#include <neash/display/TriangleCulling.h>
+#include <neash/display/Tilesheet.h>
+#include <neash/display/StageScaleMode.h>
+#include <neash/display/StageQuality.h>
+#include <neash/display/StageDisplayState.h>
+#include <neash/display/StageAlign.h>
+#include <neash/display/TouchInfo.h>
+#include <neash/display/SpreadMethod.h>
+#include <neash/display/PixelSnapping.h>
+#include <neash/display/MovieClip.h>
+#include <neash/display/ManagedStage.h>
+#include <neash/display/Stage.h>
+#include <neash/events/TouchEvent.h>
+#include <neash/events/MouseEvent.h>
+#include <neash/events/Event.h>
+#include <neash/display/LineScaleMode.h>
+#include <neash/display/JointStyle.h>
+#include <neash/display/InterpolationMethod.h>
+#include <neash/display/IGraphicsData.h>
+#include <neash/display/Graphics.h>
+#include <neash/display/GradientType.h>
+#include <neash/display/CapsStyle.h>
+#include <neash/display/BlendMode.h>
+#include <neash/display/BitmapData.h>
+#include <neash/display/Bitmap.h>
+#include <neash/Lib.h>
 #include <haxe/io/Output.h>
 #include <haxe/io/Input.h>
 #include <haxe/io/Error.h>
@@ -86,23 +102,23 @@
 #include <haxe/io/Bytes.h>
 #include <haxe/Timer.h>
 #include <haxe/Log.h>
-#include <fr/hyperfiction/FbCallback.h>
-#include <fr/hyperfiction/Facebook.h>
+#include <fr/hyperfiction/HyperTouch.h>
 #include <cpp/zip/Uncompress.h>
 #include <cpp/zip/Flush.h>
 #include <cpp/zip/Compress.h>
+#include <cpp/vm/Gc.h>
 #include <cpp/rtti/FieldNumericIntegerLookup.h>
 #include <Type.h>
 #include <ValueType.h>
-#include <TestFacebook.h>
-#include <nme/display/Sprite.h>
-#include <nme/display/DisplayObjectContainer.h>
-#include <nme/display/InteractiveObject.h>
-#include <nme/display/DisplayObject.h>
-#include <nme/Loader.h>
-#include <nme/display/IBitmapDrawable.h>
-#include <nme/events/EventDispatcher.h>
-#include <nme/events/IEventDispatcher.h>
+#include <TestTouch.h>
+#include <neash/display/Sprite.h>
+#include <neash/display/DisplayObjectContainer.h>
+#include <neash/display/InteractiveObject.h>
+#include <neash/display/DisplayObject.h>
+#include <neash/Loader.h>
+#include <neash/display/IBitmapDrawable.h>
+#include <neash/events/EventDispatcher.h>
+#include <neash/events/IEventDispatcher.h>
 #include <Sys.h>
 #include <cpp/Lib.h>
 #include <StringTools.h>
@@ -128,75 +144,91 @@ hx::RegisterResources( hx::GetResources() );
 ::sys::io::File_obj::__register();
 ::sys::FileSystem_obj::__register();
 ::sys::_FileSystem::FileKind_obj::__register();
+::org::shoebox::utils::system::flashevents::InteractiveObjectEv_obj::__register();
+::org::shoebox::utils::system::flashevents::FlashEventsCache_obj::__register();
+::org::shoebox::utils::system::flashevents::EvChannels_obj::__register();
+::org::shoebox::utils::system::SignalEvent_obj::__register();
+::org::shoebox::utils::system::Signal4_obj::__register();
+::org::shoebox::utils::system::Signal2_obj::__register();
 ::org::shoebox::utils::system::Signal1_obj::__register();
 ::org::shoebox::utils::system::ASignal_obj::__register();
+::org::shoebox::utils::Perf_obj::__register();
+::org::shoebox::utils::FrameTimer_obj::__register();
 ::org::shoebox::collections::PrioQueueIterator_obj::__register();
 ::org::shoebox::collections::PriorityQueue_obj::__register();
-::nme::utils::WeakRef_obj::__register();
-::nme::utils::Endian_obj::__register();
-::nme::utils::ByteArray_obj::__register();
-::nme::utils::IDataInput_obj::__register();
-::nme::text::FontType_obj::__register();
-::nme::text::FontStyle_obj::__register();
-::nme::text::Font_obj::__register();
-::nme::net::URLVariables_obj::__register();
-::nme::net::URLRequestMethod_obj::__register();
-::nme::net::URLRequest_obj::__register();
-::nme::net::URLLoaderDataFormat_obj::__register();
-::nme::net::URLLoader_obj::__register();
-::nme::media::SoundTransform_obj::__register();
-::nme::media::SoundLoaderContext_obj::__register();
-::nme::media::SoundChannel_obj::__register();
-::nme::media::Sound_obj::__register();
-::nme::media::ID3Info_obj::__register();
 ::nme::installer::Assets_obj::__register();
-::nme::geom::Transform_obj::__register();
-::nme::geom::Rectangle_obj::__register();
-::nme::geom::Point_obj::__register();
-::nme::geom::Matrix_obj::__register();
-::nme::geom::ColorTransform_obj::__register();
-::nme::filters::BitmapFilter_obj::__register();
-::nme::events::SampleDataEvent_obj::__register();
-::nme::events::ProgressEvent_obj::__register();
-::nme::events::KeyboardEvent_obj::__register();
-::nme::events::JoystickEvent_obj::__register();
-::nme::events::IOErrorEvent_obj::__register();
-::nme::events::HTTPStatusEvent_obj::__register();
-::nme::events::FocusEvent_obj::__register();
-::nme::events::EventPhase_obj::__register();
-::nme::events::Listener_obj::__register();
-::nme::events::ErrorEvent_obj::__register();
-::nme::events::TextEvent_obj::__register();
-::nme::errors::RangeError_obj::__register();
-::nme::errors::EOFError_obj::__register();
-::nme::errors::ArgumentError_obj::__register();
-::nme::errors::Error_obj::__register();
-::nme::display::TriangleCulling_obj::__register();
-::nme::display::Tilesheet_obj::__register();
-::nme::display::StageScaleMode_obj::__register();
-::nme::display::StageQuality_obj::__register();
-::nme::display::StageDisplayState_obj::__register();
-::nme::display::StageAlign_obj::__register();
-::nme::display::TouchInfo_obj::__register();
-::nme::display::SpreadMethod_obj::__register();
-::nme::display::PixelSnapping_obj::__register();
-::nme::display::MovieClip_obj::__register();
-::nme::display::ManagedStage_obj::__register();
-::nme::display::Stage_obj::__register();
-::nme::events::TouchEvent_obj::__register();
-::nme::events::MouseEvent_obj::__register();
-::nme::events::Event_obj::__register();
-::nme::display::LineScaleMode_obj::__register();
-::nme::display::JointStyle_obj::__register();
-::nme::display::InterpolationMethod_obj::__register();
-::nme::display::IGraphicsData_obj::__register();
-::nme::display::Graphics_obj::__register();
-::nme::display::GradientType_obj::__register();
-::nme::display::CapsStyle_obj::__register();
-::nme::display::BlendMode_obj::__register();
-::nme::display::BitmapData_obj::__register();
-::nme::display::Bitmap_obj::__register();
-::nme::Lib_obj::__register();
+::neash::utils::WeakRef_obj::__register();
+::neash::utils::Timer_obj::__register();
+::neash::utils::Endian_obj::__register();
+::neash::utils::ByteArray_obj::__register();
+::neash::utils::IDataInput_obj::__register();
+::neash::text::TextFormat_obj::__register();
+::neash::text::TextFieldType_obj::__register();
+::neash::text::TextFieldAutoSize_obj::__register();
+::neash::text::TextField_obj::__register();
+::neash::text::FontType_obj::__register();
+::neash::text::FontStyle_obj::__register();
+::neash::text::Font_obj::__register();
+::neash::text::AntiAliasType_obj::__register();
+::neash::system::System_obj::__register();
+::neash::net::URLVariables_obj::__register();
+::neash::net::URLRequestMethod_obj::__register();
+::neash::net::URLRequest_obj::__register();
+::neash::net::URLLoaderDataFormat_obj::__register();
+::neash::net::URLLoader_obj::__register();
+::neash::media::SoundTransform_obj::__register();
+::neash::media::SoundLoaderContext_obj::__register();
+::neash::media::SoundChannel_obj::__register();
+::neash::media::Sound_obj::__register();
+::neash::media::ID3Info_obj::__register();
+::neash::geom::Transform_obj::__register();
+::neash::geom::Rectangle_obj::__register();
+::neash::geom::Point_obj::__register();
+::neash::geom::Matrix_obj::__register();
+::neash::geom::ColorTransform_obj::__register();
+::neash::filters::BitmapFilter_obj::__register();
+::neash::events::TimerEvent_obj::__register();
+::neash::events::SampleDataEvent_obj::__register();
+::neash::events::ProgressEvent_obj::__register();
+::neash::events::KeyboardEvent_obj::__register();
+::neash::events::JoystickEvent_obj::__register();
+::neash::events::IOErrorEvent_obj::__register();
+::neash::events::HTTPStatusEvent_obj::__register();
+::neash::events::FocusEvent_obj::__register();
+::neash::events::EventPhase_obj::__register();
+::neash::events::Listener_obj::__register();
+::neash::events::ErrorEvent_obj::__register();
+::neash::events::TextEvent_obj::__register();
+::neash::errors::RangeError_obj::__register();
+::neash::errors::EOFError_obj::__register();
+::neash::errors::ArgumentError_obj::__register();
+::neash::errors::Error_obj::__register();
+::neash::display::TriangleCulling_obj::__register();
+::neash::display::Tilesheet_obj::__register();
+::neash::display::StageScaleMode_obj::__register();
+::neash::display::StageQuality_obj::__register();
+::neash::display::StageDisplayState_obj::__register();
+::neash::display::StageAlign_obj::__register();
+::neash::display::TouchInfo_obj::__register();
+::neash::display::SpreadMethod_obj::__register();
+::neash::display::PixelSnapping_obj::__register();
+::neash::display::MovieClip_obj::__register();
+::neash::display::ManagedStage_obj::__register();
+::neash::display::Stage_obj::__register();
+::neash::events::TouchEvent_obj::__register();
+::neash::events::MouseEvent_obj::__register();
+::neash::events::Event_obj::__register();
+::neash::display::LineScaleMode_obj::__register();
+::neash::display::JointStyle_obj::__register();
+::neash::display::InterpolationMethod_obj::__register();
+::neash::display::IGraphicsData_obj::__register();
+::neash::display::Graphics_obj::__register();
+::neash::display::GradientType_obj::__register();
+::neash::display::CapsStyle_obj::__register();
+::neash::display::BlendMode_obj::__register();
+::neash::display::BitmapData_obj::__register();
+::neash::display::Bitmap_obj::__register();
+::neash::Lib_obj::__register();
 ::haxe::io::Output_obj::__register();
 ::haxe::io::Input_obj::__register();
 ::haxe::io::Error_obj::__register();
@@ -205,23 +237,23 @@ hx::RegisterResources( hx::GetResources() );
 ::haxe::io::Bytes_obj::__register();
 ::haxe::Timer_obj::__register();
 ::haxe::Log_obj::__register();
-::fr::hyperfiction::FbCallback_obj::__register();
-::fr::hyperfiction::Facebook_obj::__register();
+::fr::hyperfiction::HyperTouch_obj::__register();
 ::cpp::zip::Uncompress_obj::__register();
 ::cpp::zip::Flush_obj::__register();
 ::cpp::zip::Compress_obj::__register();
+::cpp::vm::Gc_obj::__register();
 ::cpp::rtti::FieldNumericIntegerLookup_obj::__register();
 ::Type_obj::__register();
 ::ValueType_obj::__register();
-::TestFacebook_obj::__register();
-::nme::display::Sprite_obj::__register();
-::nme::display::DisplayObjectContainer_obj::__register();
-::nme::display::InteractiveObject_obj::__register();
-::nme::display::DisplayObject_obj::__register();
-::nme::Loader_obj::__register();
-::nme::display::IBitmapDrawable_obj::__register();
-::nme::events::EventDispatcher_obj::__register();
-::nme::events::IEventDispatcher_obj::__register();
+::TestTouch_obj::__register();
+::neash::display::Sprite_obj::__register();
+::neash::display::DisplayObjectContainer_obj::__register();
+::neash::display::InteractiveObject_obj::__register();
+::neash::display::DisplayObject_obj::__register();
+::neash::Loader_obj::__register();
+::neash::display::IBitmapDrawable_obj::__register();
+::neash::events::EventDispatcher_obj::__register();
+::neash::events::IEventDispatcher_obj::__register();
 ::Sys_obj::__register();
 ::cpp::Lib_obj::__register();
 ::StringTools_obj::__register();
@@ -234,9 +266,10 @@ hx::RegisterResources( hx::GetResources() );
 ::Hash_obj::__register();
 ::Date_obj::__register();
 ::ApplicationMain_obj::__register();
-::nme::utils::ByteArray_obj::__init__();
+::neash::utils::ByteArray_obj::__init__();
 ::cpp::Lib_obj::__boot();
 ::cpp::rtti::FieldNumericIntegerLookup_obj::__boot();
+::cpp::vm::Gc_obj::__boot();
 ::cpp::zip::Compress_obj::__boot();
 ::cpp::zip::Flush_obj::__boot();
 ::cpp::zip::Uncompress_obj::__boot();
@@ -252,19 +285,18 @@ hx::RegisterResources( hx::GetResources() );
 ::StringBuf_obj::__boot();
 ::StringTools_obj::__boot();
 ::Sys_obj::__boot();
-::nme::events::IEventDispatcher_obj::__boot();
-::nme::events::EventDispatcher_obj::__boot();
-::nme::display::IBitmapDrawable_obj::__boot();
-::nme::Loader_obj::__boot();
-::nme::display::DisplayObject_obj::__boot();
-::nme::display::InteractiveObject_obj::__boot();
-::nme::display::DisplayObjectContainer_obj::__boot();
-::nme::display::Sprite_obj::__boot();
-::TestFacebook_obj::__boot();
+::neash::events::IEventDispatcher_obj::__boot();
+::neash::events::EventDispatcher_obj::__boot();
+::neash::display::IBitmapDrawable_obj::__boot();
+::neash::Loader_obj::__boot();
+::neash::display::DisplayObject_obj::__boot();
+::neash::display::InteractiveObject_obj::__boot();
+::neash::display::DisplayObjectContainer_obj::__boot();
+::neash::display::Sprite_obj::__boot();
+::TestTouch_obj::__boot();
 ::ValueType_obj::__boot();
 ::Type_obj::__boot();
-::fr::hyperfiction::Facebook_obj::__boot();
-::fr::hyperfiction::FbCallback_obj::__boot();
+::fr::hyperfiction::HyperTouch_obj::__boot();
 ::haxe::Timer_obj::__boot();
 ::haxe::io::Bytes_obj::__boot();
 ::haxe::io::BytesBuffer_obj::__boot();
@@ -272,75 +304,91 @@ hx::RegisterResources( hx::GetResources() );
 ::haxe::io::Error_obj::__boot();
 ::haxe::io::Input_obj::__boot();
 ::haxe::io::Output_obj::__boot();
-::nme::Lib_obj::__boot();
-::nme::display::Bitmap_obj::__boot();
-::nme::display::BitmapData_obj::__boot();
-::nme::display::BlendMode_obj::__boot();
-::nme::display::CapsStyle_obj::__boot();
-::nme::display::GradientType_obj::__boot();
-::nme::display::Graphics_obj::__boot();
-::nme::display::IGraphicsData_obj::__boot();
-::nme::display::InterpolationMethod_obj::__boot();
-::nme::display::JointStyle_obj::__boot();
-::nme::display::LineScaleMode_obj::__boot();
-::nme::events::Event_obj::__boot();
-::nme::events::MouseEvent_obj::__boot();
-::nme::events::TouchEvent_obj::__boot();
-::nme::display::Stage_obj::__boot();
-::nme::display::ManagedStage_obj::__boot();
-::nme::display::MovieClip_obj::__boot();
-::nme::display::PixelSnapping_obj::__boot();
-::nme::display::SpreadMethod_obj::__boot();
-::nme::display::TouchInfo_obj::__boot();
-::nme::display::StageAlign_obj::__boot();
-::nme::display::StageDisplayState_obj::__boot();
-::nme::display::StageQuality_obj::__boot();
-::nme::display::StageScaleMode_obj::__boot();
-::nme::display::Tilesheet_obj::__boot();
-::nme::display::TriangleCulling_obj::__boot();
-::nme::errors::Error_obj::__boot();
-::nme::errors::ArgumentError_obj::__boot();
-::nme::errors::EOFError_obj::__boot();
-::nme::errors::RangeError_obj::__boot();
-::nme::events::TextEvent_obj::__boot();
-::nme::events::ErrorEvent_obj::__boot();
-::nme::events::Listener_obj::__boot();
-::nme::events::EventPhase_obj::__boot();
-::nme::events::FocusEvent_obj::__boot();
-::nme::events::HTTPStatusEvent_obj::__boot();
-::nme::events::IOErrorEvent_obj::__boot();
-::nme::events::JoystickEvent_obj::__boot();
-::nme::events::KeyboardEvent_obj::__boot();
-::nme::events::ProgressEvent_obj::__boot();
-::nme::events::SampleDataEvent_obj::__boot();
-::nme::filters::BitmapFilter_obj::__boot();
-::nme::geom::ColorTransform_obj::__boot();
-::nme::geom::Matrix_obj::__boot();
-::nme::geom::Point_obj::__boot();
-::nme::geom::Rectangle_obj::__boot();
-::nme::geom::Transform_obj::__boot();
+::neash::Lib_obj::__boot();
+::neash::display::Bitmap_obj::__boot();
+::neash::display::BitmapData_obj::__boot();
+::neash::display::BlendMode_obj::__boot();
+::neash::display::CapsStyle_obj::__boot();
+::neash::display::GradientType_obj::__boot();
+::neash::display::Graphics_obj::__boot();
+::neash::display::IGraphicsData_obj::__boot();
+::neash::display::InterpolationMethod_obj::__boot();
+::neash::display::JointStyle_obj::__boot();
+::neash::display::LineScaleMode_obj::__boot();
+::neash::events::Event_obj::__boot();
+::neash::events::MouseEvent_obj::__boot();
+::neash::events::TouchEvent_obj::__boot();
+::neash::display::Stage_obj::__boot();
+::neash::display::ManagedStage_obj::__boot();
+::neash::display::MovieClip_obj::__boot();
+::neash::display::PixelSnapping_obj::__boot();
+::neash::display::SpreadMethod_obj::__boot();
+::neash::display::TouchInfo_obj::__boot();
+::neash::display::StageAlign_obj::__boot();
+::neash::display::StageDisplayState_obj::__boot();
+::neash::display::StageQuality_obj::__boot();
+::neash::display::StageScaleMode_obj::__boot();
+::neash::display::Tilesheet_obj::__boot();
+::neash::display::TriangleCulling_obj::__boot();
+::neash::errors::Error_obj::__boot();
+::neash::errors::ArgumentError_obj::__boot();
+::neash::errors::EOFError_obj::__boot();
+::neash::errors::RangeError_obj::__boot();
+::neash::events::TextEvent_obj::__boot();
+::neash::events::ErrorEvent_obj::__boot();
+::neash::events::Listener_obj::__boot();
+::neash::events::EventPhase_obj::__boot();
+::neash::events::FocusEvent_obj::__boot();
+::neash::events::HTTPStatusEvent_obj::__boot();
+::neash::events::IOErrorEvent_obj::__boot();
+::neash::events::JoystickEvent_obj::__boot();
+::neash::events::KeyboardEvent_obj::__boot();
+::neash::events::ProgressEvent_obj::__boot();
+::neash::events::SampleDataEvent_obj::__boot();
+::neash::events::TimerEvent_obj::__boot();
+::neash::filters::BitmapFilter_obj::__boot();
+::neash::geom::ColorTransform_obj::__boot();
+::neash::geom::Matrix_obj::__boot();
+::neash::geom::Point_obj::__boot();
+::neash::geom::Rectangle_obj::__boot();
+::neash::geom::Transform_obj::__boot();
+::neash::media::ID3Info_obj::__boot();
+::neash::media::Sound_obj::__boot();
+::neash::media::SoundChannel_obj::__boot();
+::neash::media::SoundLoaderContext_obj::__boot();
+::neash::media::SoundTransform_obj::__boot();
+::neash::net::URLLoader_obj::__boot();
+::neash::net::URLLoaderDataFormat_obj::__boot();
+::neash::net::URLRequest_obj::__boot();
+::neash::net::URLRequestMethod_obj::__boot();
+::neash::net::URLVariables_obj::__boot();
+::neash::system::System_obj::__boot();
+::neash::text::AntiAliasType_obj::__boot();
+::neash::text::Font_obj::__boot();
+::neash::text::FontStyle_obj::__boot();
+::neash::text::FontType_obj::__boot();
+::neash::text::TextField_obj::__boot();
+::neash::text::TextFieldAutoSize_obj::__boot();
+::neash::text::TextFieldType_obj::__boot();
+::neash::text::TextFormat_obj::__boot();
+::neash::utils::IDataInput_obj::__boot();
+::neash::utils::ByteArray_obj::__boot();
+::neash::utils::Endian_obj::__boot();
+::neash::utils::Timer_obj::__boot();
+::neash::utils::WeakRef_obj::__boot();
 ::nme::installer::Assets_obj::__boot();
-::nme::media::ID3Info_obj::__boot();
-::nme::media::Sound_obj::__boot();
-::nme::media::SoundChannel_obj::__boot();
-::nme::media::SoundLoaderContext_obj::__boot();
-::nme::media::SoundTransform_obj::__boot();
-::nme::net::URLLoader_obj::__boot();
-::nme::net::URLLoaderDataFormat_obj::__boot();
-::nme::net::URLRequest_obj::__boot();
-::nme::net::URLRequestMethod_obj::__boot();
-::nme::net::URLVariables_obj::__boot();
-::nme::text::Font_obj::__boot();
-::nme::text::FontStyle_obj::__boot();
-::nme::text::FontType_obj::__boot();
-::nme::utils::IDataInput_obj::__boot();
-::nme::utils::ByteArray_obj::__boot();
-::nme::utils::Endian_obj::__boot();
-::nme::utils::WeakRef_obj::__boot();
 ::org::shoebox::collections::PriorityQueue_obj::__boot();
 ::org::shoebox::collections::PrioQueueIterator_obj::__boot();
+::org::shoebox::utils::FrameTimer_obj::__boot();
+::org::shoebox::utils::Perf_obj::__boot();
 ::org::shoebox::utils::system::ASignal_obj::__boot();
 ::org::shoebox::utils::system::Signal1_obj::__boot();
+::org::shoebox::utils::system::Signal2_obj::__boot();
+::org::shoebox::utils::system::Signal4_obj::__boot();
+::org::shoebox::utils::system::SignalEvent_obj::__boot();
+::org::shoebox::utils::system::flashevents::EvChannels_obj::__boot();
+::org::shoebox::utils::system::flashevents::FlashEventsCache_obj::__boot();
+::org::shoebox::utils::system::flashevents::InteractiveObjectEv_obj::__boot();
 ::sys::_FileSystem::FileKind_obj::__boot();
 ::sys::FileSystem_obj::__boot();
 ::sys::io::File_obj::__boot();

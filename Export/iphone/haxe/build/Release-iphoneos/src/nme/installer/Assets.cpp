@@ -9,38 +9,38 @@
 #ifndef INCLUDED_haxe_io_Bytes
 #include <haxe/io/Bytes.h>
 #endif
-#ifndef INCLUDED_nme_display_BitmapData
-#include <nme/display/BitmapData.h>
+#ifndef INCLUDED_neash_display_BitmapData
+#include <neash/display/BitmapData.h>
 #endif
-#ifndef INCLUDED_nme_display_IBitmapDrawable
-#include <nme/display/IBitmapDrawable.h>
+#ifndef INCLUDED_neash_display_IBitmapDrawable
+#include <neash/display/IBitmapDrawable.h>
 #endif
-#ifndef INCLUDED_nme_events_EventDispatcher
-#include <nme/events/EventDispatcher.h>
+#ifndef INCLUDED_neash_events_EventDispatcher
+#include <neash/events/EventDispatcher.h>
 #endif
-#ifndef INCLUDED_nme_events_IEventDispatcher
-#include <nme/events/IEventDispatcher.h>
+#ifndef INCLUDED_neash_events_IEventDispatcher
+#include <neash/events/IEventDispatcher.h>
+#endif
+#ifndef INCLUDED_neash_media_Sound
+#include <neash/media/Sound.h>
+#endif
+#ifndef INCLUDED_neash_media_SoundLoaderContext
+#include <neash/media/SoundLoaderContext.h>
+#endif
+#ifndef INCLUDED_neash_net_URLRequest
+#include <neash/net/URLRequest.h>
+#endif
+#ifndef INCLUDED_neash_text_Font
+#include <neash/text/Font.h>
+#endif
+#ifndef INCLUDED_neash_utils_ByteArray
+#include <neash/utils/ByteArray.h>
+#endif
+#ifndef INCLUDED_neash_utils_IDataInput
+#include <neash/utils/IDataInput.h>
 #endif
 #ifndef INCLUDED_nme_installer_Assets
 #include <nme/installer/Assets.h>
-#endif
-#ifndef INCLUDED_nme_media_Sound
-#include <nme/media/Sound.h>
-#endif
-#ifndef INCLUDED_nme_media_SoundLoaderContext
-#include <nme/media/SoundLoaderContext.h>
-#endif
-#ifndef INCLUDED_nme_net_URLRequest
-#include <nme/net/URLRequest.h>
-#endif
-#ifndef INCLUDED_nme_text_Font
-#include <nme/text/Font.h>
-#endif
-#ifndef INCLUDED_nme_utils_ByteArray
-#include <nme/utils/ByteArray.h>
-#endif
-#ifndef INCLUDED_nme_utils_IDataInput
-#include <nme/utils/IDataInput.h>
 #endif
 namespace nme{
 namespace installer{
@@ -105,7 +105,7 @@ STATIC_HX_DEFINE_DYNAMIC_FUNC0(Assets_obj,initialize,(void))
 
 STATIC_HX_DEFINE_DYNAMIC_FUNC1(Assets_obj,getResourceName,return )
 
-::nme::display::BitmapData Assets_obj::getBitmapData( ::String id,hx::Null< bool >  __o_useCache){
+::neash::display::BitmapData Assets_obj::getBitmapData( ::String id,hx::Null< bool >  __o_useCache){
 bool useCache = __o_useCache.Default(true);
 	HX_SOURCE_PUSH("Assets_obj::getBitmapData");
 {
@@ -120,7 +120,7 @@ bool useCache = __o_useCache.Default(true);
 			}
 			else{
 				HX_SOURCE_POS("nme/installer/Assets.hx",58)
-				::nme::display::BitmapData data = ::nme::display::BitmapData_obj::load(::nme::installer::Assets_obj::resourceNames->get(id),null());
+				::neash::display::BitmapData data = ::neash::display::BitmapData_obj::load(::nme::installer::Assets_obj::resourceNames->get(id),null());
 				HX_SOURCE_POS("nme/installer/Assets.hx",60)
 				if ((useCache)){
 					HX_SOURCE_POS("nme/installer/Assets.hx",60)
@@ -144,14 +144,14 @@ bool useCache = __o_useCache.Default(true);
 
 STATIC_HX_DEFINE_DYNAMIC_FUNC2(Assets_obj,getBitmapData,return )
 
-::nme::utils::ByteArray Assets_obj::getBytes( ::String id){
+::neash::utils::ByteArray Assets_obj::getBytes( ::String id){
 	HX_SOURCE_PUSH("Assets_obj::getBytes")
 	HX_SOURCE_POS("nme/installer/Assets.hx",83)
 	::nme::installer::Assets_obj::initialize();
 	HX_SOURCE_POS("nme/installer/Assets.hx",85)
 	if ((::nme::installer::Assets_obj::resourceNames->exists(id))){
 		HX_SOURCE_POS("nme/installer/Assets.hx",85)
-		return ::nme::utils::ByteArray_obj::readFile(::nme::installer::Assets_obj::resourceNames->get(id));
+		return ::neash::utils::ByteArray_obj::readFile(::nme::installer::Assets_obj::resourceNames->get(id));
 	}
 	else{
 		HX_SOURCE_POS("nme/installer/Assets.hx",91)
@@ -166,14 +166,14 @@ STATIC_HX_DEFINE_DYNAMIC_FUNC2(Assets_obj,getBitmapData,return )
 
 STATIC_HX_DEFINE_DYNAMIC_FUNC1(Assets_obj,getBytes,return )
 
-::nme::text::Font Assets_obj::getFont( ::String id){
+::neash::text::Font Assets_obj::getFont( ::String id){
 	HX_SOURCE_PUSH("Assets_obj::getFont")
 	HX_SOURCE_POS("nme/installer/Assets.hx",102)
 	::nme::installer::Assets_obj::initialize();
 	HX_SOURCE_POS("nme/installer/Assets.hx",104)
 	if (((bool(::nme::installer::Assets_obj::resourceTypes->exists(id)) && bool((::nme::installer::Assets_obj::resourceTypes->get(id) == HX_CSTRING("font")))))){
 		HX_SOURCE_POS("nme/installer/Assets.hx",104)
-		return ::nme::text::Font_obj::__new(::nme::installer::Assets_obj::resourceNames->get(id));
+		return ::neash::text::Font_obj::__new(::nme::installer::Assets_obj::resourceNames->get(id));
 	}
 	else{
 		HX_SOURCE_POS("nme/installer/Assets.hx",110)
@@ -188,7 +188,7 @@ STATIC_HX_DEFINE_DYNAMIC_FUNC1(Assets_obj,getBytes,return )
 
 STATIC_HX_DEFINE_DYNAMIC_FUNC1(Assets_obj,getFont,return )
 
-::nme::media::Sound Assets_obj::getSound( ::String id){
+::neash::media::Sound Assets_obj::getSound( ::String id){
 	HX_SOURCE_PUSH("Assets_obj::getSound")
 	HX_SOURCE_POS("nme/installer/Assets.hx",121)
 	::nme::installer::Assets_obj::initialize();
@@ -197,13 +197,13 @@ STATIC_HX_DEFINE_DYNAMIC_FUNC1(Assets_obj,getFont,return )
 		HX_SOURCE_POS("nme/installer/Assets.hx",123)
 		if (((::nme::installer::Assets_obj::resourceTypes->get(id) == HX_CSTRING("sound")))){
 			HX_SOURCE_POS("nme/installer/Assets.hx",125)
-			return ::nme::media::Sound_obj::__new(::nme::net::URLRequest_obj::__new(::nme::installer::Assets_obj::resourceNames->get(id)),null(),false);
+			return ::neash::media::Sound_obj::__new(::neash::net::URLRequest_obj::__new(::nme::installer::Assets_obj::resourceNames->get(id)),null(),false);
 		}
 		else{
 			HX_SOURCE_POS("nme/installer/Assets.hx",129)
 			if (((::nme::installer::Assets_obj::resourceTypes->get(id) == HX_CSTRING("music")))){
 				HX_SOURCE_POS("nme/installer/Assets.hx",129)
-				return ::nme::media::Sound_obj::__new(::nme::net::URLRequest_obj::__new(::nme::installer::Assets_obj::resourceNames->get(id)),null(),true);
+				return ::neash::media::Sound_obj::__new(::neash::net::URLRequest_obj::__new(::nme::installer::Assets_obj::resourceNames->get(id)),null(),true);
 			}
 		}
 	}
@@ -219,7 +219,7 @@ STATIC_HX_DEFINE_DYNAMIC_FUNC1(Assets_obj,getSound,return )
 ::String Assets_obj::getText( ::String id){
 	HX_SOURCE_PUSH("Assets_obj::getText")
 	HX_SOURCE_POS("nme/installer/Assets.hx",146)
-	::nme::utils::ByteArray bytes = ::nme::installer::Assets_obj::getBytes(id);
+	::neash::utils::ByteArray bytes = ::nme::installer::Assets_obj::getBytes(id);
 	HX_SOURCE_POS("nme/installer/Assets.hx",148)
 	if (((bytes == null()))){
 		HX_SOURCE_POS("nme/installer/Assets.hx",148)

@@ -9,18 +9,36 @@
 #include <sys/io/File.h>
 #include <sys/FileSystem.h>
 #include <sys/_FileSystem/FileKind.h>
+#include <org/shoebox/utils/system/flashevents/InteractiveObjectEv.h>
+#include <org/shoebox/utils/system/flashevents/FlashEventsCache.h>
+#include <org/shoebox/utils/system/flashevents/EvChannels.h>
+#include <org/shoebox/utils/system/SignalEvent.h>
+#include <org/shoebox/utils/system/Signal4.h>
+#include <org/shoebox/utils/system/Signal2.h>
 #include <org/shoebox/utils/system/Signal1.h>
 #include <org/shoebox/utils/system/ASignal.h>
+#include <org/shoebox/utils/Perf.h>
+#include <org/shoebox/utils/FrameTimer.h>
+#include <org/shoebox/geom/AABB.h>
+#include <org/shoebox/core/Vector2D.h>
+#include <org/shoebox/core/BoxMath.h>
 #include <org/shoebox/collections/PrioQueueIterator.h>
 #include <org/shoebox/collections/PriorityQueue.h>
 #include <nme/installer/Assets.h>
 #include <neash/utils/WeakRef.h>
+#include <neash/utils/Timer.h>
 #include <neash/utils/Endian.h>
 #include <neash/utils/ByteArray.h>
 #include <neash/utils/IDataInput.h>
+#include <neash/text/TextFormat.h>
+#include <neash/text/TextFieldType.h>
+#include <neash/text/TextFieldAutoSize.h>
+#include <neash/text/TextField.h>
 #include <neash/text/FontType.h>
 #include <neash/text/FontStyle.h>
 #include <neash/text/Font.h>
+#include <neash/text/AntiAliasType.h>
+#include <neash/system/System.h>
 #include <neash/net/URLVariables.h>
 #include <neash/net/URLRequestMethod.h>
 #include <neash/net/URLRequest.h>
@@ -37,6 +55,7 @@
 #include <neash/geom/Matrix.h>
 #include <neash/geom/ColorTransform.h>
 #include <neash/filters/BitmapFilter.h>
+#include <neash/events/TimerEvent.h>
 #include <neash/events/SampleDataEvent.h>
 #include <neash/events/ProgressEvent.h>
 #include <neash/events/KeyboardEvent.h>
@@ -77,6 +96,7 @@
 #include <neash/display/BlendMode.h>
 #include <neash/display/BitmapData.h>
 #include <neash/display/Bitmap.h>
+#include <neash/Memory.h>
 #include <neash/Lib.h>
 #include <neash/JNIMethod.h>
 #include <neash/JNI.h>
@@ -89,15 +109,16 @@
 #include <haxe/Timer.h>
 #include <haxe/Log.h>
 #include <haxe/BaseCode.h>
-#include <fr/hyperfiction/FbCallback.h>
-#include <fr/hyperfiction/Facebook.h>
+#include <fr/hyperfiction/AndroidCallback.h>
+#include <fr/hyperfiction/HyperTouch.h>
 #include <cpp/zip/Uncompress.h>
 #include <cpp/zip/Flush.h>
 #include <cpp/zip/Compress.h>
+#include <cpp/vm/Gc.h>
 #include <cpp/rtti/FieldNumericIntegerLookup.h>
 #include <Type.h>
 #include <ValueType.h>
-#include <TestFacebook.h>
+#include <TestTouch.h>
 #include <neash/display/Sprite.h>
 #include <neash/display/DisplayObjectContainer.h>
 #include <neash/display/InteractiveObject.h>
@@ -131,18 +152,36 @@ hx::RegisterResources( hx::GetResources() );
 ::sys::io::File_obj::__register();
 ::sys::FileSystem_obj::__register();
 ::sys::_FileSystem::FileKind_obj::__register();
+::org::shoebox::utils::system::flashevents::InteractiveObjectEv_obj::__register();
+::org::shoebox::utils::system::flashevents::FlashEventsCache_obj::__register();
+::org::shoebox::utils::system::flashevents::EvChannels_obj::__register();
+::org::shoebox::utils::system::SignalEvent_obj::__register();
+::org::shoebox::utils::system::Signal4_obj::__register();
+::org::shoebox::utils::system::Signal2_obj::__register();
 ::org::shoebox::utils::system::Signal1_obj::__register();
 ::org::shoebox::utils::system::ASignal_obj::__register();
+::org::shoebox::utils::Perf_obj::__register();
+::org::shoebox::utils::FrameTimer_obj::__register();
+::org::shoebox::geom::AABB_obj::__register();
+::org::shoebox::core::Vector2D_obj::__register();
+::org::shoebox::core::BoxMath_obj::__register();
 ::org::shoebox::collections::PrioQueueIterator_obj::__register();
 ::org::shoebox::collections::PriorityQueue_obj::__register();
 ::nme::installer::Assets_obj::__register();
 ::neash::utils::WeakRef_obj::__register();
+::neash::utils::Timer_obj::__register();
 ::neash::utils::Endian_obj::__register();
 ::neash::utils::ByteArray_obj::__register();
 ::neash::utils::IDataInput_obj::__register();
+::neash::text::TextFormat_obj::__register();
+::neash::text::TextFieldType_obj::__register();
+::neash::text::TextFieldAutoSize_obj::__register();
+::neash::text::TextField_obj::__register();
 ::neash::text::FontType_obj::__register();
 ::neash::text::FontStyle_obj::__register();
 ::neash::text::Font_obj::__register();
+::neash::text::AntiAliasType_obj::__register();
+::neash::system::System_obj::__register();
 ::neash::net::URLVariables_obj::__register();
 ::neash::net::URLRequestMethod_obj::__register();
 ::neash::net::URLRequest_obj::__register();
@@ -159,6 +198,7 @@ hx::RegisterResources( hx::GetResources() );
 ::neash::geom::Matrix_obj::__register();
 ::neash::geom::ColorTransform_obj::__register();
 ::neash::filters::BitmapFilter_obj::__register();
+::neash::events::TimerEvent_obj::__register();
 ::neash::events::SampleDataEvent_obj::__register();
 ::neash::events::ProgressEvent_obj::__register();
 ::neash::events::KeyboardEvent_obj::__register();
@@ -199,6 +239,7 @@ hx::RegisterResources( hx::GetResources() );
 ::neash::display::BlendMode_obj::__register();
 ::neash::display::BitmapData_obj::__register();
 ::neash::display::Bitmap_obj::__register();
+::neash::Memory_obj::__register();
 ::neash::Lib_obj::__register();
 ::neash::JNIMethod_obj::__register();
 ::neash::JNI_obj::__register();
@@ -211,15 +252,16 @@ hx::RegisterResources( hx::GetResources() );
 ::haxe::Timer_obj::__register();
 ::haxe::Log_obj::__register();
 ::haxe::BaseCode_obj::__register();
-::fr::hyperfiction::FbCallback_obj::__register();
-::fr::hyperfiction::Facebook_obj::__register();
+::fr::hyperfiction::AndroidCallback_obj::__register();
+::fr::hyperfiction::HyperTouch_obj::__register();
 ::cpp::zip::Uncompress_obj::__register();
 ::cpp::zip::Flush_obj::__register();
 ::cpp::zip::Compress_obj::__register();
+::cpp::vm::Gc_obj::__register();
 ::cpp::rtti::FieldNumericIntegerLookup_obj::__register();
 ::Type_obj::__register();
 ::ValueType_obj::__register();
-::TestFacebook_obj::__register();
+::TestTouch_obj::__register();
 ::neash::display::Sprite_obj::__register();
 ::neash::display::DisplayObjectContainer_obj::__register();
 ::neash::display::InteractiveObject_obj::__register();
@@ -243,6 +285,7 @@ hx::RegisterResources( hx::GetResources() );
 ::neash::utils::ByteArray_obj::__init__();
 ::cpp::Lib_obj::__boot();
 ::cpp::rtti::FieldNumericIntegerLookup_obj::__boot();
+::cpp::vm::Gc_obj::__boot();
 ::cpp::zip::Compress_obj::__boot();
 ::cpp::zip::Flush_obj::__boot();
 ::cpp::zip::Uncompress_obj::__boot();
@@ -266,11 +309,11 @@ hx::RegisterResources( hx::GetResources() );
 ::neash::display::InteractiveObject_obj::__boot();
 ::neash::display::DisplayObjectContainer_obj::__boot();
 ::neash::display::Sprite_obj::__boot();
-::TestFacebook_obj::__boot();
+::TestTouch_obj::__boot();
 ::ValueType_obj::__boot();
 ::Type_obj::__boot();
-::fr::hyperfiction::Facebook_obj::__boot();
-::fr::hyperfiction::FbCallback_obj::__boot();
+::fr::hyperfiction::HyperTouch_obj::__boot();
+::fr::hyperfiction::AndroidCallback_obj::__boot();
 ::haxe::BaseCode_obj::__boot();
 ::haxe::Timer_obj::__boot();
 ::haxe::io::Bytes_obj::__boot();
@@ -282,6 +325,7 @@ hx::RegisterResources( hx::GetResources() );
 ::neash::JNI_obj::__boot();
 ::neash::JNIMethod_obj::__boot();
 ::neash::Lib_obj::__boot();
+::neash::Memory_obj::__boot();
 ::neash::display::Bitmap_obj::__boot();
 ::neash::display::BitmapData_obj::__boot();
 ::neash::display::BlendMode_obj::__boot();
@@ -322,6 +366,7 @@ hx::RegisterResources( hx::GetResources() );
 ::neash::events::KeyboardEvent_obj::__boot();
 ::neash::events::ProgressEvent_obj::__boot();
 ::neash::events::SampleDataEvent_obj::__boot();
+::neash::events::TimerEvent_obj::__boot();
 ::neash::filters::BitmapFilter_obj::__boot();
 ::neash::geom::ColorTransform_obj::__boot();
 ::neash::geom::Matrix_obj::__boot();
@@ -338,18 +383,36 @@ hx::RegisterResources( hx::GetResources() );
 ::neash::net::URLRequest_obj::__boot();
 ::neash::net::URLRequestMethod_obj::__boot();
 ::neash::net::URLVariables_obj::__boot();
+::neash::system::System_obj::__boot();
+::neash::text::AntiAliasType_obj::__boot();
 ::neash::text::Font_obj::__boot();
 ::neash::text::FontStyle_obj::__boot();
 ::neash::text::FontType_obj::__boot();
+::neash::text::TextField_obj::__boot();
+::neash::text::TextFieldAutoSize_obj::__boot();
+::neash::text::TextFieldType_obj::__boot();
+::neash::text::TextFormat_obj::__boot();
 ::neash::utils::IDataInput_obj::__boot();
 ::neash::utils::ByteArray_obj::__boot();
 ::neash::utils::Endian_obj::__boot();
+::neash::utils::Timer_obj::__boot();
 ::neash::utils::WeakRef_obj::__boot();
 ::nme::installer::Assets_obj::__boot();
 ::org::shoebox::collections::PriorityQueue_obj::__boot();
 ::org::shoebox::collections::PrioQueueIterator_obj::__boot();
+::org::shoebox::core::BoxMath_obj::__boot();
+::org::shoebox::core::Vector2D_obj::__boot();
+::org::shoebox::geom::AABB_obj::__boot();
+::org::shoebox::utils::FrameTimer_obj::__boot();
+::org::shoebox::utils::Perf_obj::__boot();
 ::org::shoebox::utils::system::ASignal_obj::__boot();
 ::org::shoebox::utils::system::Signal1_obj::__boot();
+::org::shoebox::utils::system::Signal2_obj::__boot();
+::org::shoebox::utils::system::Signal4_obj::__boot();
+::org::shoebox::utils::system::SignalEvent_obj::__boot();
+::org::shoebox::utils::system::flashevents::EvChannels_obj::__boot();
+::org::shoebox::utils::system::flashevents::FlashEventsCache_obj::__boot();
+::org::shoebox::utils::system::flashevents::InteractiveObjectEv_obj::__boot();
 ::sys::_FileSystem::FileKind_obj::__boot();
 ::sys::FileSystem_obj::__boot();
 ::sys::io::File_obj::__boot();

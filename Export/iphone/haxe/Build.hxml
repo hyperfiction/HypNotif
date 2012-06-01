@@ -1,6 +1,5 @@
 -main ApplicationMain 
 -D nme_install_tool
--D verbose
 -cp /Volumes/workspaceHaxe/HyperExtensions
 -cp /Volumes/workspaceHaxe/HyperExtensions/src
 -cp /Volumes/workspaceHaxe/inthebox/src
