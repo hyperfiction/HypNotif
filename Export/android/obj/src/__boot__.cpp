@@ -109,7 +109,6 @@
 #include <haxe/Timer.h>
 #include <haxe/Log.h>
 #include <haxe/BaseCode.h>
-#include <fr/hyperfiction/AndroidCallback.h>
 #include <fr/hyperfiction/HyperTouch.h>
 #include <cpp/zip/Uncompress.h>
 #include <cpp/zip/Flush.h>
@@ -252,7 +251,6 @@ hx::RegisterResources( hx::GetResources() );
 ::haxe::Timer_obj::__register();
 ::haxe::Log_obj::__register();
 ::haxe::BaseCode_obj::__register();
-::fr::hyperfiction::AndroidCallback_obj::__register();
 ::fr::hyperfiction::HyperTouch_obj::__register();
 ::cpp::zip::Uncompress_obj::__register();
 ::cpp::zip::Flush_obj::__register();
@@ -313,7 +311,6 @@ hx::RegisterResources( hx::GetResources() );
 ::ValueType_obj::__boot();
 ::Type_obj::__boot();
 ::fr::hyperfiction::HyperTouch_obj::__boot();
-::fr::hyperfiction::AndroidCallback_obj::__boot();
 ::haxe::BaseCode_obj::__boot();
 ::haxe::Timer_obj::__boot();
 ::haxe::io::Bytes_obj::__boot();

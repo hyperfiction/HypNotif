@@ -1,9 +1,9 @@
 #include <hx/Macros.h>
 #include <hx/CFFI.h>
-
 #include "HyperTouch.h"
-
+#include <jni.h>
 using namespace Hyperfiction;
+
 AutoGCRoot *eval_callback_pan = 0;
 AutoGCRoot *eval_callback_pinch = 0;
 AutoGCRoot *eval_callback_rotation = 0;
@@ -25,42 +25,51 @@ extern "C"{
 
 	#ifdef IPHONE
 
-	void callbackTap( int touches , int taps , float fx , float fy ){
-		value args = alloc_array( 4 );
-		val_array_set_i( args , 0 , alloc_int( touches ) );
-		val_array_set_i( args , 1 , alloc_int( taps ) );
-		val_array_set_i( args , 2 , alloc_float( fx ) );
-		val_array_set_i( args , 3 , alloc_float( fy ) );
-   		val_call1( eval_callback_tap -> get( ) , args ); 
-   	}
+		void callbackTap( int touches , int taps , float fx , float fy ){
+			value args = alloc_array( 4 );
+			val_array_set_i( args , 0 , alloc_int( touches ) );
+			val_array_set_i( args , 1 , alloc_int( taps ) );
+			val_array_set_i( args , 2 , alloc_float( fx ) );
+			val_array_set_i( args , 3 , alloc_float( fy ) );
+	   		val_call1( eval_callback_tap -> get( ) , args ); 
+	   	}
 
-	void callbackSwipe( int direction ){
-		val_call1( eval_callback_swipe -> get( ) , alloc_int( direction ) ); 
-	}
+		void callbackSwipe( int direction ){
+			val_call1( eval_callback_swipe -> get( ) , alloc_int( direction ) ); 
+		}
 
-	void callbackRotation( float rotation , float velocity ){
-		val_call2( eval_callback_rotation -> get( ) , alloc_float( rotation )  , alloc_float( velocity ) ); 
-	}
+		void callbackRotation( float rotation , float velocity ){
+			val_call2( eval_callback_rotation -> get( ) , alloc_float( rotation )  , alloc_float( velocity ) ); 
+		}
 
-	void callbackPinch( float scale , float velocity ){
-		val_call2( eval_callback_pinch -> get( ) , alloc_float( scale )  , alloc_float( velocity ) ); 
-	}
+		void callbackPinch( float scale , float velocity ){
+			val_call2( eval_callback_pinch -> get( ) , alloc_float( scale )  , alloc_float( velocity ) ); 
+		}
 
-	void callbackPan( float fx , float fy , float vx , float vy ){
-		value args = alloc_array( 4 );
-		val_array_set_i( args , 0 , alloc_float( fx ) );
-		val_array_set_i( args , 1 , alloc_float( fy ) );
-		val_array_set_i( args , 2 , alloc_float( vx ) );
-		val_array_set_i( args , 3 , alloc_float( vy ) );
-   		val_call1( eval_callback_pan -> get( ) , args ); 
-   	}
+		void callbackPan( float fx , float fy , float vx , float vy ){
+			value args = alloc_array( 4 );
+			val_array_set_i( args , 0 , alloc_float( fx ) );
+			val_array_set_i( args , 1 , alloc_float( fy ) );
+			val_array_set_i( args , 2 , alloc_float( vx ) );
+			val_array_set_i( args , 3 , alloc_float( vy ) );
+	   		val_call1( eval_callback_pan -> get( ) , args ); 
+	   	}
 
 	#endif
+
+	
 
 }
 
 /* Device
 **************************************************/
+
+JNIEXPORT int JNICALL 
+intMethod(JNIEnv * env, jobject  obj)
+{
+	printf("intMethod()\n");
+return 3;
+}
 
 #ifdef IPHONE
 	

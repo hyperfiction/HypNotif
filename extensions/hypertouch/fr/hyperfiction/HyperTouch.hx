@@ -70,7 +70,6 @@ class HyperTouch{
 	static private var hyp_touch_init : Dynamic;
 	static private var hyp_touch_run  : Dynamic;
 
-	private var _oListener : AndroidCallback;
 	#end
 
 	public static inline var PAN      : String = 'PAN';
@@ -105,7 +104,7 @@ class HyperTouch{
 			//Initialize
 				if( hyp_touch_init == null )
 					hyp_touch_init = JNI.createStaticMethod( ANDROID_CLASS , 'HyperTouch_init' , "(Lorg/haxe/nme/HaxeObject;)V" );
-					hyp_touch_init( _oListener = new AndroidCallback( this ) );
+					hyp_touch_init( this );
 			
 			//Run 
 				hyp_touch_run = nme.JNI.createStaticMethod( ANDROID_CLASS , "HyperTouch_run" , "()V" );
@@ -133,6 +132,51 @@ class HyperTouch{
 	
 	// -------o public
 
+		#if android
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		public function onSwipeCallback( direction : Int ) : Void {
+			trace('onSwipeCallback ::: '+direction);
+			//onSwipe.emit( direction );			
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		public function onTapCallback( fx : Float , fy : Float , fingers : Int = 1 , taps : Int = 1 ) : Void {
+			trace('onTapCallback ::: ||| '+fx+' ||| '+fy+' ||| '+fingers);
+			return;
+			if( taps == 1 ){
+				if( fingers == 1 ){
+					onTap.emit( fx , fy );
+				}else if( fingers == 2 ){
+					onTwoFingersTap.emit( fx , fy );
+				}
+			}
+
+			/*	
+			if( fingers == 1 ){
+
+				if( taps == 2 && allowDoubleTap )
+					onDoubleTap.emit( fx , fy );
+				else if( taps == 1 && allowTap )
+					onTap.emit( fx , fy );
+
+			}else if( touches == 2 && taps == 1 ){
+				onTwoFingersTap.emit( fx , fy );
+			}
+			*/
+		}
+
+		#end
+ 
 		#if iphone
 
 		/**
@@ -325,18 +369,6 @@ class HyperTouch{
 		#if iphone
 
 		/**
-		* Callback of the Swipe
-		* 
-		* @private
-		* @param 	direction : Direction of the Swipe ( mode )
-		* @return	void
-		*/
-		private function _onSwipe( direction : Int ) : Void{
-			//TODO : Convert in to the current orientation mode
-			onSwipe.emit( direction );
-		}
-
-		/**
 		* Callback of the Pan
 		* 
 		* @private
@@ -381,7 +413,7 @@ class HyperTouch{
 		*/
 		private function _onSwipeCallback( direction : Int ) : Void{
 			onSwipe.emit( direction );
-		}
+		}		
 
 		/**
 		* Callback of the Tap gesture
@@ -391,7 +423,7 @@ class HyperTouch{
 		* @return	void
 		*/
 		private function _onTapCallback( args : Array<Float> ) : Void{
-
+			
 			var touches = Std.int( args[ 0 ] );
 			var taps    = Std.int( args[ 1 ] );
 
@@ -409,8 +441,12 @@ class HyperTouch{
 			}else{
 				onCustomTap.emit( touches , taps , res.x , res.y );
 			}
-
+			
 		}
+
+		#end
+
+		#if iphone
 
 		/**
 		* Convert the coordinates for openGL stage coordinates
@@ -475,76 +511,3 @@ class HyperTouch{
 
 		private static var __instance : HyperTouch = null;
 }
-
-#if android
-
-/**
- * ...
- * @author shoe[box]
- */
-class AndroidCallback{
-
-	public var _instance : HyperTouch;
-
-	// -------o constructor
-		
-		/**
-		* constructor
-		*
-		* @param	
-		* @return	void
-		*/
-		public function new( from : HyperTouch ) {
-			_instance = from;
-		}
-	
-	// -------o public
-		
-		/**
-		* Callback of the Swipe
-		* 
-		* @private
-		* @param 	direction : Direction of the Swipe ( mode )
-		* @return	void
-		*/
-		public function onSwipe( direction : Int ) : Void {
-			_instance.onSwipe.emit( direction );
-		}
-
-		/**
-		* Callback of the Swipe
-		* 
-		* @public
-		* @param 	fx : X position in to the current view space ( Float )
-		* @param 	fy : Y position in to the current view space ( Float )
-		* @param 	fingers : Finger count ( Int )
-		* @return	void
-		*/
-		public function onTap( fx : Float , fy : Float , fingers : Int = 1 ) : Void {
-			trace('onTap ::: '+fx+' | '+fy+' === '+fingers);
-			return;
-
-			if( fingers == 2 && _instance.allowDoubleTap )
-				_instance.onTwoFingersTap.emit( fx , fy );
-			else
-				_instance.onTap.emit( fx , fy );
-				
-		}
-
-		/**
-		* Callback of the pan gesture
-		* 
-		* @public
-		* @return	void
-		*/
-		public function onPan( fx , fy ) : Void {
-			trace('onPan ::: '+fx+' - '+fy);
-			//_instance.onPan.emit( Std.parseFloat( fx ) , Std.parseFloat( fy ) , 0.0 , 0.0 ); //NO VELOCITY FOR PAN WITH ANDROID
-		}
-
-	// -------o protected
-	
-	// -------o misc
-	
-}
-#end

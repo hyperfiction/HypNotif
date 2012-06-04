@@ -2,6 +2,6 @@
 <project>
 
 <classpath name="" />
-<ndll name="hypertouch" />
+<ndll name="hypertouch" if="iphone"/>
 
 </project>

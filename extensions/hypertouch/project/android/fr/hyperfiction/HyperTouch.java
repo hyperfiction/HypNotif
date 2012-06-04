@@ -10,7 +10,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
-import fr.hyperfiction.SimpleGestureFilter;
+//import fr.hyperfiction.SimpleGestureFilter;
 import org.haxe.nme.GameActivity;
 import org.haxe.nme.HaxeObject;
 
@@ -19,11 +19,7 @@ public class HyperTouch extends GestureDetector.SimpleOnGestureListener implemen
 	//Singleton instance of the Class
 	static private HyperTouch __instance = null;
 	
-	//Gestures codes for Haxe Callback
-	final static String GESTURE_SWIPE = "onSwipe";
-	final static String GESTURE_PAN   = "onPan";
-	final static String GESTURE_TAP   = "onTap";
-
+	
 	//Directions codes for Haxe Callback
 	final static int SWIPE_DIRECTION_RIGHT = 1;
 	final static int SWIPE_DIRECTION_LEFT  = 2;
@@ -106,11 +102,11 @@ public class HyperTouch extends GestureDetector.SimpleOnGestureListener implemen
 		*/
 		public boolean onSingleTapUp(MotionEvent ev) { 
 			Log.i( TAG , "onSingleTapUp ::: "+ev.getPointerCount( ));
-			Number[] 	args = new Number[4];
+			Number[] 	args = new Number[3];
 						args[0] = ev.getX( );
 						args[1] = ev.getY( );
 						args[2] = ev.getPointerCount( );
-			_mCallBack.call( GESTURE_TAP , args );
+			_mCallBack.call( "onTapCallback" , args );
 			return true;  
 		}  
 		
@@ -143,7 +139,7 @@ public class HyperTouch extends GestureDetector.SimpleOnGestureListener implemen
 		public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {  
 			//Log.i( TAG , "onScroll : "+e1+" - "+e2+" - "+distanceX+" - "+distanceY);  
 			//_mCallBack.call( GESTURE_PAN , e2.getX( ) , e2.getY( ) , distanceX , distanceY )
-			_mCallBack.callD2( GESTURE_PAN , e2.getX( ) , e2.getY( ) );
+			//_mCallBack.callD2( GESTURE_PAN , e2.getX( ) , e2.getY( ) );
 			return false;  
 		}  
 		
@@ -162,24 +158,28 @@ public class HyperTouch extends GestureDetector.SimpleOnGestureListener implemen
 			
 			Float fx = e1.getX() - e2.getX();
 			Float fy = e1.getY() - e2.getY() ;
-			
-			//Horizontal Swipe ?
-			if( Math.abs( fy ) < SWIPE_MAX_OFF_PATH && Math.abs( fx ) > SWIPE_MIN_DISTANCE && Math.abs( velocityX ) > SWIPE_THRESHOLD_VELOCITY ){
-				
-				if( velocityX < 0 )
-					_mCallBack.callD1( GESTURE_SWIPE , SWIPE_DIRECTION_LEFT );
-				else
-					_mCallBack.callD1( GESTURE_SWIPE , SWIPE_DIRECTION_RIGHT );
-					//Toast.makeText(GameActivity.getInstance( ), "Right Swipe", Toast.LENGTH_SHORT).show( );
+			try {
+				if( Math.abs( fy ) < SWIPE_MAX_OFF_PATH && Math.abs( fx ) > SWIPE_MIN_DISTANCE && Math.abs( velocityX ) > SWIPE_THRESHOLD_VELOCITY ){
+					
+					if( velocityX < 0 )
+						_mCallBack.call1( "onSwipeCallback" , SWIPE_DIRECTION_LEFT );
+					else
+						_mCallBack.call1( "onSwipeCallback" , SWIPE_DIRECTION_RIGHT );
 
-			}else if( Math.abs( fx ) < SWIPE_MAX_OFF_PATH && Math.abs( fy ) > SWIPE_MIN_DISTANCE && Math.abs( velocityY ) > SWIPE_THRESHOLD_VELOCITY ){
-				
-				if( velocityY > 0 )
-					_mCallBack.callD1( GESTURE_SWIPE , SWIPE_DIRECTION_DOWN );
-				else
-					_mCallBack.callD1( GESTURE_SWIPE , SWIPE_DIRECTION_UP );
+				}else if( Math.abs( fx ) < SWIPE_MAX_OFF_PATH && Math.abs( fy ) > SWIPE_MIN_DISTANCE && Math.abs( velocityY ) > SWIPE_THRESHOLD_VELOCITY ){
 
-			}
+					if( velocityY > 0 )
+						_mCallBack.call1( "onSwipeCallback" , SWIPE_DIRECTION_DOWN );
+					else
+						_mCallBack.call1( "onSwipeCallback" , SWIPE_DIRECTION_UP );
+					
+				}
+			} catch (Exception e) {
+	        	Log.i( TAG , "Exception : "+e);  
+	        }
+
+
+
             return false;
 		}  
 

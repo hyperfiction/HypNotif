@@ -135,7 +135,8 @@ class TestTouch extends Sprite{
 			#if mobile
 			var hyp = HyperTouch.getInstance( );
 				hyp.onSwipe.connect( _onSwipe );
-				/*
+				
+				#if iphone
 				hyp.onPan.connect( _onPan );
 				hyp.onTap.connect( _onTap );
 				hyp.onPinch.connect( _onPinch );
@@ -153,10 +154,10 @@ class TestTouch extends Sprite{
 				hyp.addSwipeListener( 1 , HyperTouch.SWIPE_DIRECTION_UP );
 				hyp.addSwipeListener( 1 , HyperTouch.SWIPE_DIRECTION_DOWN );
 				hyp.addPanListener( 2 , 2 );
-				*/
+				#end
 				
 			#end
-			addChild( new Perf( ) );
+			//addChild( new Perf( ) );
 		}
 
 		/**
@@ -177,7 +178,7 @@ class TestTouch extends Sprite{
 		*/
 		private function _onSwipe( direction : Int ) : Void{
 			trace('onSwipe ::: '+direction);
-			
+			return;
 			#if mobile
 			
 			switch ( direction ) {

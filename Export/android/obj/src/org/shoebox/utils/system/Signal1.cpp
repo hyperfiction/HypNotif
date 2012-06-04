@@ -47,9 +47,9 @@ Void Signal1_obj::emit( Dynamic arg){
 		for(::cpp::FastIterator_obj< Dynamic > *__it = ::cpp::CreateFastIterator< Dynamic >(this->_oQueue->iterator());  __it->hasNext(); ){
 			Dynamic l = __it->next();
 			{
-				HX_SOURCE_POS("../inthebox/src/org/shoebox/utils/system/Signal1.hx",61)
-				l->__Field(HX_CSTRING("listener"),true)(arg);
 				HX_SOURCE_POS("../inthebox/src/org/shoebox/utils/system/Signal1.hx",62)
+				l->__Field(HX_CSTRING("listener"),true)(arg);
+				HX_SOURCE_POS("../inthebox/src/org/shoebox/utils/system/Signal1.hx",63)
 				this->_check(l);
 			}
 ;

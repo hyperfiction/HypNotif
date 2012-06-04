@@ -107,7 +107,6 @@ obj/android-debug/src/haxe/io/Bytes.obj
 obj/android-debug/src/haxe/Timer.obj
 obj/android-debug/src/haxe/Log.obj
 obj/android-debug/src/haxe/BaseCode.obj
-obj/android-debug/src/fr/hyperfiction/AndroidCallback.obj
 obj/android-debug/src/fr/hyperfiction/HyperTouch.obj
 obj/android-debug/src/cpp/zip/Uncompress.obj
 obj/android-debug/src/cpp/zip/Flush.obj

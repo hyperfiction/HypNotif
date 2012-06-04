@@ -106,6 +106,8 @@ public class GameActivity extends Activity implements SensorEventListener {
          
            System.loadLibrary("nme");
          
+           System.loadLibrary("hypertouch");
+         
         org.haxe.HXCPP.run("ApplicationMain");
 
         mView = new MainView(getApplication(),this);

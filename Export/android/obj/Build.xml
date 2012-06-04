@@ -721,16 +721,7 @@
    <depend name="include/haxe/BaseCode.h"/>
    <depend name="include/haxe/io/Bytes.h"/>
   </file>
-  <file name="src/fr/hyperfiction/AndroidCallback.cpp">
-   <depend name="include/fr/hyperfiction/AndroidCallback.h"/>
-   <depend name="include/fr/hyperfiction/HyperTouch.h"/>
-   <depend name="include/haxe/Log.h"/>
-   <depend name="include/org/shoebox/utils/system/ASignal.h"/>
-   <depend name="include/org/shoebox/utils/system/Signal1.h"/>
-   <depend name="include/org/shoebox/utils/system/Signal2.h"/>
-  </file>
   <file name="src/fr/hyperfiction/HyperTouch.cpp">
-   <depend name="include/fr/hyperfiction/AndroidCallback.h"/>
    <depend name="include/fr/hyperfiction/HyperTouch.h"/>
    <depend name="include/haxe/Log.h"/>
    <depend name="include/neash/JNI.h"/>
@@ -796,7 +787,6 @@
    <depend name="include/neash/events/IEventDispatcher.h"/>
    <depend name="include/neash/events/MouseEvent.h"/>
    <depend name="include/org/shoebox/core/BoxMath.h"/>
-   <depend name="include/org/shoebox/utils/Perf.h"/>
    <depend name="include/org/shoebox/utils/system/ASignal.h"/>
    <depend name="include/org/shoebox/utils/system/Signal1.h"/>
   </file>

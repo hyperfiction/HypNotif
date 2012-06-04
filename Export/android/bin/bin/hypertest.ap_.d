@@ -1,20 +1,4 @@
 C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\bin\hypertest.ap_ \
- : C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\res\drawable-hdpi\close.png \
-C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\res\drawable-hdpi\facebook_icon.png \
-C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\res\drawable-hdpi\icon.png \
-C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\res\drawable-hdpi\login.png \
-C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\res\drawable-hdpi\login_button.xml \
-C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\res\drawable-hdpi\login_down.png \
-C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\res\drawable-hdpi\logout.png \
-C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\res\drawable-hdpi\logout_button.xml \
-C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\res\drawable-hdpi\logout_down.png \
-C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\bin\res\drawable-hdpi\close.png \
-C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\bin\res\drawable-hdpi\facebook_icon.png \
-C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\bin\res\drawable-hdpi\icon.png \
-C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\bin\res\drawable-hdpi\login.png \
-C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\bin\res\drawable-hdpi\login_down.png \
-C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\bin\res\drawable-hdpi\logout.png \
-C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\bin\res\drawable-hdpi\logout_down.png \
-C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\assets\assets_logo_png \
+ : C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\assets\assets_logo_png \
 C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\assets\assets_nme_svg \
 C:\Users\Johann\workspaceHaxe\HyperExtensions\Export\android\bin\AndroidManifest.xml \

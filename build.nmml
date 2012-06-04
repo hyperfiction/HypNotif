@@ -32,5 +32,7 @@
 	<set name="SHOW_CONSOLE" value="1" if="cpp"/>
 	<haxedef name="SHOW_CONSOLE" if="cpp"/>
 
+	<setenv name="HXCPP_LOAD_DEBUG" value="1" />
+
 	
 </project>
