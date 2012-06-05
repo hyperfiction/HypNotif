@@ -1,15 +1,18 @@
 package fr.hyperfiction;
 
-import nme.display.Stage;
 #if android
 import nme.JNI;
 #end
-import nme.errors.Error;
+import fr.hyperfiction.events.GesturePanEvent;
+import fr.hyperfiction.events.GesturePinchEvent;
+import fr.hyperfiction.events.GestureRotationEvent;
+import fr.hyperfiction.events.GestureSwipeEvent;
+import fr.hyperfiction.events.GestureTapEvent;
 import nme.Lib;
 import nme.Memory;
-import org.shoebox.utils.system.Signal1;
-import org.shoebox.utils.system.Signal2;
-import org.shoebox.utils.system.Signal4;
+import nme.display.Stage;
+import nme.errors.Error;
+import nme.events.EventDispatcher;
 import org.shoebox.geom.FPoint;
 
 /**
@@ -17,19 +20,7 @@ import org.shoebox.geom.FPoint;
  * @author shoe[box]
  */
 
-class HyperTouch{
-
-	#if iphone
-	public var onCustomTap     : Signal4<Int,Int,Float,Float>;
-	#end
-
-	public var onDoubleTap     : Signal2<Float,Float>;
-	public var onPan           : Signal4<Float,Float,Float,Float>;
-	public var onPinch         : Signal2<Float,Float>;
-	public var onRotation      : Signal2<Float,Float>;
-	public var onSwipe         : Signal1<Int>;
-	public var onTap           : Signal2<Float,Float>;
-	public var onTwoFingersTap : Signal2<Float,Float>;
+class HyperTouch extends EventDispatcher{
 
 	public var allowDoubleTap( default , _setAllowDoubleTap ) : Bool;
 	public var allowPinch( default , _setAllowPinch )  : Bool;
@@ -90,6 +81,8 @@ class HyperTouch{
 		*/
 		private function new( ) {
 
+			super( );
+
 			#if iphone
 			hypTouch_init( );
 			hyp_touch_callback_pan( _onPanCallback );
@@ -116,23 +109,12 @@ class HyperTouch{
 			#end
 
 			_fTmp = { x : 0.0 , y : 0.0 };
-
-			#if iPhone
-			onCustomTap     = new Signal4<Int,Int,Float,Float>();
-			#end
-
-			onDoubleTap     = new Signal2<Float,Float>();
-			onPan           = new Signal4<Float,Float,Float,Float>();
-			onPinch         = new Signal2<Float,Float>();
-			onRotation      = new Signal2<Float,Float>();
-			onSwipe         = new Signal1<Int>();
-			onTap           = new Signal2<Float,Float>();
-			onTwoFingersTap = new Signal2<Float,Float>();
 		}
 	
 	// -------o public
 
 		#if android
+
 		/**
 		* 
 		* 
@@ -140,8 +122,7 @@ class HyperTouch{
 		* @return	void
 		*/
 		public function onSwipeCallback( direction : Int ) : Void {
-			trace('onSwipeCallback ::: '+direction);
-			//onSwipe.emit( direction );			
+			_onDispatchSwipe( direction );
 		}
 
 		/**
@@ -151,28 +132,27 @@ class HyperTouch{
 		* @return	void
 		*/
 		public function onTapCallback( fx : Float , fy : Float , fingers : Int = 1 , taps : Int = 1 ) : Void {
-			trace('onTapCallback ::: ||| '+fx+' ||| '+fy+' ||| '+fingers);
-			return;
-			if( taps == 1 ){
-				if( fingers == 1 ){
-					onTap.emit( fx , fy );
-				}else if( fingers == 2 ){
-					onTwoFingersTap.emit( fx , fy );
-				}
-			}
+			_onDispatchTap( fx , fy , fingers , taps );
+		}
 
-			/*	
-			if( fingers == 1 ){
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		public function onPanCallback( fx : Float , fy : Float , vx : Float , vy : Float ) : Void {
+			_onDispatchPan( fx , fy , vx , vy );						
+		}
 
-				if( taps == 2 && allowDoubleTap )
-					onDoubleTap.emit( fx , fy );
-				else if( taps == 1 && allowTap )
-					onTap.emit( fx , fy );
-
-			}else if( touches == 2 && taps == 1 ){
-				onTwoFingersTap.emit( fx , fy );
-			}
-			*/
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		public function onPinchCallback( ) : Void {
+			//TODO
 		}
 
 		#end
@@ -256,8 +236,6 @@ class HyperTouch{
 
 	// -------o protected
 		
-		
-
 		/**
 		* Setter of the rotation mode
 		* 
@@ -330,6 +308,7 @@ class HyperTouch{
 		* @return	bool
 		*/
 		public function _setAllowDoubleTap( b : Bool ) : Bool{ 
+
 			if( this.allowDoubleTap == b )
 				return b;
 
@@ -360,7 +339,6 @@ class HyperTouch{
 					hyp_touch_add_tap( 2 , 1 );
 				else
 					hyp_touch_rem_tap( 2 , 1 );	
-
 			#end
 
 			return this.allowTwoFingersTap = b;
@@ -376,8 +354,7 @@ class HyperTouch{
 		* @return	void
 		*/
 		private function _onPanCallback( args : Array<Float> ) : Void{
-			//TODO : Convert in to the current orientation mode
-			onPan.emit( args[ 0 ] , args[ 1 ] , args[ 2 ] , args[ 3 ] );
+			_onDispatchPan( args[ 0 ] , args[ 1 ] , args[ 2 ] , args[ 3 ] );
 		}
 
 		/**
@@ -389,7 +366,7 @@ class HyperTouch{
 		* @return	void
 		*/
 		private function _onPinchCallback( fScale : Float , fVelocity : Float ) : Void{
-			onPinch.emit( fScale , fVelocity );
+			_onDispatchPinch( fScale , fVelocity );
 		}
 
 		/**
@@ -401,7 +378,7 @@ class HyperTouch{
 		* @return	void
 		*/
 		private function _onRotCallback( fRotation : Float , fVelocity : Float ) : Void{
-			onRotation.emit( fRotation , fVelocity );
+			_onDispatchRotation( fRotation , fVelocity );
 		}
 
 		/**
@@ -412,7 +389,7 @@ class HyperTouch{
 		* @return	void
 		*/
 		private function _onSwipeCallback( direction : Int ) : Void{
-			onSwipe.emit( direction );
+			_onDispatchSwipe( direction );
 		}		
 
 		/**
@@ -428,20 +405,7 @@ class HyperTouch{
 			var taps    = Std.int( args[ 1 ] );
 
 			var res = _convertToGl( args[ 2 ] , args[ 3 ] );
-			
-			if( touches == 1 ){
-
-				if( taps == 2 && allowDoubleTap )
-					onDoubleTap.emit( res.x , res.y );
-				else if( taps == 1 && allowTap )
-					onTap.emit( res.x , res.y );
-
-			}else if( touches == 2 && taps == 1 ){
-				onTwoFingersTap.emit( res.x , res.y );
-			}else{
-				onCustomTap.emit( touches , taps , res.x , res.y );
-			}
-			
+			_onDispatchTap( res.x , res.y , touches , taps );
 		}
 
 		#end
@@ -493,6 +457,78 @@ class HyperTouch{
 		}
 
 		#end
+
+		/**
+		* Dispatch an Tap Event at the specified position, fingers and taps count
+		* 
+		* @private
+		* @param	fx      : Position X of the Tap Event ( Float )
+		* @param	fy      : Position Y of the Tap Event ( Float )
+		* @param	fingers : Tap fingers count ( Int )
+		* @param	taps    : Taps count ( Int )
+		* @return	void
+		*/
+		private function _onDispatchTap( fx : Float , fy : Float , fingers : Int , taps : Int = 1 ) : Void{
+			
+			if( fingers == 1 ){
+				if( taps == 2 && allowDoubleTap )
+					dispatchEvent( new GestureTapEvent( GestureTapEvent.DOUBLE_TAP , fx , fy ) );
+				else if( taps == 1 && allowTap )
+					dispatchEvent( new GestureTapEvent( GestureTapEvent.TAP , fx , fy ) );
+			}else if( taps == 1 && fingers == 2 ){
+				dispatchEvent( new GestureTapEvent( GestureTapEvent.TWO_FINGERS_TAP , fx , fy ) );
+			}
+
+		}
+
+		/**
+		* Dispatch an Swipe Event for the specified direction
+		* 
+		* @private
+		* @param	direction : Direction of the swipe ( Int )
+		* @return	void
+		*/
+		private function _onDispatchSwipe( direction : Int ) : Void{
+			dispatchEvent( new GestureSwipeEvent( direction ) );
+		}
+
+		/**
+		* Dispatch an Rotation Event
+		* 
+		* @private
+		* @param	fRotation : Rotation gesture ( Float )
+		* @param	fVelocity : Rotation velocity ( Float )
+		* @return	void
+		*/
+		private function _onDispatchRotation( fRotation : Float , fVelocity : Float ) : Void{
+			dispatchEvent( new GestureRotationEvent( fRotation , fVelocity ) );
+		}
+
+		/**
+		* Dispatch an Pan Event
+		* 
+		* @private
+		* @param	fx : X offset 	( Float )
+		* @param	fy : Y offset 	( Float )
+		* @param	vx : X velocity ( Float )
+		* @param	vy : Y velocity ( Float )
+		* @return	void
+		*/
+		private function _onDispatchPan( fx : Float , fy : Float , vx : Float , vy : Float ) : Void{
+			dispatchEvent( new GesturePanEvent( fx , fy , vx , vy ) );
+		}
+
+		/**
+		* Dispatch an Pinch Event
+		* 
+		* @private
+		* @param 	fScale    : Pinch Scale Value ( Float )
+		* @param 	fVelocity : Velocity of the pinch ( Float )
+		* @return	void
+		*/
+		private function _onDispatchPinch( fScale : Float , fVelocity : Float ) : Void{
+			dispatchEvent( new GesturePinchEvent( fScale , fVelocity ) );
+		}
 
 	// -------o misc
 		

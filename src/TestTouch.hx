@@ -11,8 +11,14 @@ import nme.events.Event;
 import nme.installer.Assets;
 import nme.Lib;
 import org.shoebox.utils.Perf;
+
 #if mobile
 import fr.hyperfiction.HyperTouch;
+import fr.hyperfiction.events.GesturePanEvent;
+import fr.hyperfiction.events.GesturePinchEvent;
+import fr.hyperfiction.events.GestureRotationEvent;
+import fr.hyperfiction.events.GestureSwipeEvent;
+import fr.hyperfiction.events.GestureTapEvent;
 #end
 
 /**
@@ -22,11 +28,7 @@ import fr.hyperfiction.HyperTouch;
 
 class TestTouch extends Sprite{
 
-	private var _spB    : Sprite;
 	private var _spDemo : Sprite;
-	private var _spL    : Sprite;
-	private var _spR    : Sprite;
-	private var _spT    : Sprite;
 	private var _spTap  : Sprite;
 
 	private var _timerL : Timer;
@@ -91,35 +93,6 @@ class TestTouch extends Sprite{
 			_spTap = new Sprite( );
 			addChild( _spTap );
 
-			_spL = new Sprite( );
-			_spL.visible = false;
-			_spL.graphics.beginFill( 0x5ab6f3 );
-			_spL.graphics.drawRect( 0 , 0 , 30 , Lib.current.stage.stageHeight );
-			_spL.graphics.endFill( );
-			addChild( _spL );
-			
-			_spR = new Sprite( );
-			_spR.visible = false;
-			_spR.x = Lib.current.stage.stageWidth - 30;
-			_spR.graphics.beginFill( 0x5ab6f3 );
-			_spR.graphics.drawRect( 0 , 0 , 30 , Lib.current.stage.stageHeight );
-			_spR.graphics.endFill( );
-			addChild( _spR );
-
-			_spT = new Sprite( );
-			_spT.visible = false;
-			_spT.graphics.beginFill( 0x5ab6f3 );
-			_spT.graphics.drawRect( 0 , 0 , Lib.current.stage.stageWidth , 30 );
-			_spT.graphics.endFill( );
-			addChild( _spT );
-
-			_spB = new Sprite( );
-			_spB.visible = false;
-			_spB.graphics.beginFill( 0x5ab6f3 );
-			_spB.graphics.drawRect( 0 , 0 , Lib.current.stage.stageWidth , 30 );
-			_spB.graphics.endFill( );
-			_spB.y = Lib.current.stage.stageHeight - 30;
-			addChild( _spB );
 		}
 
 		/**
@@ -134,28 +107,26 @@ class TestTouch extends Sprite{
 
 			#if mobile
 			var hyp = HyperTouch.getInstance( );
-				hyp.onSwipe.connect( _onSwipe );
-				
-				#if iphone
-				hyp.onPan.connect( _onPan );
-				hyp.onTap.connect( _onTap );
-				hyp.onPinch.connect( _onPinch );
-				hyp.onDoubleTap.connect( _onDoubleTap );
-				hyp.onTwoFingersTap.connect( _onTap2Fingers );
-				hyp.onRotation.connect( _onRotation );
-				
+				hyp.addEventListener( GesturePanEvent.PAN , _onPan , false );
+				hyp.addEventListener( GesturePinchEvent.PINCH , _onPinch , false );
+				hyp.addEventListener( GestureRotationEvent.ROTATE , _onRotation , false );
+				hyp.addEventListener( GestureSwipeEvent.SWIPE , _onSwipe , false );
+				hyp.addEventListener( GestureTapEvent.TAP , _onTap , false );
+				hyp.addEventListener( GestureTapEvent.TWO_FINGERS_TAP , _onTwoFingers , false );
+				hyp.addEventListener( GestureTapEvent.DOUBLE_TAP , _onDoubleTap , false );
+
 				hyp.allowRotation      = true;
 				hyp.allowPinch         = true;
 				hyp.allowTap           = true;
 				hyp.allowTwoFingersTap = true;
 
+				#if iphone
 				hyp.addSwipeListener( 1 , HyperTouch.SWIPE_DIRECTION_LEFT );
 				hyp.addSwipeListener( 1 , HyperTouch.SWIPE_DIRECTION_RIGHT );
 				hyp.addSwipeListener( 1 , HyperTouch.SWIPE_DIRECTION_UP );
 				hyp.addSwipeListener( 1 , HyperTouch.SWIPE_DIRECTION_DOWN );
 				hyp.addPanListener( 2 , 2 );
 				#end
-				
 			#end
 			//addChild( new Perf( ) );
 		}
@@ -170,50 +141,7 @@ class TestTouch extends Sprite{
 			trace( Lib.current.stage.width +' - '+Lib.current.stage.height);
 		}
 
-		/**
-		* 
-		* 
-		* @private
-		* @return	void
-		*/
-		private function _onSwipe( direction : Int ) : Void{
-			trace('onSwipe ::: '+direction);
-			return;
-			#if mobile
-			
-			switch ( direction ) {
-
-				case HyperTouch.SWIPE_DIRECTION_LEFT:
-					_resetTimer( _timerL);
-					_spL.visible = true;
-					_timerL = haxe.Timer.delay( function( ){
-						_spL.visible = false;
-					} , 200 );
-
-				case HyperTouch.SWIPE_DIRECTION_RIGHT:
-					_resetTimer( _timerR);					
-					_spR.visible = true;
-					_timerR = haxe.Timer.delay( function( ){
-						_spR.visible = false;
-					} , 200 );
-
-				case HyperTouch.SWIPE_DIRECTION_DOWN:
-					_resetTimer( _timerB );
-					_spB.visible = true;
-					_timerB = haxe.Timer.delay( function( ){
-						_spB.visible = false;
-					} , 200 );
-
-				case HyperTouch.SWIPE_DIRECTION_UP:
-					_resetTimer( _timerT );
-					_spT.visible = true;
-					_timerT = haxe.Timer.delay( function( ){
-						_spT.visible = false;
-					} , 200 );
-			}
-			#end
-		}
-
+		
 		/**
 		* 
 		* 
@@ -226,17 +154,62 @@ class TestTouch extends Sprite{
 			t.stop( );
 		}
 
+		#if mobile
+
 		/**
 		* 
 		* 
 		* @private
 		* @return	void
 		*/
-		private function _onTap( fx : Float , fy : Float ) : Void{
-			trace('onTap ::: '+fx+' - '+fy );
+		private function _onPan( e : GesturePanEvent ) : Void{
+			trace('onPan ::: '+e);
+			_spDemo.x = e.x;
+			_spDemo.y = e.y;
+		}
+
+		/**
+		* 
+		* 
+		* @private
+		* @return	void
+		*/
+		private function _onPinch( e : GesturePinchEvent ) : Void{
+			trace('onPinch ::: '+e);
+			_spDemo.scaleY = _spDemo.scaleX = e.scale;
+		}
+
+		/**
+		* 
+		* 
+		* @private
+		* @return	void
+		*/
+		private function _onRotation( e : GestureRotationEvent ) : Void{
+			_spDemo.rotation = e.rotation * org.shoebox.core.BoxMath.RAD_TO_DEG;
+		}
+
+		/**
+		* 
+		* 
+		* @private
+		* @return	void
+		*/
+		private function _onSwipe( e : GestureSwipeEvent ) : Void{
+			trace('onSwipe ::: '+e);
+		}
+
+		/**
+		* 
+		* 
+		* @private
+		* @return	void
+		*/
+		private function _onTap( e : GestureTapEvent ) : Void{
+			trace('onTap ::: '+e);
 			_spTap.graphics.clear( );
 			_spTap.graphics.lineStyle( 4 , 0 );
-			_spTap.graphics.drawCircle( fx , fy , 40 );
+			_spTap.graphics.drawCircle( e.x , e.y , 40 );
 		}
 
 		/**
@@ -245,17 +218,7 @@ class TestTouch extends Sprite{
 		* @private
 		* @return	void
 		*/
-		private function _onDoubleTap( fx : Float , fy : Float ) : Void{
-			trace('_onDoubleTap ::: '+fx+' - '+fy );
-		}
-
-		/**
-		* 
-		* 
-		* @private
-		* @return	void
-		*/
-		private function _onTap2Fingers( fx : Float , fy : Float ) : Void{
+		private function _onTwoFingers( e : GestureTapEvent ) : Void{
 			_spDemo.rotation = 0;
 			_spDemo.scaleX = _spDemo.scaleY = 1;
 			_spDemo.x = Lib.current.stage.stageWidth / 2;
@@ -268,31 +231,11 @@ class TestTouch extends Sprite{
 		* @private
 		* @return	void
 		*/
-		private function _onRotation( fRotation : Float , fVelocity : Float ) : Void{
-			_spDemo.rotation = fRotation * org.shoebox.core.BoxMath.RAD_TO_DEG;
+		private function _onDoubleTap( e : GestureTapEvent ) : Void{
+			trace('onDoubleTap ::: '+e);
 		}
 
-		/**
-		* 
-		* 
-		* @private
-		* @return	void
-		*/
-		private function _onPinch( fScale : Float , fVelocity : Float ) : Void{
-			_spDemo.scaleX = fScale;
-			_spDemo.scaleY = fScale;
-		}
-
-		/**
-		* 
-		* 
-		* @private
-		* @return	void
-		*/
-		private function _onPan( fx : Float , fy : Float , fVelocityX : Float , fVelocityY : Float ) : Void{
-			_spDemo.x = fx;
-			_spDemo.y = fy;
-		}		
+		#end
 
 	// -------o misc
 		

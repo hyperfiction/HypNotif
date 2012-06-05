@@ -1,7 +1,6 @@
 #include <hx/Macros.h>
 #include <hx/CFFI.h>
 #include "HyperTouch.h"
-#include <jni.h>
 using namespace Hyperfiction;
 
 AutoGCRoot *eval_callback_pan = 0;
@@ -63,13 +62,6 @@ extern "C"{
 
 /* Device
 **************************************************/
-
-JNIEXPORT int JNICALL 
-intMethod(JNIEnv * env, jobject  obj)
-{
-	printf("intMethod()\n");
-return 3;
-}
 
 #ifdef IPHONE
 	

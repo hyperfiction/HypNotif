@@ -83,7 +83,6 @@ obj/android-debug/src/neash/display/ManagedStage.obj
 obj/android-debug/src/neash/display/Stage.obj
 obj/android-debug/src/neash/events/TouchEvent.obj
 obj/android-debug/src/neash/events/MouseEvent.obj
-obj/android-debug/src/neash/events/Event.obj
 obj/android-debug/src/neash/display/LineScaleMode.obj
 obj/android-debug/src/neash/display/JointStyle.obj
 obj/android-debug/src/neash/display/InterpolationMethod.obj
@@ -107,6 +106,12 @@ obj/android-debug/src/haxe/io/Bytes.obj
 obj/android-debug/src/haxe/Timer.obj
 obj/android-debug/src/haxe/Log.obj
 obj/android-debug/src/haxe/BaseCode.obj
+obj/android-debug/src/fr/hyperfiction/events/GestureTapEvent.obj
+obj/android-debug/src/fr/hyperfiction/events/GestureSwipeEvent.obj
+obj/android-debug/src/fr/hyperfiction/events/GestureRotationEvent.obj
+obj/android-debug/src/fr/hyperfiction/events/GesturePinchEvent.obj
+obj/android-debug/src/fr/hyperfiction/events/GesturePanEvent.obj
+obj/android-debug/src/neash/events/Event.obj
 obj/android-debug/src/fr/hyperfiction/HyperTouch.obj
 obj/android-debug/src/cpp/zip/Uncompress.obj
 obj/android-debug/src/cpp/zip/Flush.obj
