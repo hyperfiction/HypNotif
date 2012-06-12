@@ -3,6 +3,7 @@
 
 namespace Hyperfiction{
 
+	#ifdef IPHONE
 	bool addTapRecognizer( int fingers , int taps );
 	bool removeTapRecognizer( int fingers , int taps );
 
@@ -28,6 +29,11 @@ namespace Hyperfiction{
 	void callbackPinch( float scale , float velocity );
 	
 	int getOrientation( );
+	#endif
+	
+	#ifdef ANDROID
+	int TwoPlusTwo ();
+	#endif
 }
 
 #endif

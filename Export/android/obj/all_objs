@@ -11,8 +11,6 @@ obj/android-debug/src/org/shoebox/utils/system/flashevents/InteractiveObjectEv.o
 obj/android-debug/src/org/shoebox/utils/system/flashevents/FlashEventsCache.obj
 obj/android-debug/src/org/shoebox/utils/system/flashevents/EvChannels.obj
 obj/android-debug/src/org/shoebox/utils/system/SignalEvent.obj
-obj/android-debug/src/org/shoebox/utils/system/Signal4.obj
-obj/android-debug/src/org/shoebox/utils/system/Signal2.obj
 obj/android-debug/src/org/shoebox/utils/system/Signal1.obj
 obj/android-debug/src/org/shoebox/utils/system/ASignal.obj
 obj/android-debug/src/org/shoebox/utils/Perf.obj
@@ -87,6 +85,7 @@ obj/android-debug/src/neash/display/LineScaleMode.obj
 obj/android-debug/src/neash/display/JointStyle.obj
 obj/android-debug/src/neash/display/InterpolationMethod.obj
 obj/android-debug/src/neash/display/IGraphicsData.obj
+obj/android-debug/src/neash/display/GraphicsPathWinding.obj
 obj/android-debug/src/neash/display/Graphics.obj
 obj/android-debug/src/neash/display/GradientType.obj
 obj/android-debug/src/neash/display/CapsStyle.obj

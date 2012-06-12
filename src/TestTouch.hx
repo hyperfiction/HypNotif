@@ -175,8 +175,8 @@ class TestTouch extends Sprite{
 		* @return	void
 		*/
 		private function _onPinch( e : GesturePinchEvent ) : Void{
-			trace('onPinch ::: '+e);
-			_spDemo.scaleY = _spDemo.scaleX = e.scale;
+			//trace('onPinch ::: '+e);
+			_spDemo.scaleY = _spDemo.scaleX = _spDemo.scaleY * e.scale;
 		}
 
 		/**
@@ -209,7 +209,7 @@ class TestTouch extends Sprite{
 			trace('onTap ::: '+e);
 			_spTap.graphics.clear( );
 			_spTap.graphics.lineStyle( 4 , 0 );
-			_spTap.graphics.drawCircle( e.x , e.y , 40 );
+			_spTap.graphics.drawCircle( e.stageX , e.stageY , 40 );
 		}
 
 		/**
