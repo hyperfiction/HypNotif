@@ -30,6 +30,7 @@ class GesturePanEvent extends Event{
 			this.offsetY   = fy;
 			this.velocityX = vx;
 			this.velocityY = vy;
+			
 		}
 	
 	// -------o public
