@@ -33,11 +33,9 @@
   <files id="common">
       <compilerflag value="-Iinclude"/>
       <file name="common/ExternalInterface.cpp"/>
-      <file name="android/Test.cpp"/>
   </files>
 
   <files id="android">
-       <compilerflag value="-Iinclude"/>
   </files>
 
   <files id="iphone">

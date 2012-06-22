@@ -9,8 +9,8 @@ import nme.events.Event;
 
 class GesturePanEvent extends Event{
 
-	public var x         : Float;
-	public var y         : Float;
+	public var offsetX    : Float;
+	public var offsetY    : Float;
 	public var velocityX : Float;
 	public var velocityY : Float;
 
@@ -26,14 +26,24 @@ class GesturePanEvent extends Event{
 		*/
 		public function new( fx : Float , fy : Float , vx : Float , vy : Float ) {
 			super( PAN );
-			this.x = fx;
-			this.y = fy;
+			this.offsetX   = fx;
+			this.offsetY   = fy;
 			this.velocityX = vx;
 			this.velocityY = vy;
 		}
 	
 	// -------o public
-				
+		
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		override public function toString( ) : String {
+			return '[ '+PAN+' offsetX : '+offsetX+' offsetY : '+offsetY+' ]';
+		}
+
 	// -------o protected
 	
 	// -------o misc

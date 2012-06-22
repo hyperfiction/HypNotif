@@ -3,21 +3,8 @@
 
 namespace Hyperfiction{
 
-	#ifdef IPHONE
-	bool addTapRecognizer( int fingers , int taps );
-	bool removeTapRecognizer( int fingers , int taps );
-
-	bool addSwipeRecognizer( int fingers , int direction );
-	bool removeSwipeRecognizer( int fingers , int direction );
-
-	bool addRotationRecognizer( );
-	bool removeRotationRecognizer( );
-
-	bool addPanRecognizer( int min , int max );
-	bool removePanRecognizer( int min , int max );
-	
-	bool addPinchRecognize( );
-	bool removePinchRecognize( );
+	bool activateGesture( int gestureCode );
+	bool deactivateGesture( int gestureCode );
 	
 	void init_hyp_touch( );
 	
@@ -29,11 +16,7 @@ namespace Hyperfiction{
 	void callbackPinch( float scale , float velocity );
 	
 	int getOrientation( );
-	#endif
 	
-	#ifdef ANDROID
-	int TwoPlusTwo ();
-	#endif
 }
 
 #endif

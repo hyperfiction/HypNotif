@@ -1,5 +1,19 @@
 package fr.hyperfiction;
 
+#if code_completion
+
+@final extern class HyperTouch{
+	static var SWIPE_DIRECTION_RIGHT : Int;
+	static var SWIPE_DIRECTION_LEFT  : Int;
+	static var SWIPE_DIRECTION_UP    : Int;
+	static var SWIPE_DIRECTION_DOWN  : Int;
+	function getInstance( ) : HyperTouch;
+	function addEventListener(type : String, listener : Dynamic -> Void, useCapture : Bool = false, priority : Int = 0, useWeakReference : Bool = false) : Void;
+	function removeEventListener(type : String, listener : Dynamic -> Void, useCapture : Bool = false ) : Void;
+}
+
+#else
+
 #if android
 import nme.JNI;
 #end
@@ -16,9 +30,9 @@ import fr.hyperfiction.events.GestureRotationEvent;
 import fr.hyperfiction.events.GestureSwipeEvent;
 import fr.hyperfiction.events.GestureTapEvent;
 import nme.Lib;
-import nme.Memory;
 import nme.display.Stage;
 import nme.errors.Error;
+import nme.events.Event;
 import nme.events.EventDispatcher;
 import org.shoebox.geom.FPoint;
 
@@ -28,12 +42,6 @@ import org.shoebox.geom.FPoint;
  */
 
 class HyperTouch extends EventDispatcher{
-
-	public var allowDoubleTap( default , _setAllowDoubleTap ) : Bool;
-	public var allowPinch( default , _setAllowPinch )  : Bool;
-	public var allowRotation( default , _setAllowRot ) : Bool;
-	public var allowTap( default , _setAllowTap ) : Bool;
-	public var allowTwoFingersTap( default , _setAllowTwixTap ) : Bool;
 	
 	public static inline var SWIPE_DIRECTION_RIGHT : Int = 1;
 	public static inline var SWIPE_DIRECTION_LEFT  : Int = 2;
@@ -41,40 +49,35 @@ class HyperTouch extends EventDispatcher{
 	public static inline var SWIPE_DIRECTION_DOWN  : Int = 8;
 
 	#if mobile
-	private static var hyp_touch_callback_pan      = Lib.load ( "hypertouch" , "hyp_touch_callback_pan", 1);
-	private static var hyp_touch_callback_pinch    = Lib.load ( "hypertouch" , "hyp_touch_callback_pinch", 1);
-	private static var hyp_touch_callback_rotation = Lib.load ( "hypertouch" , "hyp_touch_callback_rotation", 1);
-	private static var hyp_touch_callback_swipe    = Lib.load ( "hypertouch" , "hyp_touch_callback_swipe", 1);
-	private static var hyp_touch_callback_tap      = Lib.load ( "hypertouch" , "hyp_touch_callback_tap", 1);
+	private static var hyp_touch_activate          = Lib.load( "HyperTouch" , "hyp_touch_activate" , 1 );
+	private static var hyp_touch_deactivate        = Lib.load( "HyperTouch" , "hyp_touch_deactivate" , 1 );
+	private static var hyp_touch_callback_pan      = Lib.load( "HyperTouch" , "hyp_touch_callback_pan", 1);
+	private static var hyp_touch_callback_pinch    = Lib.load( "HyperTouch" , "hyp_touch_callback_pinch", 1);
+	private static var hyp_touch_callback_rotation = Lib.load( "HyperTouch" , "hyp_touch_callback_rotation", 1);
+	private static var hyp_touch_callback_swipe    = Lib.load( "HyperTouch" , "hyp_touch_callback_swipe", 1);
+	private static var hyp_touch_callback_tap      = Lib.load( "HyperTouch" , "hyp_touch_callback_tap", 1);
+	private static var hyp_touch_callback_tap2     = Lib.load( "HyperTouch" , "hyp_touch_callback_tap2", 1);
+	private static var hyp_touch_callback_twix     = Lib.load( "HyperTouch" , "hyp_touch_callback_twix", 1);
+	private static var hyp_touch_get_orientation   = Lib.load( "HyperTouch" , "hyp_touch_get_orientation" , 0 );
 	#end
 
 	#if iphone
 	static var hypTouch_init             = nme.Loader.load( "hyp_touch_init" , 0 );
-	static var hyp_touch_add_pan         = nme.Loader.load( "hyp_touch_add_pan" , 2 );
-	static var hyp_touch_add_pinch       = nme.Loader.load( "hyp_touch_add_pinch" , 0 );	
-	static var hyp_touch_add_rot         = nme.Loader.load( "hyp_touch_add_rot" , 0 );
-	static var hyp_touch_add_swipe       = nme.Loader.load( "HypTouch_addSwipe" , 2 );
-	static var hyp_touch_add_tap         = nme.Loader.load( "HypTouch_addTap" , 2 );
-	static var hyp_touch_get_orientation = nme.Loader.load( "HypTouch_get_orientation" , 0 );
-	static var hyp_touch_rem_pan         = nme.Loader.load( "hyp_touch_remove_pan" , 2 );
-	static var hyp_touch_rem_pinch       = nme.Loader.load( "hyp_touch_remove_pinch" , 0 );
-	static var hyp_touch_rem_rot         = nme.Loader.load( "hyp_touch_remove_rot" , 0 );
-	static var hyp_touch_rem_swipe       = nme.Loader.load( "HypTouch_removeSwipe" , 2 );
-	static var hyp_touch_rem_tap         = nme.Loader.load( "HypTouch_removeTap" , 2 );
 	#end
 
 	#if android
+
+	
 	//static private var hypfb_request : Dynamic;
 	public static inline var ANDROID_CLASS : String = 'fr.hyperfiction.HyperTouch';
 
 	static private var hyp_touch_init : Dynamic;
+	static private var hyp_touch_allow_pan : Dynamic;
+	static private var hyp_touch_allow_pinch : Dynamic;
+	private var _oAndroidCB : AndroidCallback;
 	#end
 
-	public static inline var PAN      : String = 'PAN';
-	public static inline var PINCH    : String = 'PINCH';
-	public static inline var ROTATION : String = 'ROTATION';
-	public static inline var SWIPE    : String = 'SWIPE';
-	public static inline var TAP      : String = 'TAP';
+	public static inline var GestureCode_TAP : Int = 0;
 
 	private var _fTmp : FPoint;
 
@@ -91,31 +94,48 @@ class HyperTouch extends EventDispatcher{
 			super( );
 
 			#if iphone
-			hypTouch_init( );
-			#end
-
-			#if mobile
-			hyp_touch_callback_pan( _onPanCallback );
-			hyp_touch_callback_pinch( _onPinchCallback );
-			hyp_touch_callback_rotation( _onRotCallback );
-			hyp_touch_callback_swipe( _onSwipeCallback );
-			hyp_touch_callback_tap( _onTapCallback );
+				hypTouch_init( );
+				hyp_touch_callback_pan( _onPanCallback );
+				hyp_touch_callback_pinch( _onPinchCallback );
+				hyp_touch_callback_rotation( _onRotCallback );
+				hyp_touch_callback_swipe( _onSwipeCallback );
+				hyp_touch_callback_tap( _onTapCallback );
+				hyp_touch_callback_tap2( _onTap2Callback );
+				hyp_touch_callback_twix( _onTwixCallback );
+				
 			#end
 
 			#if android
-			
+			trace('init');
+
+			//
+				_oAndroidCB         = new AndroidCallback( );
+				_oAndroidCB.onTap   = _onTapCallback;
+				_oAndroidCB.onSwipe = _onSwipeCallback;
+				_oAndroidCB.onScale = _onPinchCallback;
+				_oAndroidCB.onPan   = _onPanCallback;
+
 			//Initialize
+					
 				if( hyp_touch_init == null )
-					hyp_touch_init = JNI.createStaticMethod( 'fr.hyperfiction.HyperTouch' , 'HyperTouch_init' , "()V" );
+					hyp_touch_init = JNI.createStaticMethod( 'fr.hyperfiction.HyperTouch' , 'HyperTouch_init' , "(Lorg/haxe/nme/HaxeObject;)V" );
+					hyp_touch_init( _oAndroidCB );
+
+					hyp_touch_allow_pan = JNI.createStaticMethod( 'fr.hyperfiction.HyperTouch' , 'HyperTouch_allowPan' , "(Z)V" );
+					hyp_touch_allow_pinch = JNI.createStaticMethod( 'fr.hyperfiction.HyperTouch' , 'HyperTouch_allowPinch' , "(Z)V" );
+					trace('hyp_touch_allow_pan ::: '+hyp_touch_allow_pan);
+					trace('hyp_touch_allow_pinch ::: '+hyp_touch_allow_pinch);
+					/*
 				nme.Lib.postUICallback( 
 										function() { 
 											trace('postUICallback 1');
 											hyp_touch_init( );	
-										});
-			
+										});*/
+			#end
+
+			//
 				
 			
-			#end
 
 			_fTmp = { x : 0.0 , y : 0.0 };
 		}
@@ -124,191 +144,83 @@ class HyperTouch extends EventDispatcher{
 
 		#if iphone
 
-		/**
-		* Add a Tap listener
-		* 
-		* @public
-		* @param 	iFingers : Fingers Count 	( int )
-		* @param 	iTaps    : Taps Count 		( int )
-		* @return	boolean
-		*/
-		public function addCustomTapListener( iFingers : Int , iTaps : Int ) : Bool {
-			return hyp_touch_add_tap( iFingers , iTaps );
-		}
+		#end
+
+		#if android
 
 		/**
-		* Remove a Tap Listener
+		* 
 		* 
 		* @public
-		* @param 	fingersCount 	: Simultaneous fingers needed 	( int )
-		* @param 	tapsCount 		: Taps count needed 			( int )
-		* @return	boolean
+		* @return	void
 		*/
-		public function removeTapListener( fingersCount : Int , tapsCount : Int ) : Bool {
-			return hyp_touch_rem_tap( fingersCount , tapsCount );
-		}
-
-		/**
-		* Add a Swipe Listener witht the specififed FingersCount / Direction
-		* 
-		* @public
-		* @param 	fingersCount 	: Simultaneous fingers needed ( int )
-		* @param 	direction : Direction of the Swipe ( int )
-		* @return	boolean;
-		*/
-		public function addSwipeListener( fingersCount : Int , direction : Int ) : Bool {
-			return hyp_touch_add_swipe( fingersCount , direction );
-		}
-
-		/**
-		* Remove a Swipe Listener with the specified FingersCount / Direction
-		* 
-		* @public
-		* @param 	fingersCount 	: Simultaneous fingers needed ( int )
-		* @param 	direction : Direction of the Swipe ( int )
-		* @return	boolean;
-		*/
-		public function removeSwipeListener( fingersCount : Int , direction : Int ) : Bool {
-			return hyp_touch_rem_swipe( fingersCount , direction );
-		}
-
-		/**
-		* Add a pna Listener with a min / max finger count
-		* 
-		* @public
-		* @param 	minTouch : Min finger( s ) count ( Int )
-		* @param 	maxTouch : Max finger( s ) count ( Int )
-		* @return	boolean
-		*/
-		public function addPanListener( minTouch : Int , maxTouch : Int ) : Bool {
-			trace('addPanListener ::: '+minTouch+' - '+maxTouch);
-			return hyp_touch_add_pan( minTouch , maxTouch );
-		}
-
-		/**
-		* Remove a PAN Listener with a min / max finger count
-		* 
-		* @public
-		* @param 	minTouch : Min finger( s ) count ( Int )
-		* @param 	maxTouch : Max finger( s ) count ( Int )
-		* @return	boolean
-		*/
-		public function removePanListener( minTouch : Int , maxTouch : Int ) : Bool {
-			return hyp_touch_rem_pan( minTouch , maxTouch );
+		public function onTapCb( fx : Float , fy : Float ) : Void {
+			trace('onTapCb ::: '+fx+' - '+fy);
 		}
 
 		#end
 
+		override public function addEventListener(
+													type : String, 
+													listener : Dynamic -> Void, 
+													useCapture : Bool = false, 
+													priority : Int = 0, 
+													useWeakReference : Bool = false
+													) : Void{
+
+			trace('addEventListener ::: '+type);
+			super.addEventListener( type , listener , useCapture , priority , useWeakReference );
+			hyp_touch_activate( getCode( type ) );
+
+		}
+
+		override public function removeEventListener(
+														type : String, 
+														listener : Dynamic -> Void, 
+														useCapture : Bool = false
+													) : Void{
+			super.removeEventListener( type , listener , useCapture );
+			trace('removeEventListener ::: '+type+' ---- '+hasEventListener( type )+' --- '+willTrigger( type ));
+			_disable( type );
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		public function getCode( type : String ) : Int {
+			
+			switch( type ){
+				
+				case GestureTapEvent.TAP:
+					return 0;
+
+				case GestureTapEvent.DOUBLE_TAP:
+					return 1;
+
+				case GestureTapEvent.TWO_FINGERS_TAP:
+					return 2;
+
+				case GesturePanEvent.PAN:
+					return 3;
+
+				case GesturePinchEvent.PINCH:
+					return 4;
+
+				case GestureRotationEvent.ROTATE:
+					return 5;
+
+				case GestureSwipeEvent.SWIPE:
+					return 6;
+			}
+			
+			return -1;			
+		}
+
 	// -------o protected
 		
-		/**
-		* Setter of the rotation mode
-		* 
-		* @private
-		* @param	b : Rotation ON / OFF ( Bool )
-		* @return	bool
-		*/
-		private function _setAllowRot( b : Bool ) : Bool{
-			if( this.allowRotation == b )
-				return b;
-
-			#if iphone
-				if( b )
-					hyp_touch_add_rot( );
-				else
-					hyp_touch_rem_rot( );
-			#end
-
-			return this.allowRotation = b;
-		}
-
-		/**
-		* Setter of the Pinch Mode
-		* 
-		* @private
-		* @param 	b : Pinch ON / OFF ( bool )
-		* @return	bool
-		*/
-		private function _setAllowPinch( b : Bool ) : Bool{
-			if( this.allowPinch == b )
-				return b;
-
-			#if iphone
-				if( b )
-					hyp_touch_add_pinch( );
-				else
-					hyp_touch_rem_pinch( );
-			#end
-
-			return this.allowPinch = b;
-		}
-
-		/**
-		* Setter of the Tap Mode
-		* 
-		* @private
-		* @param 	b : Tap ON / OFF ( bool )
-		* @return	bool
-		*/
-		private function _setAllowTap( b : Bool ) : Bool{ 
-			
-			if( this.allowTap == b )
-				return b;
-
-			#if iphone
-				if( b )
-					hyp_touch_add_tap( 1 , 1 );
-				else
-					hyp_touch_rem_tap( 1 , 1 );
-			#end
-
-			return this.allowTap = b;
-		}
-
-		/**
-		* Setter of the Double Tap Mode
-		* 
-		* @private
-		* @param 	b : Double Tap ON / OFF ( bool )
-		* @return	bool
-		*/
-		public function _setAllowDoubleTap( b : Bool ) : Bool{ 
-
-			if( this.allowDoubleTap == b )
-				return b;
-
-			#if iphone
-				if( b )
-					hyp_touch_add_tap( 1 , 2 );
-				else
-					hyp_touch_rem_tap( 1 , 2 );	
-			#end
-
-			return this.allowDoubleTap = b;
-		}
-
-		/**
-		* Setter of the Double Finger Tap Mode
-		* 
-		* @private
-		* @param 	b : Twix ON / OFF ( bool )
-		* @return	bool
-		*/
-		public function _setAllowTwixTap( b : Bool ) : Bool{ 
-
-			if( this.allowTwoFingersTap == b )
-				return b;
-			
-			#if iphone
-				if( b )
-					hyp_touch_add_tap( 2 , 1 );
-				else
-					hyp_touch_rem_tap( 2 , 1 );	
-			#end
-
-			return this.allowTwoFingersTap = b;
-		}
-
 		#if mobile
 
 		/**
@@ -318,9 +230,17 @@ class HyperTouch extends EventDispatcher{
 		* @param 	args : Callback arguments coordinates ( Array<Float> )
 		* @return	void
 		*/
+		#if iphone
 		private function _onPanCallback( args : Array<Float> ) : Void{
-			_onDispatchPan( args[ 0 ] , args[ 1 ] , args[ 2 ] , args[ 3 ] );
+			_onDispatchPan( args[ 2 ] , args[ 3 ] , args[ 0 ] , args[ 1 ] );
 		}
+		#end
+
+		#if android
+		private function _onPanCallback( fx : Float , fy : Float ) : Void{
+			_onDispatchPan( fx , fy , 0 , 0 );
+		}
+		#end
 
 		/**
 		* Callback of the Pinch Listener
@@ -354,7 +274,7 @@ class HyperTouch extends EventDispatcher{
 		* @return	void
 		*/
 		private function _onSwipeCallback( direction : Int ) : Void{
-			trace('_onSwipeCallback ::: '+direction);
+			trace('_onSwipeCallback');
 			_onDispatchSwipe( direction );
 		}		
 
@@ -365,19 +285,46 @@ class HyperTouch extends EventDispatcher{
 		* @param 	args : Callback arguments coordinates ( Array<Float> )
 		* @return	void
 		*/
-		private function _onTapCallback( args : Array<Float> ) : Void{
-			trace('_onTapCallback ::: '+args);
-
-			var touches = Std.int( args[ 0 ] );
-			var taps    = Std.int( args[ 1 ] );
-
+		private function _onTapCallback( fx : Float , fy : Float ) : Void{
+			trace('_onTapCallback ::: '+fx+' || '+fy);
 			#if iphone
-			var res = _convertToGl( args[ 2 ] , args[ 3 ] );
-			_onDispatchTap( res.x , res.y , touches , taps );
+			var res = _convertToGl( fx , fy );
+			_onDispatchTap( res.x , res.y , 1 , 1 );
+			#else
+			_onDispatchTap( fx , fy , 1 , 1 );
 			#end
+			
+		}
 
-			#if android
-			_onDispatchTap( args[ 2 ] , args[ 3 ] , touches , taps );
+		/**
+		* 
+		* 
+		* @private
+		* @return	void
+		*/
+		private function _onTap2Callback( fx : Float , fy : Float ) : Void{
+			trace('_onTap2Callback ::: '+fx+' || '+fy);
+			#if iphone
+			var res = _convertToGl( fx , fy );
+			_onDispatchTap( res.x , res.y , 1 , 2 );
+			#else
+			_onDispatchTap( fx , fy , 1 , 2 );
+			#end
+		}
+
+		/**
+		* 
+		* 
+		* @private
+		* @return	void
+		*/
+		private function _onTwixCallback( fx : Float , fy : Float ) : Void{
+			trace('_onTwixCallback ::: '+fx+' || '+fy);
+			#if iphone
+			var res = _convertToGl( fx , fy );
+			_onDispatchTap( res.x , res.y , 2 , 1 );
+			#else
+			_onDispatchTap( fx , fy , 2 , 1 );
 			#end
 		}
 
@@ -397,8 +344,9 @@ class HyperTouch extends EventDispatcher{
 			
 			_fTmp.x = fx;
 			_fTmp.y = fy;
+			var ori : Int = hyp_touch_get_orientation( );
 			
-			switch ( hyp_touch_get_orientation( ) ) {
+			switch ( ori ) {
 				
 				case Stage.OrientationPortrait:
 					_fTmp.x = nme.Lib.current.stage.stageWidth - fy;
@@ -442,24 +390,34 @@ class HyperTouch extends EventDispatcher{
 		* @return	void
 		*/
 		private function _onDispatchTap( fx : Float , fy : Float , fingers : Int , taps : Int = 1 ) : Void{
-			trace('_onDispatchTap ::: '+fx+' - '+fy+' - '+fingers+' - '+taps);
-			trace('allowTap ::: '+allowTap);
-			trace('allowTap ::: '+allowDoubleTap);
+						
 			if( fingers == 1 ){
-				if( taps == 2 && allowDoubleTap ){
-					if( hasEventListener( GestureTapEvent.DOUBLE_TAP ) )
-						dispatchEvent( new GestureTapEvent( GestureTapEvent.DOUBLE_TAP , fx , fy ) );
-				}else if( taps == 1 && allowTap ){
-					trace('allowTap --- '+'GestureTapEvent.TAP');
-					if( hasEventListener( GestureTapEvent.TAP ) )
-						dispatchEvent( new GestureTapEvent( GestureTapEvent.TAP , fx , fy ) );
-				}
-			}else if( taps == 1 && fingers == 2 ){
-				if( hasEventListener( GestureTapEvent.TWO_FINGERS_TAP ) )
-					dispatchEvent( new GestureTapEvent( GestureTapEvent.TWO_FINGERS_TAP , fx , fy ) );
-			}
 
+				if( taps == 2 )
+					_dispatch( new GestureTapEvent( GestureTapEvent.DOUBLE_TAP , fx , fy ) );
+				else if( taps == 1 )
+					_dispatch( new GestureTapEvent( GestureTapEvent.TAP , fx , fy ) );				
+
+			}else if( taps == 1 && fingers == 2 )
+				_dispatch( new GestureTapEvent( GestureTapEvent.TWO_FINGERS_TAP , fx , fy ) );
+			
 		}
+
+		/**
+		* 
+		* 
+		* @private
+		* @return	void
+		*/
+		private function _dispatch( e : Event ) : Void{
+			
+			_disable( e.type );
+			if( hasEventListener( e.type ) )
+				dispatchEvent( e );
+						
+		}
+
+
 
 		/**
 		* Dispatch an Swipe Event for the specified direction
@@ -469,6 +427,8 @@ class HyperTouch extends EventDispatcher{
 		* @return	void
 		*/
 		private function _onDispatchSwipe( direction : Int ) : Void{
+			trace('_onDispatchSwipe ::: '+direction);
+			_disable( GestureSwipeEvent.SWIPE );
 			dispatchEvent( new GestureSwipeEvent( direction ) );
 		}
 
@@ -481,6 +441,7 @@ class HyperTouch extends EventDispatcher{
 		* @return	void
 		*/
 		private function _onDispatchRotation( fRotation : Float , fVelocity : Float ) : Void{
+			_disable( GestureRotationEvent.ROTATE );
 			dispatchEvent( new GestureRotationEvent( fRotation , fVelocity ) );
 		}
 
@@ -495,6 +456,7 @@ class HyperTouch extends EventDispatcher{
 		* @return	void
 		*/
 		private function _onDispatchPan( fx : Float , fy : Float , vx : Float , vy : Float ) : Void{
+			_disable( GesturePanEvent.PAN );
 			dispatchEvent( new GesturePanEvent( fx , fy , vx , vy ) );
 		}
 
@@ -507,7 +469,22 @@ class HyperTouch extends EventDispatcher{
 		* @return	void
 		*/
 		private function _onDispatchPinch( fScale : Float , fVelocity : Float ) : Void{
+			_disable( GesturePinchEvent.PINCH );
 			dispatchEvent( new GesturePinchEvent( fScale , fVelocity ) );
+		}
+
+		/**
+		* 
+		* 
+		* @private
+		* @return	void
+		*/
+		private function _disable( type : String ) : Void{
+			if( !hasEventListener( type ) ){
+				trace('disable '+type+' - '+hasEventListener( type ));
+				trace('pas de listener on desactive le code : '+getCode( type ) );
+				hyp_touch_deactivate( getCode( type ) );
+			}
 		}
 
 	// -------o misc
@@ -527,3 +504,41 @@ class HyperTouch extends EventDispatcher{
 
 		private static var __instance : HyperTouch = null;
 }
+
+
+	/**
+	 * ...
+	 * @author shoe[box]
+	 */
+	
+	class AndroidCallback{
+		
+		public var onTap : Float->Float->Void;
+		public var onSwipe : Int->Void;
+		public var onScale : Float->Float->Void;
+		public var onPan : Float->Float->Void;
+
+		// -------o constructor
+			
+			/**
+			* constructor
+			*
+			* @param	
+			* @return	void
+			*/
+			public function new() {
+				
+			}
+		
+		// -------o public
+					
+					
+	
+		// -------o protected
+		
+			
+	
+		// -------o misc
+		
+	}
+#end

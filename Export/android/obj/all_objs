@@ -92,7 +92,6 @@ obj/android-debug/src/neash/display/CapsStyle.obj
 obj/android-debug/src/neash/display/BlendMode.obj
 obj/android-debug/src/neash/display/BitmapData.obj
 obj/android-debug/src/neash/display/Bitmap.obj
-obj/android-debug/src/neash/Memory.obj
 obj/android-debug/src/neash/Lib.obj
 obj/android-debug/src/neash/JNIMethod.obj
 obj/android-debug/src/neash/JNI.obj
@@ -111,6 +110,7 @@ obj/android-debug/src/fr/hyperfiction/events/GestureRotationEvent.obj
 obj/android-debug/src/fr/hyperfiction/events/GesturePinchEvent.obj
 obj/android-debug/src/fr/hyperfiction/events/GesturePanEvent.obj
 obj/android-debug/src/neash/events/Event.obj
+obj/android-debug/src/fr/hyperfiction/AndroidCallback.obj
 obj/android-debug/src/fr/hyperfiction/HyperTouch.obj
 obj/android-debug/src/cpp/zip/Uncompress.obj
 obj/android-debug/src/cpp/zip/Flush.obj

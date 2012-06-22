@@ -107,26 +107,25 @@ class TestTouch extends Sprite{
 
 			#if mobile
 			var hyp = HyperTouch.getInstance( );
-				hyp.addEventListener( GesturePanEvent.PAN , _onPan , false );
-				hyp.addEventListener( GesturePinchEvent.PINCH , _onPinch , false );
-				hyp.addEventListener( GestureRotationEvent.ROTATE , _onRotation , false );
-				hyp.addEventListener( GestureSwipeEvent.SWIPE , _onSwipe , false );
 				hyp.addEventListener( GestureTapEvent.TAP , _onTap , false );
 				hyp.addEventListener( GestureTapEvent.TWO_FINGERS_TAP , _onTwoFingers , false );
 				hyp.addEventListener( GestureTapEvent.DOUBLE_TAP , _onDoubleTap , false );
-
-				hyp.allowRotation      = true;
-				hyp.allowPinch         = true;
-				hyp.allowTap           = true;
-				hyp.allowTwoFingersTap = true;
-
-				#if iphone
-				hyp.addSwipeListener( 1 , HyperTouch.SWIPE_DIRECTION_LEFT );
-				hyp.addSwipeListener( 1 , HyperTouch.SWIPE_DIRECTION_RIGHT );
-				hyp.addSwipeListener( 1 , HyperTouch.SWIPE_DIRECTION_UP );
-				hyp.addSwipeListener( 1 , HyperTouch.SWIPE_DIRECTION_DOWN );
-				hyp.addPanListener( 2 , 2 );
-				#end
+				hyp.addEventListener( GesturePanEvent.PAN , _onPan , false );
+				hyp.addEventListener( GestureSwipeEvent.SWIPE , _onSwipe , false );
+				hyp.addEventListener( GesturePinchEvent.PINCH , _onPinch , false );
+				hyp.addEventListener( GestureSwipeEvent.SWIPE , _onSwipe , false );
+				/*
+				haxe.Timer.delay( function( ){
+					trace('removeTap');
+					hyp.removeEventListener( GestureTapEvent.TAP , _onTap , false );
+				},5000);
+				*/
+				/*
+				
+				hyp.addEventListener( GestureRotationEvent.ROTATE , _onRotation , false );
+				hyp.addEventListener( GestureTapEvent.TWO_FINGERS_TAP , _onTwoFingers , false );
+				hyp.addEventListener( GestureTapEvent.DOUBLE_TAP , _onDoubleTap , false );
+				*/
 			#end
 			//addChild( new Perf( ) );
 		}
@@ -164,8 +163,8 @@ class TestTouch extends Sprite{
 		*/
 		private function _onPan( e : GesturePanEvent ) : Void{
 			trace('onPan ::: '+e);
-			_spDemo.x = e.x;
-			_spDemo.y = e.y;
+			_spDemo.x += e.offsetX;
+			_spDemo.y += e.offsetY;
 		}
 
 		/**
@@ -175,8 +174,8 @@ class TestTouch extends Sprite{
 		* @return	void
 		*/
 		private function _onPinch( e : GesturePinchEvent ) : Void{
-			//trace('onPinch ::: '+e);
-			_spDemo.scaleY = _spDemo.scaleX = _spDemo.scaleY * e.scale;
+			trace('onPinch ::: '+e);
+			_spDemo.scaleY = _spDemo.scaleX = e.scale;
 		}
 
 		/**
@@ -206,10 +205,10 @@ class TestTouch extends Sprite{
 		* @return	void
 		*/
 		private function _onTap( e : GestureTapEvent ) : Void{
-			trace('onTap ::: '+e);
+			//trace('onTap ::: '+e);
 			_spTap.graphics.clear( );
-			_spTap.graphics.lineStyle( 4 , 0 );
-			_spTap.graphics.drawCircle( e.stageX , e.stageY , 40 );
+			_spTap.graphics.lineStyle( 1 , 0 );
+			_spTap.graphics.drawCircle( e.stageX , e.stageY , 30 );
 		}
 
 		/**
@@ -219,10 +218,22 @@ class TestTouch extends Sprite{
 		* @return	void
 		*/
 		private function _onTwoFingers( e : GestureTapEvent ) : Void{
+			trace('_onTwoFingers ::: '+e);
+			/*
 			_spDemo.rotation = 0;
 			_spDemo.scaleX = _spDemo.scaleY = 1;
 			_spDemo.x = Lib.current.stage.stageWidth / 2;
 			_spDemo.y = Lib.current.stage.stageHeight / 2;
+			*/
+
+			var hyp = HyperTouch.getInstance( );
+				hyp.removeEventListener( GestureTapEvent.TAP , _onTap , false );
+				hyp.removeEventListener( GestureTapEvent.TWO_FINGERS_TAP , _onTwoFingers , false );
+				hyp.removeEventListener( GestureTapEvent.DOUBLE_TAP , _onDoubleTap , false );
+				hyp.removeEventListener( GesturePanEvent.PAN , _onPan , false );
+				hyp.removeEventListener( GestureSwipeEvent.SWIPE , _onSwipe , false );
+				hyp.removeEventListener( GesturePinchEvent.PINCH , _onPinch , false );
+				hyp.removeEventListener( GestureSwipeEvent.SWIPE , _onSwipe , false );
 		}
 
 		/**
@@ -232,7 +243,7 @@ class TestTouch extends Sprite{
 		* @return	void
 		*/
 		private function _onDoubleTap( e : GestureTapEvent ) : Void{
-			trace('onDoubleTap ::: '+e);
+			//trace('onDoubleTap ::: '+e);
 		}
 
 		#end
