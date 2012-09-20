@@ -1,2 +1,9 @@
+[Bb]in-deploy*/
+[Ee]xports*/
 [Ee]xport*/
-[Aa]ssets*/
+.build
+build.build
+project.sublime-project
+project.sublime-workspace
+all_objs
+obj/
