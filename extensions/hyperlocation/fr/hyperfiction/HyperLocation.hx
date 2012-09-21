@@ -28,7 +28,7 @@ class HyperLocation extends EventDispatcher {
 		private var _hyp_stop				: Dynamic;
 		private var _hyp_instance			: Dynamic;
 		private var _hyp_set_time_accuracy	: Dynamic;
-		private var _hyp_set_test_better		: Dynamic;
+		private var _hyp_set_test_better	: Dynamic;
 	#end
 
 	#if mobile

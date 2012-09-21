@@ -44,7 +44,7 @@ public class HyperLocation implements LocationListener {
 		_isBetterWindow = duration;
 	}
 
-	public void setTestIfIsBetter( boolean test ) {
+	public void setTestIfBetter( boolean test ) {
 		_testIfIsBetter = test;
 	}
 
