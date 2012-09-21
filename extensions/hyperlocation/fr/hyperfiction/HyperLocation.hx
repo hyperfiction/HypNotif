@@ -23,17 +23,19 @@ class HyperLocation extends EventDispatcher {
 	#if android	
 		public static inline var ANDROID_CLASS : String = 'fr.hyperfiction.HyperLocation';
 
-		private var hyplocation_create		: Dynamic;
-		private var hyplocation_start		: Dynamic;
-		private var hyplocation_stop		: Dynamic;
-		private var hyplocation_instance	: Dynamic;
+		private var _hyp_create				: Dynamic;
+		private var _hyp_start				: Dynamic;
+		private var _hyp_stop				: Dynamic;
+		private var _hyp_instance			: Dynamic;
+		private var _hyp_set_time_accuracy	: Dynamic;
+		private var _hyp_set_test_better		: Dynamic;
 	#end
 
 	#if mobile
-		private static var hyp_cb_on_location_changed	= Lib.load( "hyperlocation", "hyp_cb_on_location_changed", 1 );
-		private static var hyp_cb_on_provider_disabled	= Lib.load( "hyperlocation", "hyp_cb_on_provider_disabled", 1 );
-		private static var hyp_cb_on_provider_enabled	= Lib.load( "hyperlocation", "hyp_cb_on_provider_enabled", 1 );
-		private static var hyp_cb_on_status_changed		= Lib.load( "hyperlocation", "hyp_cb_on_status_changed", 1 );
+		private static var hyp_cb_location_changed	= Lib.load( "hyperlocation", "hyp_cb_location_changed", 1 );
+		private static var hyp_cb_provider_disabled	= Lib.load( "hyperlocation", "hyp_cb_provider_disabled", 1 );
+		private static var hyp_cb_provider_enabled	= Lib.load( "hyperlocation", "hyp_cb_provider_enabled", 1 );
+		private static var hyp_cb_status_changed		= Lib.load( "hyperlocation", "hyp_cb_status_changed", 1 );
 	#end
 
 	// -------o constructor
@@ -48,36 +50,54 @@ class HyperLocation extends EventDispatcher {
 			super();
 
 			#if android
-				hyp_cb_on_location_changed( _onLocationChanged );
-				hyp_cb_on_provider_enabled( _onProviderEnabled );
-				hyp_cb_on_provider_disabled( _onProviderDisabled );
-				hyp_cb_on_status_changed( _onStatusChanged );
+				hyp_cb_location_changed( _onLocationChanged );
+				hyp_cb_provider_enabled( _onProviderEnabled );
+				hyp_cb_provider_disabled( _onProviderDisabled );
+				hyp_cb_status_changed( _onStatusChanged );
 
-				if( hyplocation_create == null )
-					hyplocation_create = JNI.createStaticMethod( ANDROID_CLASS , 'createInstance' , "()Lfr/hyperfiction/HyperLocation;" );
+				if( _hyp_create == null )
+					_hyp_create = JNI.createStaticMethod( ANDROID_CLASS , 'createInstance' , "()Lfr/hyperfiction/HyperLocation;" );
 					
-				hyplocation_instance = hyplocation_create( );
+				_hyp_instance = _hyp_create( );
 			#end
 		}
 
 
 	// -------o public
 
+		public function setTimeAccuracy( time : Float ) : Void {
+			#if android
+				if( _hyp_set_time_accuracy == null )
+					_hyp_set_time_accuracy = JNI.createMemberMethod( ANDROID_CLASS, 'setTimeAccuracy', "(F)V" );
+				
+				_hyp_set_time_accuracy( _hyp_instance, time );
+			#end
+		}
+
+		public function setTestIfBetter( test : Bool ) : Void {
+			#if android
+				if( _hyp_set_test_better == null )
+					_hyp_set_test_better = JNI.createMemberMethod( ANDROID_CLASS, 'setTestIfBetter', "(Z)V" );
+
+				_hyp_set_test_better( _hyp_instance, test );
+			#end
+		}
+
 		public function startLocation( minTime : Float = 0, minDistance : Float = 0 ) : Void {
 			#if android
-				if( hyplocation_start == null )
-					hyplocation_start = JNI.createMemberMethod( ANDROID_CLASS , 'beginLocationUpdates' , "(JF)V" );
+				if( _hyp_start == null )
+					_hyp_start = JNI.createMemberMethod( ANDROID_CLASS , 'beginLocationUpdates' , "(JF)V" );
 				
-				hyplocation_start( hyplocation_instance, minTime, minDistance );
+				_hyp_start( _hyp_instance, minTime, minDistance );
 			#end
 		}
 
 		public function stopLocation( ) : Void {
 			#if android
-				if( hyplocation_stop == null )
-					hyplocation_stop = JNI.createMemberMethod( ANDROID_CLASS , 'stopLocationUpdates' , "()V" );
+				if( _hyp_stop == null )
+					_hyp_stop = JNI.createMemberMethod( ANDROID_CLASS , 'stopLocationUpdates' , "()V" );
 				
-				hyplocation_stop( hyplocation_instance );
+				_hyp_stop( _hyp_instance );
 			#end
 		}
 

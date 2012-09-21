@@ -75,30 +75,30 @@ extern "C" {
 	#endif
 }
 
-static value hyp_cb_on_location_changed( value onCall ) {
+static value hyp_cb_location_changed( value onCall ) {
 	printf("Set Location changed callback");
 	_on_location_changed = new AutoGCRoot( onCall );
     return alloc_bool(true);
 }
-DEFINE_PRIM(hyp_cb_on_location_changed,1);
+DEFINE_PRIM(hyp_cb_location_changed,1);
 
-static value hyp_cb_on_provider_enabled( value onCall ) {
+static value hyp_cb_provider_enabled( value onCall ) {
 	printf("Set provider enabled callback");
 	_on_provider_enabled = new AutoGCRoot( onCall );
     return alloc_bool(true);
 }
-DEFINE_PRIM(hyp_cb_on_provider_enabled,1);
+DEFINE_PRIM(hyp_cb_provider_enabled,1);
 
-static value hyp_cb_on_provider_disabled( value onCall ) {
+static value hyp_cb_provider_disabled( value onCall ) {
 	printf("Set provider disabled callback");
 	_on_provider_disabled = new AutoGCRoot( onCall );
     return alloc_bool(true);
 }
-DEFINE_PRIM(hyp_cb_on_provider_disabled,1);
+DEFINE_PRIM(hyp_cb_provider_disabled,1);
 
-static value hyp_cb_on_status_changed( value onCall ) {
+static value hyp_cb_status_changed( value onCall ) {
 	printf("Set status changed callback");
 	_on_status_changed = new AutoGCRoot( onCall );
     return alloc_bool(true);
 }
-DEFINE_PRIM(hyp_cb_on_status_changed,1);
+DEFINE_PRIM(hyp_cb_status_changed,1);
