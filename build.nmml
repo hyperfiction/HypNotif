@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
 	
-	<app title="HyperTest(s)" file="hypertest" main="TestGA" package="fr.hyperfiction.Tests" version="1.0.0" company="Hyperfiction" debug="true"/>
+	<app title="HyperTest(s)" file="hypertest" main="TestWebView" package="fr.hyperfiction.Tests" version="1.0.0" company="Hyperfiction" debug="true"/>
 	
 	<window width="1024" height="768" fps="60" orientation="landscape" resizable="true" if="target_flash" background="0xFFFFFF"/>
 	<window width="1024" height="768" fps="60" orientation="landscape" resizable="true" unless="target_flash" background="0xFFFFFF"/>
@@ -28,7 +28,7 @@
 	<include path="extensions/hypertouch" if="mobile"/>
 	-->
 
-	<include path="extensions/HypGA" />
+	<include path="extensions/HypWebView" />
 		
 	<!--
 	<set name="SHOW_CONSOLE" value="1" if="cpp"/>

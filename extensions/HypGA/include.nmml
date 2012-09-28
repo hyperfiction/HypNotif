@@ -2,13 +2,13 @@
 <project>
 	
 	<!-- misc --> 
-		<ndll name="HypGA" />
+		<ndll name="HypGA" if="ios"/>
 		<classpath name="." />
 
 	<!-- Android -->
 		<java path="project/android" />
-		<template path="project/android" rename="libs" if="android"/>
-
+		<template path="android-jars" rename="libs" if="android"/>
+		
 	<!-- iOS -->
 		<dependency name="CFNetwork" if="ios"/>
 		<dependency name="libsqlite3.0.dylib" if="ios"/>
