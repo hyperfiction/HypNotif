@@ -11,17 +11,8 @@ import android.content.pm.Signature;
 import android.content.pm.Signature;
 import android.os.Bundle;
 import android.util.Log;
-import com.facebook.android.AsyncFacebookRunner.RequestListener;
-import com.facebook.android.AsyncFacebookRunner;
-import com.facebook.android.DialogError;
-import com.facebook.android.Facebook.DialogListener;
-import com.facebook.android.Facebook.DialogListener;
-import com.facebook.android.Facebook.DialogListener;
-import com.facebook.android.Facebook;
-import com.facebook.android.FacebookError;
-import com.facebook.android.SessionEvents.AuthListener;
-import com.facebook.android.SessionEvents.LogoutListener;
-import com.facebook.android.SessionStore;
+import com.facebook.android.*;
+import com.facebook.android.Facebook.*;
 import fr.hyperfiction.Base64;
 import java.io.FileNotFoundException;
 import java.security.MessageDigest;
@@ -32,9 +23,10 @@ import org.haxe.nme.NME;
 
 public class HypFacebook implements DialogListener{
 	
-	private HaxeObject 			_mCallBack;
 	private Facebook 			_mFacebook;
+	private HaxeObject 			_mCallBack;
 	private SharedPreferences 	_mPrefs;
+	private String[ ] 			_aPerms;
 
 	private static String TAG = "trace";
 
@@ -52,11 +44,12 @@ public class HypFacebook implements DialogListener{
 		* @public
 		* @return	void
 		*/
-		public void init( String appId , HaxeObject oCallback ){
+		public void init( String appId , HaxeObject oCallback , String sPerms ){
 			Log.i( TAG , "Init : "+appId+" callback : "+oCallback );
-			_mCallBack = oCallback;
-			_mFacebook = new Facebook( appId );
-			_mPrefs    = GameActivity.getInstance( ).getPreferences( Activity.MODE_PRIVATE );
+			_aPerms		= sPerms.split("|");
+			_mCallBack	= oCallback;
+			_mFacebook	= new Facebook( appId );
+			_mPrefs		= GameActivity.getInstance( ).getPreferences( Activity.MODE_PRIVATE );
 		}
 
 		/**
@@ -218,10 +211,9 @@ public class HypFacebook implements DialogListener{
 	    */
 	    private void _createSession( ){
 	    	Log.i( TAG ,"_createSession" );
-			String[ ] mPermissions = new String[ ] { "publish_stream" };
 			_mFacebook.authorize( 
 									GameActivity.getInstance( ) , 
-									mPermissions , 
+									_aPerms , 
 									this 
 								);
 	    }
@@ -255,10 +247,10 @@ public class HypFacebook implements DialogListener{
 	    * @public
 	    * @return	void
 	    */
-	    public static void hypfb_init( String appId , HaxeObject cb ){
+	    public static void hypfb_init( String appId , HaxeObject cb , String sPerms ){
 	    	Log.i( TAG , "nme_init appId: "+appId +" and callback object ::: "+cb);
 	    	__instance = new HypFacebook( );
-	    	__instance.init( appId , cb );
+	    	__instance.init( appId , cb , sPerms );
 	    }
 
 	     /**
@@ -272,7 +264,7 @@ public class HypFacebook implements DialogListener{
 	    	__instance.connect( );
 	    }
 
-	     /**
+	    /**
 	    * 
 	    * 
 	    * @public

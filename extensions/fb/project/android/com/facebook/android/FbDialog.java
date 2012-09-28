@@ -15,7 +15,7 @@
  */
 
 package com.facebook.android;
-import ::APP_PACKAGE::.R;
+
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -35,6 +35,7 @@ import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import ::APP_PACKAGE::.R;
 
 import com.facebook.android.Facebook.DialogListener;
 
@@ -121,6 +122,7 @@ public class FbDialog extends Dialog {
         mWebView.loadUrl(mUrl);
         mWebView.setLayoutParams(FILL);
         mWebView.setVisibility(View.INVISIBLE);
+        mWebView.getSettings().setSavePassword(false);
         
         webViewContainer.setPadding(margin, margin, margin, margin);
         webViewContainer.addView(mWebView);

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	
+	<!-- misc --> 
+		<ndll name="HypGA" />
+		<classpath name="." />
+
+	<!-- Android -->
+		<java path="project/android" />
+		<template path="project/android" rename="libs" if="android"/>
+
+	<!-- iOS -->
+		<dependency name="CFNetwork" if="ios"/>
+		<dependency name="libsqlite3.0.dylib" if="ios"/>
+
+		<template path="templates/ios/" rename="HypGA" if="ios"/>
+		<dependency name="hypertest/HypGA" if="ios" />
+		
+</project>

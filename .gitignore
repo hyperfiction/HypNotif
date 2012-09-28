@@ -3,7 +3,5 @@
 [Ee]xport*/
 .build
 build.build
-project.sublime-project
-project.sublime-workspace
-all_objs
-obj*/
+*.sublime-project
+*.sublime-workspace

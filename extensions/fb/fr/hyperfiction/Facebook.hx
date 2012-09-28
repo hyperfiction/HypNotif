@@ -63,8 +63,12 @@ class Facebook{
 		* @public
 		* @return	void
 		*/
-		public function init( app_id : String ) : Void {
-			_init( app_id );	
+		public function init( app_id : String , aPerms : Array<String> = null ) : Void {
+
+			if( aPerms == null )
+				aPerms = [ ];
+
+			_init( app_id , aPerms );	
 		}
 
 		/**
@@ -74,7 +78,7 @@ class Facebook{
 		* @return	void
 		*/
 		public function connect( ) : Void {
-
+			trace('connect');
 			if( _sAppID == null )
 				throw new Error( "Facebook App ID is not defined" );
 
@@ -135,9 +139,11 @@ class Facebook{
 		* @return	void
 		*/
 		public function generateKeyHash( sPackageName : String ) : Void {
+			/*
 			trace('generateKeyHash ::: '+sPackageName);
 			var hyp_key : Dynamic = JNI.createStaticMethod( 'fr.hyperfiction.HypFacebook' , 'hypfb_key_hash' , "(Ljava/lang/String;)V" );
 				hyp_key( sPackageName );
+			*/
 		}
 		
 		#end
@@ -152,20 +158,21 @@ class Facebook{
 		* @private
 		* @return	void
 		*/
-		private function _init( sAppId : String ) : Void{
+		private function _init( sAppId : String , aPerms : Array<String> ) : Void{
 			trace( 'init ::: ' + sAppId );
 			_sAppID = sAppId;
 
 			#if iphone
 				hyp_fb_init( _sAppID );
 			#else
+
 				if( hyp_fb_init == null )
-					hyp_fb_init = JNI.createStaticMethod( 'fr.hyperfiction.HypFacebook' , 'hypfb_init' , "(Ljava/lang/String;Lorg/haxe/nme/HaxeObject;)V" );
+					hyp_fb_init = JNI.createStaticMethod( 'fr.hyperfiction.HypFacebook' , 'hypfb_init' , "(Ljava/lang/String;Lorg/haxe/nme/HaxeObject;Ljava/lang/String;)V" );
 					nme.Lib.postUICallback( 
 											function() { 
-												hyp_fb_init( _sAppID , this );
+												hyp_fb_init( _sAppID , this , aPerms.join('|') );
 											});
-					
+				
 			#end
 		}
 
@@ -176,17 +183,19 @@ class Facebook{
 		* @return	void
 		*/
 		private function _connect( ) : Void{
-
+			trace('connect');
 			//
 			#if iphone
 				hypfb_set_callback( _onCallback );
 				hypfb_connect( );
 			#else
+
 				if( hypfb_connect == null )
 					hypfb_connect = JNI.createStaticMethod( 'fr.hyperfiction.HypFacebook' , 'hypfb_connect' , "()V" );
 					nme.Lib.postUICallback( function() { 
 						hypfb_connect( );
 					});
+				
 			#end
 		}
 
