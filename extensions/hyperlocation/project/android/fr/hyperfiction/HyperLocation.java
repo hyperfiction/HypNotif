@@ -13,6 +13,8 @@ import android.app.Activity;
 
 public class HyperLocation implements LocationListener {
 	
+	private LocationManager _locManagerGPS;
+	private LocationManager _locManagerNET;
 	private Location 		_location;
 	private long 			_minTime;
 	private float 			_minDistance;
@@ -37,11 +39,12 @@ public class HyperLocation implements LocationListener {
 
 	public void HyperLocation( ) {
 		Log.i( TAG, " constructor ::: " );
-		_isBetterWindow = 1000 * 10;
+		_isBetterWindow = 10000;
 	}
 
-	public void setDurationToTestBetter( float duration ) {
+	public void setTimeAccuracy( float duration ) {
 		_isBetterWindow = duration;
+		Log.i( TAG, " setDurationToTestBetter ::: "+duration );
 	}
 
 	public void setTestIfBetter( boolean test ) {
@@ -54,33 +57,53 @@ public class HyperLocation implements LocationListener {
 		_minDistance	= minDistance;
 		GameActivity.getInstance().runOnUiThread( new Runnable() {
 			public void run( ) {
-				LocationManager locManager;
-				locManager = ( LocationManager ) GameActivity.getContext().getSystemService(Context.LOCATION_SERVICE);
-				if( locManager != null ) {
-					HyperLocation.this.onLocationChanged( locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) );
-					locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, HyperLocation.this._minTime, HyperLocation.this._minDistance, HyperLocation.this);
-					locManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, HyperLocation.this._minTime, HyperLocation.this._minDistance, HyperLocation.this);
+				
+				if( _locManagerGPS == null )
+					_locManagerGPS = ( LocationManager ) GameActivity.getContext().getSystemService(Context.LOCATION_SERVICE);
+				
+				if( _locManagerNET == null )
+					_locManagerNET = ( LocationManager ) GameActivity.getContext().getSystemService(Context.LOCATION_SERVICE);
+				
+				if( _locManagerNET != null ) {
+					Log.i( TAG, " _locManager instanciated ::: " );
+					HyperLocation.this.onLocationChanged( _locManagerNET.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) );
+					_locManagerNET.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, HyperLocation.this._minTime, HyperLocation.this._minDistance, HyperLocation.this);
+				}
+				
+				if( _locManagerGPS != null ) {
+					Log.i( TAG, " _locManager instanciated ::: " );
+					HyperLocation.this.onLocationChanged( _locManagerGPS.getLastKnownLocation(LocationManager.GPS_PROVIDER) );
+					_locManagerGPS.requestLocationUpdates(LocationManager.GPS_PROVIDER, HyperLocation.this._minTime, HyperLocation.this._minDistance, HyperLocation.this);
 				}
 			}
 		});
 	}
 
+	public void pauseLocationUpdates( ) {
+		Log.i( TAG, "pauseLocationUpdates ::: " );
+		
+		if( _locManagerGPS != null )
+			_locManagerGPS.removeUpdates(HyperLocation.this);
+		
+		if( _locManagerNET != null )
+			_locManagerNET.removeUpdates(HyperLocation.this);
+	}
+
 	public void stopLocationUpdates( ) {
 		Log.i( TAG, "stopLocationUpdates ::: " );
-		GameActivity.getInstance().runOnUiThread( new Runnable() {
-			public void run( ) {
-				LocationManager locManager;
-				locManager = ( LocationManager ) GameActivity.getContext().getSystemService(Context.LOCATION_SERVICE);
-				if( locManager != null )
-					locManager.removeUpdates(HyperLocation.this);
-			}
-		});
+		
+		pauseLocationUpdates();
+		
+		_locManagerGPS = null;
+		_locManagerNET = null;
 	}
 
 	public void onLocationChanged( Location newLocation ) {
 		Log.i( TAG, " on location changed ::: "+newLocation );
+		
 		if( !_testIfIsBetter || isBetterLocation(newLocation, _location) ) {
 			_location = newLocation;
+			
 			if( _location != null )
 				HyperLocation.onHypLocationChanged( _location.getTime(), _location.getLatitude(), _location.getLongitude(), _location.getAltitude() );
 		}
@@ -115,9 +138,17 @@ public class HyperLocation implements LocationListener {
 
 	    // Check whether the new location fix is newer or older
 	    long timeDelta = location.getTime() - currentBestLocation.getTime();
+		Log.i( TAG, " timeDelta       ::: "+ timeDelta);
+		Log.i( TAG, " _isBetterWindow ::: "+ _isBetterWindow);
+
 	    boolean isSignificantlyNewer = timeDelta > _isBetterWindow;
 	    boolean isSignificantlyOlder = timeDelta < _isBetterWindow;
 	    boolean isNewer = timeDelta > 0;
+
+
+		Log.i( TAG, " isSignificantlyNewer	::: "+ isSignificantlyNewer);
+		Log.i( TAG, " isSignificantlyOlder  ::: "+ isSignificantlyOlder);
+		Log.i( TAG, " isNewer 				::: "+ isNewer);
 
 	    // If it's been more than _isBetterWindow (ms) since the current location, use the new location
 	    // because the user has likely moved
@@ -138,6 +169,12 @@ public class HyperLocation implements LocationListener {
 	    boolean isFromSameProvider = isSameProvider(location.getProvider(),
 	            currentBestLocation.getProvider());
 
+		Log.i( TAG, " isMoreAccurate 			  ::: "+ isMoreAccurate);
+		Log.i( TAG, " isLessAccurate 			  ::: "+ isLessAccurate);
+		Log.i( TAG, " isSignificantlyLessAccurate ::: "+ isSignificantlyLessAccurate);
+		
+		Log.i( TAG, " isFromSameProvider 		  ::: "+ isFromSameProvider);
+	    
 	    // Determine location quality using a combination of timeliness and accuracy
 	    if (isMoreAccurate) {
 	        return true;

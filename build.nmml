@@ -37,5 +37,6 @@
 	<set name="SHOW_CONSOLE" value="1" if="cpp"/>
 	<haxedef name="SHOW_CONSOLE" if="cpp"/>
 
+  	<icon name="Assets/hypicon.svg" />
 	
 </project>

@@ -26,6 +26,7 @@ class HyperLocation extends EventDispatcher {
 		private var _hyp_create				: Dynamic;
 		private var _hyp_start				: Dynamic;
 		private var _hyp_stop				: Dynamic;
+		private var _hyp_pause				: Dynamic;
 		private var _hyp_instance			: Dynamic;
 		private var _hyp_set_time_accuracy	: Dynamic;
 		private var _hyp_set_test_better	: Dynamic;
@@ -98,6 +99,15 @@ class HyperLocation extends EventDispatcher {
 					_hyp_stop = JNI.createMemberMethod( ANDROID_CLASS , 'stopLocationUpdates' , "()V" );
 				
 				_hyp_stop( _hyp_instance );
+			#end
+		}
+
+		public function pauseLocation( ) : Void {
+			#if android
+				if( _hyp_pause == null )
+					_hyp_pause = JNI.createMemberMethod( ANDROID_CLASS , 'pauseLocationUpdates' , "()V" );
+				
+				_hyp_pause( _hyp_instance );
 			#end
 		}
 
