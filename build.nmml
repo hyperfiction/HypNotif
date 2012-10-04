@@ -35,5 +35,6 @@
 	<haxedef name="SHOW_CONSOLE" if="cpp"/>
 	<template path="assets/close.png" />
 	-->
+  	<icon name="Assets/hypicon.svg" />
 
 </project>
