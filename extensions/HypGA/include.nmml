@@ -10,10 +10,10 @@
 		<template path="android-jars" rename="libs" if="android"/>
 		
 	<!-- iOS -->
-		<dependency name="CFNetwork" if="ios"/>
-		<dependency name="libsqlite3.0.dylib" if="ios"/>
-
-		<template path="templates/ios/" rename="HypGA" if="ios"/>
-		<dependency name="hypertest/HypGA" if="ios" />
+		<dependency name="CFNetwork.framework" if="ios" />
 		
+		<template path="templates/ios/" rename="HypGA" if="ios"/>
+		<!--
+		<dependency name="templates/ios/" if="ios" rename="HypGA" />
+		-->
 </project>

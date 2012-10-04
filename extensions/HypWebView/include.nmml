@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	
+	<!-- misc --> 
+		<ndll name="HypWebView" />
+		<classpath name="." />
+
+	<!-- Android -->
+		<java path="project/android" if="android" />
+
+</project>
