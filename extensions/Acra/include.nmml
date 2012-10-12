@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	
+	<!-- misc --> 
+		<classpath name="src"/>
+
+	<!-- Android -->
+		<java path="project/android" />
+		<template path="android-jars" rename="libs" if="android"/>
+		
+		
+</project>

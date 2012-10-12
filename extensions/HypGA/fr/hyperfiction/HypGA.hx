@@ -59,7 +59,14 @@ class HypGA{
 		* @return	void
 		*/
 		public function startNewSession( sUA : String , iPeriod : Int = 5 ) : Void {
+			trace('startNewSession ::: '+sUA+' - '+iPeriod);
+			#if android
 			_startSession( sUA , iPeriod );
+			#end
+
+			#if iphone
+			_startSession( sUA , iPeriod );
+			#end
 		}
 
 		/**
@@ -69,7 +76,13 @@ class HypGA{
 		* @return	void
 		*/
 		public function stopSession( ) : Void {
+			#if iphone
 			_stop_session( );
+			#end
+
+			#if android
+			_stop_session( );
+			#end
 		}
 
 		/**
@@ -79,7 +92,14 @@ class HypGA{
 		* @return	void
 		*/
 		public function trackPageView( s_path : String ) : Void {
+			trace('trackPageView ::: '+s_path);
+			#if iphone
 			_track_page_view( s_path );
+			#end
+
+			#if android
+			_track_page_view( s_path );
+			#end
 		}
 
 		/**
@@ -89,8 +109,16 @@ class HypGA{
 		* @return	void
 		*/
 		public function trackEvent( sCat : String , sAction : String , sLabel : String , value : Int ) : Void {
+			trace('trackEvent ::: '+sCat+' - '+sAction+' - '+sLabel+' - '+value);
+			#if iphone
 			_track_event( sCat , sAction , sLabel , value );
+			#end
+
+			#if android
+			_track_event( sCat , sAction , sLabel , value );
+			#end
 		}
+
 		#if android
 
 		/**
@@ -100,7 +128,9 @@ class HypGA{
 		* @return	void
 		*/
 		public function setDispatchPeriod( i : Int ) : Void {
+			#if android
 			_set_dispatch_period( i );
+			#end
 		}
 
 		#end
@@ -112,7 +142,15 @@ class HypGA{
 		* @return	void
 		*/
 		public function setCustomVariable( iSlot : Int , sName : String , sValue : String ) : Void {
+			
+			#if android
 			_set_custom_variable( iSlot , sName , sValue );	
+			#end
+
+			#if iphone
+			_set_custom_variable( iSlot , sName , sValue );	
+			#end
+
 		}
 
 	// -------o protected
@@ -234,7 +272,7 @@ class HypGA{
 		* @return	void
 		*/
 		private function _track_event( sCat : String , sAction : String , sLabel : String , value : Int ) : Void{
-
+			trace('_track_event ::: '+sCat+' - '+sAction+' - '+sLabel+' - '+value);
 			if( _func_track_event == null )
 				_func_track_event = JNI.createMemberMethod( ANDROID_CLASS , 'trackEvent' , '(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V' );
 				_func_track_event( _get_android_instance( ) , sCat , sAction , sLabel , value );

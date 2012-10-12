@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	
+	<!-- misc --> 
+		<ndll name="HypSystem" if="ios"/>
+		<classpath name="." />
+
+	<!-- Android -->
+		<java path="project/android" if="android" />
+
+		<dependency name="SystemConfiguration.framework" if="ios" />		
+
+</project>

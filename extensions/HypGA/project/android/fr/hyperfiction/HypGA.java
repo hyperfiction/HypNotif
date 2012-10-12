@@ -12,7 +12,7 @@ public class HypGA{
 
 	GoogleAnalyticsTracker tracker;
 
-	private static String TAG = "HyperLocation";
+	private static String TAG = "HypGA";
 
 	// -------o constructor
 		

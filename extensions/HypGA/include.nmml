@@ -10,10 +10,9 @@
 		<template path="android-jars" rename="libs" if="android"/>
 		
 	<!-- iOS -->
-		<dependency name="CFNetwork.framework" if="ios" />
-		
+		<dependency name="CFNetwork.framework" if="ios" />		
 		<template path="templates/ios/" rename="HypGA" if="ios"/>
-		<!--
-		<dependency name="templates/ios/" if="ios" rename="HypGA" />
-		-->
+		<dependency name="CFNetwork.framework" if="ios" />		
+		
+		
 </project>

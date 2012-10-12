@@ -14,7 +14,7 @@
 		
 	</application>
 
-	<uses-sdk android:minSdkVersion="8"/>
+	<uses-sdk android:minSdkVersion="11"/>
 	
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
 	<uses-permission android:name="android.permission.ACCESS_GPS" />

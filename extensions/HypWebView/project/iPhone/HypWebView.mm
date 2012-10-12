@@ -30,10 +30,17 @@
 			[ super dealloc ];
 		}
 
+		-(void) open_local_file:(NSString*)sPath atPosX:(int)x atPosY:(int)y withW:(int)w withH:(int)h{
+			NSString *sResolvedPath = [[NSBundle mainBundle] pathForResource:sPath ofType:@"html"];
+			NSLog(@"open_local_file %@",sResolvedPath);
+			//open( sResolvedPath , x , y , w , h );
+			[self open:sResolvedPath atPosX:x atPosY:y withW:w withH:h];
+		}
+
 		-(void) open:(NSString*)sUrl atPosX:(int)x atPosY:(int)y withW:(int)w withH:(int)h{
 
 			NSLog(@"open %@",sUrl);
-
+						
 			//
 				NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:sUrl]];
 			
@@ -41,6 +48,14 @@
 				if( webView == nil )
 					webView	= [[UIWebView alloc]init]; 
 					webView.frame = CGRectMake( x , y , w , h ); 
+				
+				//
+					for (id subview in webView.subviews){
+  						if ([[subview class] isSubclassOfClass: [UIScrollView class]]){
+    						((UIScrollView *)subview).bounces = NO;
+    					}
+    				}
+
 					//webView.scrollView.decelerationRate = UIScrollViewDecelerationRateNormal;
 
 			//
@@ -54,10 +69,13 @@
 		-(void) close{
 			NSLog(@"close");
 			[webView loadHTMLString: @"" baseURL: nil];
+			NSLog(@"loadHTMLString");
 			[webView removeFromSuperview];
+			NSLog(@"removeFromSuperview");
       	 	[webView dealloc];
-      	 	webView = NULL;
-		}
+			NSLog(@"dealloc");
+			webView = NULL;
+      	}
 
 	@end
 
@@ -78,6 +96,20 @@ namespace hyperfiction {
 		//
 			[instance open:sPageURL atPosX:iPosX atPosY:iPosY withW:iWidth withH:iHeight];
 		
+	}
+
+	void  open_local_webview( const char *sUrl , int iPosX , int iPosY , int iWidth , int iHeight ){
+
+		//
+			if( instance == nil )
+				instance = [[BrowserController alloc] init];
+		
+		//
+			NSString *nsURL = [[NSString alloc] initWithUTF8String:sUrl];
+			//NSString *nsEXT = [[NSString alloc] initWithUTF8String:sExtension];
+
+		//
+			[instance open_local_file:nsURL atPosX:iPosX atPosY:iPosY withW:iWidth withH:iHeight];
 	}
 
 	void close_webview( ){

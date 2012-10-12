@@ -50,7 +50,7 @@
   <set name="IOS_ARCH" value="-v7" if="HXCPP_ARMV7" />
   <set name="name_extra" value=".iphoneos${IOS_ARCH}" if="iphoneos"/>
 
-  <target id="NDLL" output="${name_prefix}HypWebView${name_extra}" tool="linker" toolid="${ndll-tool}">
+  <target id="NDLL" output="${name_prefix}hypwebview${name_extra}" tool="linker" toolid="${ndll-tool}">
       <outdir name="../ndll/${BINDIR}" />
       <ext value=".ndll" unless="mobile"/>
       <files id="common"/>

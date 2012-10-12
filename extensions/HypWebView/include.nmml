@@ -2,7 +2,7 @@
 <project>
 	
 	<!-- misc --> 
-		<ndll name="HypWebView" />
+		<ndll name="hypwebview" if="ios"/>
 		<classpath name="." />
 
 	<!-- Android -->

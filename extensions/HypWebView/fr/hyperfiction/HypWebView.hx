@@ -21,14 +21,14 @@ class HypWebView{
 	#if android
 		static private var _func_open	: Dynamic;
 		static private var _func_close	: Dynamic;
-		static private var _instance	: Dynamic;
 
-		private static inline var ANDROID_CLASS : String = 'fr.hyperfiction.HypWebView';
+		private static inline var ANDROID_CLASS : String = 'fr/hyperfiction/HypWebView';
 	#end
 
 	#if iphone
-		private static var hyp_webview_open		= Lib.load( "HypWebView" , "HypWebView_open" , 5 );
-		private static var hyp_webview_close	= Lib.load( "HypWebView" , "HypWebView_close" , 0 );
+		private static var hyp_webview_open			= Lib.load( "hypwebview" , "hypwebview_open" 	, 5 );
+		private static var hyp_webview_open_local	= Lib.load( "hypwebview" , "hypwebview_loc" 	, 5 );
+		private static var hyp_webview_close		= Lib.load( "hypwebview" , "hypwebview_close" 	, 0 );
 	#end
 
 	// -------o constructor
@@ -51,10 +51,49 @@ class HypWebView{
 		* @public
 		* @return	void
 		*/
-		static public function open( sUrl : String , iPosX : Int , iPosY : Int , iWidth : Int , iHeight : Int ) : Void {
+		static public function open( 
+										sUrl	: String , 
+										iPosX	: Int , 
+										iPosY	: Int , 
+										iWidth	: Int , 
+										iHeight	: Int 
+									) : Void {
+
+
 			trace('open ::: '+sUrl+' - '+iPosX+' - '+iPosY+' - '+iWidth+' - '+iHeight );
+
+			#if android
 			_open( sUrl , iPosX , iPosY , iWidth , iHeight );
+			#end
+
+			#if iphone
+			_open( sUrl , iPosX , iPosY , iWidth , iHeight );
+			#end
+
 		}
+
+		#if iphone
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		static public function open_local( 
+											sUrl		: String , 
+											sExtension	: String , 
+											iPosX		: Int , 
+											iPosY		: Int , 
+											iWidth		: Int , 
+											iHeight		: Int 
+										):Void{
+			trace('open_local ::: '+sUrl+' - '+sExtension+' - '+iPosX+' - '+iPosY+' - '+iWidth+' - '+iHeight );
+			
+			#if iphone
+			hyp_webview_open_local( sUrl , iPosX , iPosY , iWidth , iHeight );
+			#end
+		}
+		#end
 
 		/**
 		* 
@@ -63,7 +102,15 @@ class HypWebView{
 		* @return	void
 		*/
 		static public function close( ) : Void {
+			
+			#if android
 			_close( );		
+			#end
+
+			#if iphone
+			_close( );		
+			#end
+
 		}
 
 	// -------o protected
@@ -77,6 +124,7 @@ class HypWebView{
 		* @return	void
 		*/
 		static private function _open( sUrl : String , iPosX : Int , iPosY : Int , iWidth : Int , iHeight : Int ) : Void{
+			trace('_open ::: '+Std.format( 'url  : $sUrl x : $iPosX y : $iPosY w : $iWidth h : $iHeight' ) );
 			hyp_webview_open( sUrl , iPosX , iPosY , iWidth , iHeight );
 		}
 
@@ -101,11 +149,10 @@ class HypWebView{
 		* @return	void
 		*/
 		static private function _open( sUrl : String , iPosX : Int , iPosY : Int , iWidth : Int , iHeight : Int ) : Void{
-			if( _func_open == null )
-				_func_open = JNI.createMemberMethod( ANDROID_CLASS ,'open', '(Ljava/lang/String;IIII)V');
-				nme.Lib.postUICallback( function( ){
-					_func_open( _get_android_instance( ) , sUrl , iPosX , iPosY , iWidth , iHeight );
-				});
+			_func_open = JNI.createStaticMethod( ANDROID_CLASS ,'open', '(Ljava/lang/String;IIII)V');
+			nme.Lib.postUICallback( function( ){
+				_func_open( sUrl , iPosX , iPosY , iWidth , iHeight );
+			});
 		}
 
 		/**
@@ -115,27 +162,12 @@ class HypWebView{
 		* @return	void
 		*/
 		static private function _close( ) : Void{
-			if( _func_close == null )
-				_func_close = JNI.createMemberMethod( ANDROID_CLASS ,'close', '()V)');
-				nme.Lib.postUICallback( function( ){
-					_func_close( _get_android_instance( ) );
-				});
+			_func_close = JNI.createStaticMethod( ANDROID_CLASS ,'close', '()V)');
+			nme.Lib.postUICallback( function( ){
+				_func_close( );
+			});
 		}
 
-		/**
-		* 
-		* 
-		* @private
-		* @return	void
-		*/
-		static private function _get_android_instance( ) : Dynamic{
-
-			if( _instance == null ){
-				var method = JNI.createStaticMethod( ANDROID_CLASS ,'getInstance', '()Lfr/hyperfiction/HypWebView;');
-				_instance = method( );
-			}
-			return _instance;
-		}
 
 		#end
 
