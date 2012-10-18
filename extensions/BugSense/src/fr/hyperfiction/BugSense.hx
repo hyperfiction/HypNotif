@@ -7,12 +7,12 @@ import nme.JNI;
  * @author shoe[box]
  */
 
-class Acra{
+class BugSense{
 
 	#if android
-	static private var _acra_func_run : Dynamic;
+	static private var _bs_func_run : Dynamic;
 
-	private static inline var ANDROID_CLASS : String = 'fr.hyperfiction.HypAcra';
+	private static inline var ANDROID_CLASS : String = 'fr.hyperfiction.BugSense';
 	#end
 
 	// -------o constructor
@@ -36,9 +36,9 @@ class Acra{
 		* @return	void
 		*/
 		static public function run( sCode : String ) : Void {
-			if( _acra_func_run == null )
-				_acra_func_run = JNI.createStaticMethod( ANDROID_CLASS , 'run_acra' , '(Ljava/lang/String;)V' );
-				_acra_func_run( sCode );		
+			if( _bs_func_run == null )
+				_bs_func_run = JNI.createStaticMethod( ANDROID_CLASS , 'run' , '(Ljava/lang/String;)V' );
+				_bs_func_run( sCode );		
 		}		
 
 	// -------o protected

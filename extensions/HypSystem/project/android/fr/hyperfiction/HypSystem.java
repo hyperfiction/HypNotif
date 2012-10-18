@@ -1,8 +1,11 @@
 package fr.hyperfiction;
 
+import android.os.Build;
+import android.os.Build.VERSION_CODES;
 import android.content.Context;
-import android.util.Log;
 import android.net.ConnectivityManager;
+import android.util.Log;
+import android.view.View;
 import org.haxe.nme.GameActivity;
 
 /**
@@ -52,6 +55,7 @@ class HypSystem{
 		    return res;
 
 		}
+
 
 	// -------o protected
 	

@@ -14,7 +14,8 @@ import neko.Lib;
 class HypSystem{
 
 	#if android
-	private static var _fisConnectedtoInternet : Dynamic;
+	private static var _fisConnectedtoInternet	: Dynamic;
+	private static var _f_hide_system_bar		: Dynamic;
 
 	private static inline var ANDROID_CLASS : String = 'fr/hyperfiction/HypSystem';
 	#end
