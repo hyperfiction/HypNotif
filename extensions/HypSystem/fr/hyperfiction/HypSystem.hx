@@ -16,6 +16,9 @@ class HypSystem{
 	#if android
 	private static var _fisConnectedtoInternet	: Dynamic;
 	private static var _f_hide_system_bar		: Dynamic;
+	private static var _f_show_loading			: Dynamic;
+	private static var _f_hide_loading			: Dynamic;
+	private static var _f_dismiss_loading		: Dynamic;
 
 	private static inline var ANDROID_CLASS : String = 'fr/hyperfiction/HypSystem';
 	#end
@@ -57,6 +60,45 @@ class HypSystem{
 
 			return true;
 		}	
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		static public function show_loading( ) : Void {
+			trace("show_loading");
+			if( _f_show_loading == null )
+				_f_show_loading = JNI.createStaticMethod( ANDROID_CLASS , 'show_loading' , '()V' );
+				_f_show_loading();
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		static public function hide_loading( ) : Void {
+			trace("hide_loading");
+			if( _f_hide_loading == null )
+				_f_hide_loading = JNI.createStaticMethod( ANDROID_CLASS , 'hide_loading' , '()V' );
+				_f_hide_loading();
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		static public function dismiss_loading( ) : Void {
+			trace("dismiss_loading");
+			if( _f_dismiss_loading == null )
+				_f_dismiss_loading = JNI.createStaticMethod( ANDROID_CLASS , 'dismiss_loading' , '()V' );
+				_f_dismiss_loading();		
+		}
 
 	// -------o protected
 		

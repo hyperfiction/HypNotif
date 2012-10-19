@@ -1,12 +1,21 @@
 package fr.hyperfiction;
 
-import android.os.Build;
-import android.os.Build.VERSION_CODES;
+import	::APP_PACKAGE::.R;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
+import android.os.Build.VERSION_CODES;
+import android.os.Build;
 import android.util.Log;
+import android.app.Dialog;
 import android.view.View;
+import android.view.Window;
+import android.widget.ProgressBar;
 import org.haxe.nme.GameActivity;
+import android.view.ViewGroup.LayoutParams;
+
 
 /**
  * ...
@@ -16,6 +25,8 @@ import org.haxe.nme.GameActivity;
 class HypSystem{
 
 	private static String TAG = "HypSystem";
+
+	private static LoadingDialog dialog_progress;
 
 	// -------o constructor
 		
@@ -56,6 +67,64 @@ class HypSystem{
 
 		}
 
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		static public void show_loading( ){
+			GameActivity.getInstance( ).runOnUiThread(
+				new Runnable(){
+	                @Override
+	                public void run() {
+	                	if( dialog_progress == null )
+	                    	dialog_progress = new LoadingDialog( GameActivity.getContext( ) );
+							dialog_progress.show( );
+	                }                   
+		        }
+            );			
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		static public void hide_loading( ){
+			trace("hide_loading");
+			GameActivity.getInstance( ).runOnUiThread(
+				new Runnable(){
+	                @Override
+	                public void run() {
+	                	if( dialog_progress != null )
+	                    	dialog_progress.hide( );
+	                }                   
+		        }
+            );			
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		static public void dismiss_loading( ){
+			trace("dismiss_loading");
+			GameActivity.getInstance( ).runOnUiThread(
+				new Runnable(){
+	                @Override
+	                public void run() {
+	                	if( dialog_progress != null )
+	                    	dialog_progress.dismiss( );
+	                    	dialog_progress = null;
+	                }                   
+		        }
+            );			
+		}
+
 
 	// -------o protected
 	
@@ -66,4 +135,23 @@ class HypSystem{
 		public static void trace( String s ){
 			Log.i( TAG, s );
 		}
+
+	static class LoadingDialog extends Dialog{
+
+		ProgressBar pb;
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		public LoadingDialog( final Context context ){
+			super( context , R.style.CustomDialogTheme );
+
+			addContentView( pb = new ProgressBar( GameActivity.getContext( ) ) ,  new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+
+			//getWindow().setBackgroundDrawableResource(R.color.bg_tran);
+		}
+	}
 }
