@@ -60,6 +60,8 @@ class HypSystem{
 
 			return true;
 		}	
+		
+		#if android
 
 		/**
 		* 
@@ -99,6 +101,8 @@ class HypSystem{
 				_f_dismiss_loading = JNI.createStaticMethod( ANDROID_CLASS , 'dismiss_loading' , '()V' );
 				_f_dismiss_loading();		
 		}
+
+		#end
 
 	// -------o protected
 		
