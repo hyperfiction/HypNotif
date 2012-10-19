@@ -33,9 +33,17 @@ public class BugSense{
 		* @public
 		* @return	void
 		*/
-		static public void run( String sApiKey ) {
+		static public void run( final String sApiKey ) {
 			Log.i( TAG, "run ::: "+sApiKey );
-			BugSenseHandler.initAndStartSession( GameActivity.getContext( ) , sApiKey );
+			GameActivity.getInstance( ).runOnUiThread(
+				new Runnable(){
+	                @Override
+	                public void run() {
+	                	BugSenseHandler.initAndStartSession( GameActivity.getContext( ) , sApiKey );
+	                }                   
+		        }
+            );			
+			
 		}
 
 	// -------o protected
