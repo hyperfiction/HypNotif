@@ -69,9 +69,12 @@ class HypSystem{
 		*/
 		static public function show_loading( ) : Void {
 			trace("show_loading");
+
+			#if android
 			if( _f_show_loading == null )
 				_f_show_loading = JNI.createStaticMethod( ANDROID_CLASS , 'show_loading' , '()V' );
 				_f_show_loading();
+			#end
 		}
 
 		/**
@@ -82,9 +85,11 @@ class HypSystem{
 		*/
 		static public function hide_loading( ) : Void {
 			trace("hide_loading");
+			#if android
 			if( _f_hide_loading == null )
 				_f_hide_loading = JNI.createStaticMethod( ANDROID_CLASS , 'hide_loading' , '()V' );
 				_f_hide_loading();
+			#end
 		}
 
 		/**
@@ -95,9 +100,11 @@ class HypSystem{
 		*/
 		static public function dismiss_loading( ) : Void {
 			trace("dismiss_loading");
+			#if android
 			if( _f_dismiss_loading == null )
 				_f_dismiss_loading = JNI.createStaticMethod( ANDROID_CLASS , 'dismiss_loading' , '()V' );
 				_f_dismiss_loading();		
+			#end
 		}
 
 	// -------o protected

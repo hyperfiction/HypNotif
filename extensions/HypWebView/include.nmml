@@ -6,6 +6,7 @@
 		<classpath name="." />
 
 	<!-- Android -->
-		<java path="project/android" if="android" />
+		<java path="project/android" />
+		<template path="templates/android/style.xml" rename="res/values/style.xml" if="android"/>
 
 </project>

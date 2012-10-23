@@ -52,7 +52,7 @@ class HypWebView{
 		* @return	void
 		*/
 		static public void open( String sURL , int iPosX , int iPosY , int iWidth , int iHeight ){
-			trace("open");
+			trace("open ::: "+sURL+" || x : "+iPosX+" || y : "+iPosY+" || w : "+iWidth+" || h : "+iHeight);
 			
 			//
 				LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams( iWidth , iHeight );
@@ -64,6 +64,7 @@ class HypWebView{
 				dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 				dialog.getWindow().setLayout( iWidth , iHeight );
 				//dialog.getWindow().setGravity( 0x00000035 );
+				dialog.setContentView(mLinearLayout);
 			
 			//
 				WindowManager.LayoutParams 	WMLP 		= dialog.getWindow().getAttributes();
@@ -84,8 +85,8 @@ class HypWebView{
 							webSettings.setJavaScriptEnabled(true);
 
 			//
-				dialog.getWindow().setAttributes(WMLP);
-				dialog.setContentView(mLinearLayout);
+				dialog.getWindow().setAttributes( WMLP );
+				//dialog.setContentView(mLinearLayout);
 				dialog.show();
 
 		}

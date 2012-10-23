@@ -3,10 +3,14 @@
 	
 	<!-- misc --> 
 		<classpath name="src"/>
-
+		
 	<!-- Android -->
 		<java path="project/android" />
-		<template path="android-jars" rename="libs" if="android"/>
-		
+		<template path="templates/android/bugsense3.0.5.jar" rename="libs/bugsense3.0.5.jar" if="android"/>
+	
+	<!-- ios -->
+		<ndll name="BugSense" if="ios"/>
+		<template path="templates/ios/" rename="BugSense" if="ios"/>
+	
 		
 </project>
