@@ -60,6 +60,8 @@ class HypSystem{
 
 			return true;
 		}	
+		
+		#if android
 
 		/**
 		* 
@@ -106,6 +108,8 @@ class HypSystem{
 				_f_dismiss_loading();		
 			#end
 		}
+
+		#end
 
 	// -------o protected
 		
