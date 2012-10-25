@@ -26,9 +26,9 @@ class HypWebView{
 	#end
 
 	#if iphone
-		private static var hyp_webview_open			= Lib.load( "hypwebview" , "hypwebview_open" 	, 5 );
-		private static var hyp_webview_open_local	= Lib.load( "hypwebview" , "hypwebview_loc" 	, 5 );
-		private static var hyp_webview_close		= Lib.load( "hypwebview" , "hypwebview_close" 	, 0 );
+		private static var hyp_webview_open			= Lib.load( "hypwebview" , "hypwebview_open" 		 , 5 );
+		private static var hyp_webview_open_local	= Lib.load( "hypwebview" , "hypwebview_loc" 		 , 5 );
+		private static var hyp_webview_close		= Lib.load( "hypwebview" , "hypwebview_close" 		 , 0 );
 	#end
 
 	// -------o constructor
@@ -44,7 +44,7 @@ class HypWebView{
 		}
 	
 	// -------o public
-				
+		#if android	
 		/**
 		* 
 		* 
@@ -62,17 +62,26 @@ class HypWebView{
 
 			trace("open ::: "+sUrl+" - "+iPosX+" - "+iPosY+" - "+iWidth+" - "+iHeight );
 
-			#if android
 			_open( sUrl , iPosX , iPosY , iWidth , iHeight );
-			#end
-
-			#if iphone
-			_open( sUrl , iPosX , iPosY , iWidth , iHeight );
-			#end
+			
 
 		}
 
+		#end
+
 		#if iphone
+
+		
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		static public function open( sUrl : String , iMarginL : Int , iMarginT : Int , iMarginR : Int , iMarginB : Int ) : Void {
+			trace(Std.format('open url : $sUrl l : $iMarginL t : $iMarginT , r : $iMarginR , b : $iMarginB'));
+			hyp_webview_open( sUrl , iMarginL , iMarginT , iMarginR , iMarginB );
+		}
 		/**
 		* 
 		* 
@@ -82,16 +91,15 @@ class HypWebView{
 		static public function open_local( 
 											sUrl		: String , 
 											sExtension	: String , 
-											iPosX		: Int , 
-											iPosY		: Int , 
-											iWidth		: Int , 
-											iHeight		: Int 
+											iMarginL	: Int , 
+											iMarginT	: Int , 
+											iMarginR	: Int , 
+											iMarginB	: Int
 										):Void{
-			trace('open_local ::: '+sUrl+' - '+sExtension+' - '+iPosX+' - '+iPosY+' - '+iWidth+' - '+iHeight );
 			
-			#if iphone
-			hyp_webview_open_local( sUrl , iPosX , iPosY , iWidth , iHeight );
-			#end
+			trace(Std.format('open_local url : $sUrl l : $iMarginL t : $iMarginT , r : $iMarginR , b : $iMarginB'));
+			hyp_webview_open_local( sUrl , iMarginL , iMarginT , iMarginR , iMarginB );
+		
 		}
 		#end
 

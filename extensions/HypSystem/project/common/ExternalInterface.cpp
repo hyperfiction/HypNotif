@@ -19,9 +19,23 @@ extern "C"{
 #ifdef IPHONE
 
 	static value HypSystem_isConnectedtoInternet( value sUrl ){
-		isConnectedtoInternet( val_string( sUrl ));
-		return alloc_null( );
+		return alloc_bool( isConnectedtoInternet( val_string( sUrl ) ));
 	}
 	DEFINE_PRIM( HypSystem_isConnectedtoInternet , 1 );
+
+	static value HypSystem_is_iphone( ){
+		return alloc_bool( isiPhone( ) );
+	}
+	DEFINE_PRIM( HypSystem_is_iphone , 0 );
+
+	static value HypSystem_screen_width( ){
+		return alloc_int( get_screen_width( ) );
+	}
+	DEFINE_PRIM( HypSystem_screen_width , 0 );
+
+	static value HypSystem_screen_height( ){
+		return alloc_int( get_screen_height( ) );
+	}
+	DEFINE_PRIM( HypSystem_screen_height , 0 );
 
 #endif

@@ -35,4 +35,22 @@ namespace hyperfiction{
 
 	}
 
+	bool isiPhone( ){
+		return (UI_USER_INTERFACE_IDIOM()==UIUserInterfaceIdiomPhone);
+	}
+
+	int get_screen_width( ){
+		UIScreen *MainScreen = [UIScreen mainScreen];
+		UIScreenMode *ScreenMode = [MainScreen currentMode];
+		CGSize Size = [ScreenMode size]; // <--- Real screen size
+		return Size.width;
+	}
+
+	int get_screen_height( ){
+		UIScreen *MainScreen = [UIScreen mainScreen];
+		UIScreenMode *ScreenMode = [MainScreen currentMode];
+		CGSize Size = [ScreenMode size]; // <--- Real screen size
+		return Size.height;
+	}
+
 }

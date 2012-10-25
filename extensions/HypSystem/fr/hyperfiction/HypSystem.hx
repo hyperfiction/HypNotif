@@ -19,13 +19,17 @@ class HypSystem{
 	private static var _f_show_loading			: Dynamic;
 	private static var _f_hide_loading			: Dynamic;
 	private static var _f_dismiss_loading		: Dynamic;
+	private static var _f_is_iphone				: Dynamic;
 
 	private static inline var ANDROID_CLASS : String = 'fr/hyperfiction/HypSystem';
 	#end
 
 
 	#if iphone
-	private static var isconnected	= Lib.load( "HypSystem" , "HypSystem_isConnectedtoInternet" , 1 );
+	private static var isconnected			= Lib.load( "HypSystem" , "HypSystem_isConnectedtoInternet" , 1 );
+	private static var isiphone				= Lib.load( "HypSystem" , "HypSystem_is_iphone" , 0 );
+	private static var hyp_webview_screen_w	= Lib.load( "HypSystem" , "HypSystem_screen_width"  , 0 );
+	private static var hyp_webview_screen_h	= Lib.load( "HypSystem" , "HypSystem_screen_height" , 0 );
 	#end
 
 	// -------o constructor
@@ -61,6 +65,40 @@ class HypSystem{
 			return true;
 		}	
 		
+		#if iphone
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		static public function isiPhone( ) : Bool {
+			return isiphone( );	
+		}
+		#end
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		static public function get_screen_width( ) : Int {
+			return hyp_webview_screen_w( );
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		static public function get_screen_height( ) : Int {
+			return hyp_webview_screen_h( );
+		}
+
+
 		#if android
 
 		/**

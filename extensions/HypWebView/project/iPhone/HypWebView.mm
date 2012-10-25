@@ -9,7 +9,8 @@
 
 	@property(nonatomic,retain)IBOutlet UIWebView *webView;
 
-	-(void) open:(NSString*)sUrl atPosX:(int)x atPosY:(int)y withW:(int)w withH:(int)h;
+	-(void) open_local_file:(NSString*)sUrl marginL:(int)ml marginT:(int)mt marginR:(int)mr marginB:(int)mb;
+	-(void) open:(NSString*)sUrl marginL:(int)ml marginT:(int)mt marginR:(int)mr marginB:(int)mb;
 	-(void) close;
 
 	@end
@@ -30,35 +31,36 @@
 			[ super dealloc ];
 		}
 
-		-(void) open_local_file:(NSString*)sPath atPosX:(int)x atPosY:(int)y withW:(int)w withH:(int)h{
-			NSString *sResolvedPath = [[NSBundle mainBundle] pathForResource:sPath ofType:@"html"];
+		-(void) open_local_file:(NSString*)sUrl marginL:(int)ml marginT:(int)mt marginR:(int)mr marginB:(int)mb{
+			NSString *sResolvedPath = [[NSBundle mainBundle] pathForResource:sUrl ofType:@"html"];
 			NSLog(@"open_local_file %@",sResolvedPath);
 			//open( sResolvedPath , x , y , w , h );
-			[self open:sResolvedPath atPosX:x atPosY:y withW:w withH:h];
+			[self open:sResolvedPath marginL:ml marginT:mt marginR:mr marginB:mb];
 		}
 
-		-(void) open:(NSString*)sUrl atPosX:(int)x atPosY:(int)y withW:(int)w withH:(int)h{
+		-(void) open:(NSString*)sUrl marginL:(int)ml marginT:(int)mt marginR:(int)mr marginB:(int)mb{
 
 			NSLog(@"open %@",sUrl);
-						
+
 			//
 				NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:sUrl]];
 			
 			//
 				if( webView == nil )
-					webView	= [[UIWebView alloc]init]; 
-					webView.frame = CGRectMake( x , y , w , h ); 
-				
-				//
-					for (id subview in webView.subviews){
-  						if ([[subview class] isSubclassOfClass: [UIScrollView class]]){
-    						((UIScrollView *)subview).bounces = NO;
-    					}
-    				}
-
-					//webView.scrollView.decelerationRate = UIScrollViewDecelerationRateNormal;
-
-			//
+					webView	= [[UIWebView alloc] init];//WithFrame:CGRectMake(ml,mt,[[UIScreen mainScreen] bounds].size.width -mr, [[UIScreen mainScreen] bounds].size.height)-mb];
+					webView.frame = CGRectMake( 
+												ml , 
+												mt , 
+												[[UIScreen mainScreen] bounds].size.width - ml - mr,
+												[[UIScreen mainScreen] bounds].size.height - mt - mb
+											);
+				for (id subview in webView.subviews){
+ 					if ([[subview class] isSubclassOfClass: [UIScrollView class]]){
+   						((UIScrollView *)subview).bounces = NO;
+   					}
+   				}
+   				
+			//	
 				[webView loadRequest:request];
 
 			//
@@ -84,7 +86,7 @@ namespace hyperfiction {
 
 	static BrowserController *instance;
 
-	void open_webview( const char *sUrl , int iPosX , int iPosY , int iWidth , int iHeight ){
+	void open_webview( const char *sUrl , int ml , int mt , int mr , int mb ){
 		
 		//
 			if( instance == nil )
@@ -94,11 +96,11 @@ namespace hyperfiction {
 			NSString *sPageURL = [[NSString alloc] initWithUTF8String:sUrl];
 
 		//
-			[instance open:sPageURL atPosX:iPosX atPosY:iPosY withW:iWidth withH:iHeight];
-		
+			//[instance open:sPageURL marginL:marginL marginT:marginT withW:marginR withH:marginB];
+			[instance open:sPageURL marginL:ml marginT:mt marginR:mr marginB:mb];
 	}
 
-	void  open_local_webview( const char *sUrl , int iPosX , int iPosY , int iWidth , int iHeight ){
+	void  open_local_webview( const char *sUrl , int ml , int mt , int mr , int mb ){
 
 		//
 			if( instance == nil )
@@ -109,7 +111,9 @@ namespace hyperfiction {
 			//NSString *nsEXT = [[NSString alloc] initWithUTF8String:sExtension];
 
 		//
-			[instance open_local_file:nsURL atPosX:iPosX atPosY:iPosY withW:iWidth withH:iHeight];
+			//[instance open_local_file:nsURL marginL:marginL marginT:marginT withW:marginR withH:marginB];*
+			[instance open_local_file:nsURL marginL:ml marginT:mt marginR:mr marginB:mb];
+			//[instance open:sPageURL marginL:ml marginT:mt marginR:mr marginB:mb];
 	}
 
 	void close_webview( ){

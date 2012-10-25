@@ -39,11 +39,13 @@ class TestWebView extends Sprite{
 		* @return	void
 		*/
 		private function _run( ) : Void{
-			trace('run ::: '+HypSystem.isConnected( ));
+			trace('run');
+			Lib.current.stage.scaleMode = nme.display.StageScaleMode.NO_SCALE;
+			Lib.current.stage.align     = nme.display.StageAlign.TOP_LEFT;
 			#if mobile
 			#if !flash
             nme.display.Stage.shouldRotateInterface = function( inOrientation : Int ) : Bool{
-                return ( inOrientation == nme.display.Stage.OrientationPortrait );
+                return true;//( inOrientation == nme.display.Stage.OrientationPortrait );
             };
             #end
         	#end
@@ -51,7 +53,7 @@ class TestWebView extends Sprite{
         	//Lib.current.stage.addEventListener( nme.events.Event.ENTER_FRAME , _onFrame , false);
 			Lib.current.stage.addEventListener( KeyboardEvent.KEY_DOWN , _onKey , false );
 
-			HypWebView.open('http://www.hyperfiction.fr/arkeon/rules' , 10 , 10 , Lib.current.stage.stageWidth - 20 , Lib.current.stage.stageHeight - 120 );
+			HypWebView.open('http://www.hyperfiction.fr/arkeon/rules' , 10 , 10 , 10 , 100 );
 		
 			
 		}

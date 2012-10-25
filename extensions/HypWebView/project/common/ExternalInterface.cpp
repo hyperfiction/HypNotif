@@ -18,25 +18,25 @@ extern "C"{
 }
 #ifdef IPHONE
 
-	static value hypwebview_open( value sUrl , value iPosX , value iPosY , value iWidth , value iHeight ){
+	static value hypwebview_open( value sUrl , value ml , value mt , value mr , value mb ){
 		open_webview( 
 						val_string( sUrl ) ,
-						val_int( iPosX ),
-						val_int( iPosY ),
-						val_int( iWidth ),
-						val_int( iHeight )
+						val_int( ml ),
+						val_int( mt ),
+						val_int( mr ),
+						val_int( mb )
 					);
 		return alloc_null( );
 	}
 	DEFINE_PRIM( hypwebview_open , 5 );
 
-	static value hypwebview_loc( value sUrl , value iPosX , value iPosY , value iWidth , value iHeight ){
+	static value hypwebview_loc( value sUrl , value ml , value mt , value mr , value mb ){
 		open_local_webview( 
 						val_string( sUrl ) ,
-						val_int( iPosX ),
-						val_int( iPosY ),
-						val_int( iWidth ),
-						val_int( iHeight )
+						val_int( ml ),
+						val_int( mt ),
+						val_int( mr ),
+						val_int( mb )
 					);
 		return alloc_null( );
 	}
