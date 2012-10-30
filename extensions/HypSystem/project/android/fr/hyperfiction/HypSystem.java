@@ -1,20 +1,26 @@
 package fr.hyperfiction;
 
 import	::APP_PACKAGE::.R;
+
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.os.Build.VERSION_CODES;
 import android.os.Build;
 import android.util.Log;
-import android.app.Dialog;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.widget.ProgressBar;
+
+import java.util.Locale;
+
 import org.haxe.nme.GameActivity;
-import android.view.ViewGroup.LayoutParams;
 
 
 /**
@@ -123,6 +129,36 @@ class HypSystem{
 	                }                   
 		        }
             );			
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		static public void show_error_dialog( String error_msg ){
+			trace("show_error_dialog ::: "+error_msg);
+			AlertDialog.Builder builder = new AlertDialog.Builder( GameActivity.getContext( ) );  
+           						builder.setMessage( error_msg );  
+           						builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {  
+                @Override  
+                public void onClick(DialogInterface dialog, int which) {  
+                     dialog.cancel();  
+                }  
+           });  
+           AlertDialog 	alert = builder.create();  
+          				alert.show();  
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		static public String get_system_language( ){
+			return Locale.getDefault().getLanguage();
 		}
 
 

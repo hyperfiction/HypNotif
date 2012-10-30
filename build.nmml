@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
 	
-	<app title="HyperTest(s)" file="hypertest" main="TestWebView" package="fr.hyperfiction.Tests" version="1.0.0" company="Hyperfiction" debug="true"/>
+	<app title="HyperTest(s)" file="hypertest" main="TestLicensing" package="fr.hyperfiction.Tests" version="1.0.0" company="Hyperfiction" debug="true"/>
 	
 	<window width="1024" height="768" fps="60" orientation="portrait" resizable="true" if="target_flash" background="0xff6600"/>
 	<window width="1024" height="768" fps="60" orientation="portrait" resizable="true" unless="target_flash" background="0xff6600"/>
@@ -28,10 +28,10 @@
 	<!--
 	<include path="extensions/fb/" />
 	<include path="extensions/hypertouch" if="mobile"/>
-	-->
 
 	<include path="extensions/HypWebView" />
-	<include path="extensions/HypSystem" />
+	-->
+	
 		
 	<!--
 	<set name="SHOW_CONSOLE" value="1" if="cpp"/>
@@ -41,6 +41,6 @@
   	<icon name="Assets/hypicon.svg" />
 
   	<section if="android">
-	
+		<include path="extensions/HypLicensing" />
 	</section>
 </project>

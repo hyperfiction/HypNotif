@@ -14,12 +14,13 @@ import neko.Lib;
 class HypSystem{
 
 	#if android
-	private static var _fisConnectedtoInternet	: Dynamic;
-	private static var _f_hide_system_bar		: Dynamic;
-	private static var _f_show_loading			: Dynamic;
-	private static var _f_hide_loading			: Dynamic;
 	private static var _f_dismiss_loading		: Dynamic;
+	private static var _f_hide_loading			: Dynamic;
+	private static var _f_hide_system_bar		: Dynamic;
 	private static var _f_is_iphone				: Dynamic;
+	private static var _f_show_dialog			: Dynamic;
+	private static var _f_show_loading			: Dynamic;
+	private static var _fisConnectedtoInternet	: Dynamic;
 
 	private static inline var ANDROID_CLASS : String = 'fr/hyperfiction/HypSystem';
 	#end
@@ -64,6 +65,34 @@ class HypSystem{
 
 			return true;
 		}	
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		static public function show_error_dialog( sText : String ) : Void {
+			#if android
+			_show_error_dialog( sText );
+			#end		
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		static public function get_system_language( ) : String {
+
+			#if android
+			return _get_system_language( );
+			#else
+			return 'frak';
+			#end
+
+		}
 		
 		#if iphone
 
@@ -76,7 +105,7 @@ class HypSystem{
 		static public function isiPhone( ) : Bool {
 			return isiphone( );	
 		}
-		#end
+		
 
 		/**
 		* 
@@ -98,6 +127,7 @@ class HypSystem{
 			return hyp_webview_screen_h( );
 		}
 
+		#end
 
 		#if android
 
@@ -147,6 +177,21 @@ class HypSystem{
 			#end
 		}
 
+		/**
+		* 
+		* 
+		* @private
+		* @return	void
+		*/
+		static private function _show_error_dialog( sText : String ) : Void{
+			trace('_show_error_dialog ::: '+sText);
+			#if android
+			if( _f_show_dialog == null )
+				_f_show_dialog = JNI.createStaticMethod( ANDROID_CLASS , 'show_error_dialog' , '(Ljava/lang/String;)V' );
+				_f_show_dialog( sText );		
+			#end
+		}
+
 		#end
 
 	// -------o protected
@@ -165,6 +210,16 @@ class HypSystem{
 				_fisConnectedtoInternet = JNI.createStaticMethod( ANDROID_CLASS , 'isConnectedtoInternet' , '()Z' );
 
 			return _fisConnectedtoInternet();
+		}
+
+		/**
+		* 
+		* 
+		* @private
+		* @return	void
+		*/
+		static private function _get_system_language( ) : String{
+			return JNI.createStaticMethod( ANDROID_CLASS , 'get_system_language' , '()Ljava/lang/String;' )();
 		}
 
 		#end

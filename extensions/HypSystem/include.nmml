@@ -11,3 +11,20 @@
 		<dependency name="SystemConfiguration.framework" if="ios" />		
 
 </project>
+
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	
+	<!-- misc --> 
+		<classpath name="src"/>
+		
+	<!-- Android -->
+		<java path="project/android" />
+		<template path="templates/android/bugsense3.0.5.jar" rename="libs/bugsense3.0.5.jar" if="android"/>
+	
+	<!-- ios -->
+		<ndll name="BugSense" if="ios"/>
+		<template path="templates/ios/" rename="BugSense" if="ios"/>
+	
+		
+</project>
