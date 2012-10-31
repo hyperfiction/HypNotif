@@ -31,6 +31,7 @@ class HypSystem{
 	private static var isiphone				= Lib.load( "HypSystem" , "HypSystem_is_iphone" , 0 );
 	private static var hyp_webview_screen_w	= Lib.load( "HypSystem" , "HypSystem_screen_width"  , 0 );
 	private static var hyp_webview_screen_h	= Lib.load( "HypSystem" , "HypSystem_screen_height" , 0 );
+	private static var hyp_system_lang		= Lib.load( "HypSystem" , "HypSystem_get_system_lang" , 0 );
 	#end
 
 	// -------o constructor
@@ -86,11 +87,16 @@ class HypSystem{
 		*/
 		static public function get_system_language( ) : String {
 
+			var s = 'unknow';
 			#if android
-			return _get_system_language( );
-			#else
-			return 'frak';
+			s = _get_system_language( );
 			#end
+
+			#if iphone
+			s = hyp_system_lang( );			
+			#end
+
+			return s;
 
 		}
 		

@@ -53,4 +53,8 @@ namespace hyperfiction{
 		return Size.height;
 	}
 
+	const char* get_system_lang( ){
+		return [[[NSLocale preferredLanguages] objectAtIndex:0] UTF8String];
+	}
+
 }

@@ -8,6 +8,7 @@ namespace hyperfiction{
 	bool isiPhone( );
 	int get_screen_height( );
 	int get_screen_width( );
+	const char* get_system_lang( );
 }
 
 #endif

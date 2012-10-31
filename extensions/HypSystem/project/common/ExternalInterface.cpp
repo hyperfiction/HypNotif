@@ -38,4 +38,9 @@ extern "C"{
 	}
 	DEFINE_PRIM( HypSystem_screen_height , 0 );
 
+	static value HypSystem_get_system_lang( ){
+		return alloc_string( get_system_lang( ) );
+	}
+	DEFINE_PRIM( HypSystem_get_system_lang , 0 );
+
 #endif
