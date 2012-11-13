@@ -17,7 +17,7 @@ class BugSense{
 	#if android
 	static private var _bs_func_run : Dynamic;
 
-	private static inline var ANDROID_CLASS : String = 'fr.hyperfiction.BugSense';
+	private static inline var ANDROID_CLASS : String = 'fr/hyperfiction/BugSense';
 	#end
 
 	#if iphone

@@ -12,6 +12,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.os.Build.VERSION_CODES;
 import android.os.Build;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -33,6 +34,8 @@ class HypSystem{
 	private static String TAG = "HypSystem";
 
 	private static LoadingDialog dialog_progress;
+
+	public static final int TABLET_MIN_DP_WEIGHT = 450;
 
 	// -------o constructor
 		
@@ -71,6 +74,74 @@ class HypSystem{
 		    trace("isConnectedtoInternet ::: "+res);
 		    return res;
 
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		static public boolean is_a_phone( ){
+			
+		    DisplayMetrics metrics = new DisplayMetrics();
+		    GameActivity.getInstance( ).getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+		    int dpi = 0;
+		    if (metrics.widthPixels < metrics.heightPixels){
+		        dpi = (int) (metrics.widthPixels / metrics.density);
+		    }else{
+		        dpi = (int) (metrics.heightPixels / metrics.density);
+		    }
+
+		   return dpi < TABLET_MIN_DP_WEIGHT;
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		static public String get_screen_bucket( ){
+			DisplayMetrics dm = new DisplayMetrics();
+			GameActivity.getInstance( ).getWindowManager().getDefaultDisplay().getMetrics(dm);	
+			trace("bucket : "+dm.densityDpi);
+
+			String sRes = "mdpi";
+
+			switch( dm.densityDpi ){
+
+				case DisplayMetrics.DENSITY_LOW :
+					sRes = "ldpi";
+					break;
+
+				/*
+				case DisplayMetrics.DENSITY_DEFAULT:
+					sRes = "mdpi";
+					break;
+				*/
+
+				case DisplayMetrics.DENSITY_MEDIUM:
+					sRes = "mdpi";
+					break;
+
+				case DisplayMetrics.DENSITY_HIGH:
+					sRes = "hdpi";
+					break;
+
+				case DisplayMetrics.DENSITY_XHIGH :
+					sRes = "xhdpi";
+					break;
+
+				/*
+				case DisplayMetrics.DENSITY_XXHIGH :
+					sRes = "xxhdpi";
+					break;
+				*/
+			}
+
+			return sRes;	
 		}
 
 		/**

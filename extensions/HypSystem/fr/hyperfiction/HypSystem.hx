@@ -21,6 +21,7 @@ class HypSystem{
 	private static var _f_show_dialog			: Dynamic;
 	private static var _f_show_loading			: Dynamic;
 	private static var _fisConnectedtoInternet	: Dynamic;
+	private static var _f_screen_bucket	: Dynamic;
 
 	private static inline var ANDROID_CLASS : String = 'fr/hyperfiction/HypSystem';
 	#end
@@ -100,7 +101,7 @@ class HypSystem{
 
 		}
 		
-		#if iphone
+		
 
 		/**
 		* 
@@ -108,10 +109,17 @@ class HypSystem{
 		* @public
 		* @return	void
 		*/
-		static public function isiPhone( ) : Bool {
+		static public function isSmartPhone( ) : Bool {
+			#if iphone
 			return isiphone( );	
+			#end
+
+			#if android
+			return JNI.createStaticMethod( ANDROID_CLASS , 'is_a_phone' , '()Z' )( );
+			#end
 		}
 		
+		#if iphone
 
 		/**
 		* 
@@ -136,6 +144,18 @@ class HypSystem{
 		#end
 
 		#if android
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		static public function get_screen_bucket( ) : String {
+			if( _f_screen_bucket == null )
+				_f_screen_bucket = JNI.createStaticMethod( ANDROID_CLASS , 'get_screen_bucket' , '()Ljava/lang/String;' );
+			return _f_screen_bucket( );	
+		}
 
 		/**
 		* 
