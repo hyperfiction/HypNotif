@@ -3,6 +3,7 @@
 	
 	<!-- misc --> 
 		<ndll name="HypSystem" if="ios"/>
+		<ndll name="HypSystem" if="blackberry"/>
 		<classpath name="." />
 
 	<!-- Android -->

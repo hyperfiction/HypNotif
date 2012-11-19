@@ -16,8 +16,25 @@ extern "C"{
 		return 0;
 	}
 }
-#ifdef IPHONE
 
+#ifdef BLACKBERRY
+	static void HypSystem_show_loading( ){
+		show_loading( );
+	}
+	DEFINE_PRIM( HypSystem_show_loading , 0 );
+
+	static void HypSystem_hide_loading( ){
+		hide_loading( );
+	}
+	DEFINE_PRIM( HypSystem_hide_loading , 0 );
+
+	static value HypSystem_get_system_lang( ){
+		return alloc_string( get_system_lang( ) );
+	}
+	DEFINE_PRIM( HypSystem_get_system_lang , 0 );
+#endif
+
+#ifdef IPHONE
 	static value HypSystem_isConnectedtoInternet( value sUrl ){
 		return alloc_bool( isConnectedtoInternet( val_string( sUrl ) ));
 	}
