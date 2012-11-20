@@ -32,6 +32,11 @@ extern "C"{
 		return alloc_string( get_system_lang( ) );
 	}
 	DEFINE_PRIM( HypSystem_get_system_lang , 0 );
+
+	static value HypSystem_launch_browser( value sUrl ){
+		return alloc_bool( LaunchBrowser( val_string( sUrl ) ) );
+	}
+	DEFINE_PRIM( HypSystem_launch_browser , 1 );
 #endif
 
 #ifdef IPHONE

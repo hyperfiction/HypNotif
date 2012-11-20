@@ -2,6 +2,7 @@
 #include <bps/bps.h>
 #include <bps/dialog.h>
 #include <bps/locale.h>
+#include <bps/navigator.h>
 #include <stdlib.h>
 
 namespace hyperfiction{
@@ -11,9 +12,11 @@ namespace hyperfiction{
 	const char* get_system_lang( ) {
 		char* country = NULL;
     	char* language = NULL;
+    	
     	locale_get(&language, &country);
 
     	bps_free(country);
+    	bps_free(language);
 
     	return language;
 	}
@@ -51,5 +54,15 @@ namespace hyperfiction{
 			dialog_destroy(loading_dialog);
 			loading_dialog = 0;
 		}
+	}
+
+	bool LaunchBrowser (const char *inUtf8URL) {
+		char* err = NULL;
+		
+		int result = navigator_invoke (inUtf8URL, &err);
+		
+		bps_free (err);
+		
+		return (result == BPS_SUCCESS);
 	}
 }

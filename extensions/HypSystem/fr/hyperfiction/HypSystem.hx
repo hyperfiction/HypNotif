@@ -39,6 +39,7 @@ class HypSystem{
 	private static var hyp_show_loading	= Lib.load( "HypSystem" , "HypSystem_show_loading"  , 0 );
 	private static var hyp_hide_loading	= Lib.load( "HypSystem" , "HypSystem_hide_loading"  , 0 );
 	private static var hyp_system_lang		= Lib.load( "HypSystem" , "HypSystem_get_system_lang" , 0 );
+	private static var hyp_launch_browser	= Lib.load( "HypSystem" , "HypSystem_launch_browser" , 1 );
 	#end
 
 	// -------o constructor
@@ -225,6 +226,12 @@ class HypSystem{
 				_f_dismiss_loading();		
 			#end
 		}
+
+		#if blackberry
+		static public function launch_browser( sUrl : String ) : Void {
+			hyp_launch_browser( sUrl );
+		}
+		#end
 
 		/**
 		* 
