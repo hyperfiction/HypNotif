@@ -36,6 +36,13 @@ class HypSystem{
 	private static var hyp_system_lang		= Lib.load( "HypSystem" , "HypSystem_get_system_lang" , 0 );
 	#end
 
+	#if blackberry
+	private static var hyp_show_loading	= Lib.load( "HypSystem" , "HypSystem_show_loading"  , 0 );
+	private static var hyp_hide_loading	= Lib.load( "HypSystem" , "HypSystem_hide_loading"  , 0 );
+	private static var hyp_system_lang		= Lib.load( "HypSystem" , "HypSystem_get_system_lang" , 0 );
+	private static var hyp_launch_browser	= Lib.load( "HypSystem" , "HypSystem_launch_browser" , 1 );
+	#end
+
 	// -------o constructor
 		
 		/**
@@ -98,6 +105,10 @@ class HypSystem{
 			s = hyp_system_lang( );			
 			#end
 
+			#if blackberry
+			s = hyp_system_lang( );			
+			#end
+
 			return s;
 
 		}
@@ -118,6 +129,8 @@ class HypSystem{
 			#if android
 			return JNI.createStaticMethod( ANDROID_CLASS , 'is_a_phone' , '()Z' )( );
 			#end
+
+			return true;
 		}
 		
 		#if iphone
@@ -158,6 +171,8 @@ class HypSystem{
 			return _f_screen_bucket( );	
 		}
 
+		#end
+
 		/**
 		* 
 		* 
@@ -166,6 +181,10 @@ class HypSystem{
 		*/
 		static public function show_loading( ) : Void {
 			trace("show_loading");
+
+			#if blackberry
+			hyp_show_loading();
+			#end
 
 			#if android
 			if( _f_show_loading == null )
@@ -182,6 +201,11 @@ class HypSystem{
 		*/
 		static public function hide_loading( ) : Void {
 			trace("hide_loading");
+
+			#if blackberry
+			hyp_hide_loading();
+			#end
+
 			#if android
 			if( _f_hide_loading == null )
 				_f_hide_loading = JNI.createStaticMethod( ANDROID_CLASS , 'hide_loading' , '()V' );
@@ -204,6 +228,12 @@ class HypSystem{
 			#end
 		}
 
+		#if blackberry
+		static public function launch_browser( sUrl : String ) : Void {
+			hyp_launch_browser( sUrl );
+		}
+		#end
+
 		/**
 		* 
 		* 
@@ -219,7 +249,6 @@ class HypSystem{
 			#end
 		}
 
-		#end
 
 	// -------o protected
 		

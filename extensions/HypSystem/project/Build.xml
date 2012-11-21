@@ -22,6 +22,7 @@
   <set name="ndll-tool" value="static" if="iphone"/>
   <set name="name_extra" value=".iphoneos${IOS_ARCH}" if="iphoneos"/>
   <set name="name_extra" value=".iphonesim" if="iphonesim"/>
+  <set name="name_extra" value="-x86" if="simulator"/>
 
   <set name="no_thirdparty_extras" value="1" if="iphone"/>
 
@@ -37,6 +38,11 @@
 
   <files id="android">
      
+  </files>
+
+  <files id="blackberry">
+      <compilerflag value="-Iinclude"/>
+      <file name="blackberry/HypSystem.cpp"/>
   </files>
 
   <files id="iphone">
@@ -56,6 +62,7 @@
       <files id="common"/>
       <files id="iphone" if="iphone"/>
       <files id="android" if="android"/>
+      <files id="blackberry" if="blackberry" />
   </target>
 
   <target id="default">
