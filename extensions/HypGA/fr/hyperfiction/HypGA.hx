@@ -27,7 +27,7 @@ class HypGA{
 		private var _func_track_page	: Dynamic;
 		private var _instance			: Dynamic;
 
-		private static inline var ANDROID_CLASS : String = 'fr.hyperfiction.HypGA';
+		private static inline var ANDROID_CLASS : String = 'fr/hyperfiction/HypGA';
 	#end
 
 	#if iphone
@@ -220,10 +220,11 @@ class HypGA{
 		private function _startSession( sUA : String , iPeriod : Int ) : Void{
 			//
 				if( _func_new_session == null )
-					_func_new_session = JNI.createMemberMethod( ANDROID_CLASS , 'startNewSession' , '(Ljava/lang/String;)V' );
+					_func_new_session = JNI.createStaticMethod( ANDROID_CLASS , 'startNewSession' , '(Ljava/lang/String;)V' );
 		
 			//
-				_func_new_session( _get_android_instance( ) , sUA );
+				trace('call _startSession');
+				_func_new_session( sUA );
 
 			//
 				_set_dispatch_period( iPeriod );
@@ -235,10 +236,11 @@ class HypGA{
 		* @public
 		* @return	void
 		*/
-		public function _set_custom_variable( iSlot : Int , sName : String , sValue : String ) : Void {
+		private function _set_custom_variable( iSlot : Int , sName : String , sValue : String ) : Void {
+			trace('_set_custom_variable::::');
 			if( _func_set_user_var == null )
-				_func_set_user_var = JNI.createMemberMethod( ANDROID_CLASS , 'setCustomVar' , '(ILjava/lang/String;Ljava/lang/String;)V' );
-				_func_set_user_var( _get_android_instance( ) );
+				_func_set_user_var = JNI.createStaticMethod( ANDROID_CLASS , 'setCustomVar' , '(ILjava/lang/String;Ljava/lang/String;)V' );
+				_func_set_user_var( iSlot , sName , sValue );
 		}
 
 		/**
@@ -249,8 +251,8 @@ class HypGA{
 		*/
 		private function _stop_session( ) : Void{
 			if( _func_stop_session == null )
-				_func_stop_session = JNI.createMemberMethod( ANDROID_CLASS , 'stopSession' , '()V' );
-				_func_stop_session( _get_android_instance( ) );
+				_func_stop_session = JNI.createStaticMethod( ANDROID_CLASS , 'stopSession' , '()V' );
+				_func_stop_session( );
 		}
 
 		/**
@@ -261,8 +263,8 @@ class HypGA{
 		*/
 		private function _track_page_view( s_path : String ) : Void{
 			if( _func_track_page == null )
-				_func_track_page = JNI.createMemberMethod( ANDROID_CLASS , 'trackPageView' , '(Ljava/lang/String;)V' );
-				_func_track_page( _get_android_instance( ) , s_path );
+				_func_track_page = JNI.createStaticMethod( ANDROID_CLASS , 'trackPageView' , '(Ljava/lang/String;)V' );
+				_func_track_page( s_path );
 		}
 
 		/**
@@ -274,24 +276,9 @@ class HypGA{
 		private function _track_event( sCat : String , sAction : String , sLabel : String , value : Int ) : Void{
 			trace('_track_event ::: '+sCat+' - '+sAction+' - '+sLabel+' - '+value);
 			if( _func_track_event == null )
-				_func_track_event = JNI.createMemberMethod( ANDROID_CLASS , 'trackEvent' , '(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V' );
-				_func_track_event( _get_android_instance( ) , sCat , sAction , sLabel , value );
+				_func_track_event = JNI.createStaticMethod( ANDROID_CLASS , 'trackEvent' , '(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V' );
+				_func_track_event( sCat , sAction , sLabel , value );
 
-		}
-
-		/**
-		* 
-		* 
-		* @private
-		* @return	void
-		*/
-		private function _get_android_instance( ) : Dynamic{
-
-			if( _instance == null ){
-				var method = JNI.createStaticMethod( ANDROID_CLASS ,'getInstance', '()Lfr/hyperfiction/HypGA;');
-				_instance = method( );
-			}
-			return _instance;
 		}
 
 		/**
@@ -302,8 +289,9 @@ class HypGA{
 		*/
 		private function _set_dispatch_period( i : Int ) : Void{
 			if( _func_set_period == null )
-				_func_set_period = JNI.createMemberMethod( ANDROID_CLASS , 'set_dispatch_period' , '(I)V' );
-				_func_set_period( _get_android_instance( ) , i );
+				_func_set_period = JNI.createStaticMethod( ANDROID_CLASS , 'set_dispatch_period' , '(I)V' );
+			trace('call _func_set_period');
+				_func_set_period( i );
 		}
 
 		#end

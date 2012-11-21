@@ -19,6 +19,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.widget.ProgressBar;
 
+import java.lang.reflect.Method;
 import java.util.Locale;
 
 import org.haxe.nme.GameActivity;
@@ -261,4 +262,5 @@ class HypSystem{
 			//getWindow().setBackgroundDrawableResource(R.color.bg_tran);
 		}
 	}
+
 }

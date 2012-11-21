@@ -22,7 +22,7 @@ class HypWebView{
 		static private var _func_open	: Dynamic;
 		static private var _func_close	: Dynamic;
 
-		private static inline var ANDROID_CLASS : String = 'fr.hyperfiction.HypWebView';
+		private static inline var ANDROID_CLASS : String = 'fr/hyperfiction/HypWebView';
 	#end
 
 	#if iphone

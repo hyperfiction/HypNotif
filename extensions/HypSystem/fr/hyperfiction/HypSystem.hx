@@ -21,7 +21,8 @@ class HypSystem{
 	private static var _f_show_dialog			: Dynamic;
 	private static var _f_show_loading			: Dynamic;
 	private static var _fisConnectedtoInternet	: Dynamic;
-	private static var _f_screen_bucket	: Dynamic;
+	private static var _f_screen_bucket			: Dynamic;
+	private static var _f_lights_out			: Dynamic;
 
 	private static inline var ANDROID_CLASS : String = 'fr/hyperfiction/HypSystem';
 	#end
