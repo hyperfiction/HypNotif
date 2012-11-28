@@ -11,24 +11,37 @@ import android.content.pm.Signature;
 import android.content.pm.Signature;
 import android.os.Bundle;
 import android.util.Log;
+
 import com.facebook.android.*;
+import com.facebook.android.AsyncFacebookRunner;
+import com.facebook.android.AsyncFacebookRunner.RequestListener;
 import com.facebook.android.Facebook.*;
+
 import fr.hyperfiction.Base64;
+
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
 import org.haxe.nme.GameActivity;
 import org.haxe.nme.HaxeObject;
 import org.haxe.nme.NME;
 
 public class HypFacebook implements DialogListener{
 	
-	private Facebook 			_mFacebook;
-	private HaxeObject 			_mCallBack;
-	private SharedPreferences 	_mPrefs;
-	private String[ ] 			_aPerms;
+	static public native void onConnect( );
+	static {
+		System.loadLibrary( "fb" );
+	}
 
-	private static String TAG = "trace";
+	static private Facebook 			_mFacebook;
+	static private HaxeObject 			_mCallBack;
+	static private SharedPreferences 	_mPrefs;
+	static private String[ ] 			_aPerms;
+
+	private static String TAG = "HypFB";
 
 	// -------o constructor
 
@@ -44,7 +57,27 @@ public class HypFacebook implements DialogListener{
 		* @public
 		* @return	void
 		*/
-		public void init( String appId , HaxeObject oCallback , String sPerms ){
+		static public Facebook get_fb_instance( ){
+			return _mFacebook;
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		static public String get_token( ) {
+			return _mFacebook.getAccessToken( );		
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		static public void init( String appId , HaxeObject oCallback , String sPerms ){
 			Log.i( TAG , "Init : "+appId+" callback : "+oCallback );
 			_aPerms		= sPerms.split("|");
 			_mCallBack	= oCallback;
@@ -58,10 +91,35 @@ public class HypFacebook implements DialogListener{
 		* @public
 		* @return	void
 		*/
-		public void connect( ){
+		static public String request( final String graphpath ){
+
+			Log.i( TAG , "request : "+graphpath );
+
+			String res = null;
+			try {
+				res = _mFacebook.request( graphpath );
+				Log.i( TAG , "response : "+res );
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return res;
+			
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		static public void connect( ){
+
+			String sAccess_Token	= _mPrefs.getString( "access_token" , null );
+			long lExpire			= _mPrefs.getLong( "access_expires" , 0 );	
+
 			Log.i( TAG , "connect" );
-			String sAccess_Token = _mPrefs.getString( "access_token" , null );
-			long lExpire         = _mPrefs.getLong( "access_expires" , 0 );	
+			Log.i( TAG , "sAccess_Token 	:::"+sAccess_Token );
+			Log.i( TAG , "lExpire 			:::"+lExpire );
 
         	if( sAccess_Token != null) 
 	            _mFacebook.setAccessToken( sAccess_Token );
@@ -70,10 +128,17 @@ public class HypFacebook implements DialogListener{
 	            _mFacebook.setAccessExpires( lExpire );
 	        
         	Log.i("trace","session valid : "+_mFacebook.isSessionValid());
-			if(!_mFacebook.isSessionValid())
+			if(!_mFacebook.isSessionValid()){
 	         	_createSession( );
-	        else
-	        	_onSessionValid( );
+	        }else{
+	        	Log.i( TAG , "Sessions is valid :::"+sAccess_Token );
+
+	        	SharedPreferences.Editor editor = _mPrefs.edit();
+                    editor.putString("access_token", sAccess_Token );
+                    editor.putLong("access_expires", lExpire );
+                    editor.commit( );
+	        	onConnect( );
+	        }
 		}
 
 		/**
@@ -161,7 +226,9 @@ public class HypFacebook implements DialogListener{
 	                                    editor.putString("access_token", _mFacebook.getAccessToken());
 	                                    editor.putLong("access_expires", _mFacebook.getAccessExpires());
 	                                    editor.commit();     
- 			_mCallBack.call2( "_onCallback" , "ON_LOGIN" , _mFacebook.getAccessToken() );
+ 			//_mCallBack.call2( "_onCallback" , "ON_LOGIN" , _mFacebook.getAccessToken() );
+
+			_on_connected( );
  		}
 
  		/**
@@ -209,13 +276,18 @@ public class HypFacebook implements DialogListener{
 	    * @private
 	    * @return	void
 	    */
-	    private void _createSession( ){
+	   static private void _createSession( ){
 	    	Log.i( TAG ,"_createSession" );
 			_mFacebook.authorize( 
 									GameActivity.getInstance( ) , 
 									_aPerms , 
-									this 
+									getInstance( ) 
 								);
+	    }
+
+	    private void _on_connected( ){
+	    	Log.i( TAG , "_on_connected ::: "+_mFacebook.getAccessToken());
+	    	onConnect( );
 	    }
 
 	    /**
@@ -226,7 +298,8 @@ public class HypFacebook implements DialogListener{
 	    */
 	    private void _onSessionValid( ){
 	    	Log.i( TAG ,"_onSessionValid");
-	    	_mCallBack.call2( "_onCallback" , "ON_LOGIN" , _mFacebook.getAccessToken() );
+	    	//_mCallBack.call2( "_onCallback" , "ON_LOGIN" , _mFacebook.getAccessToken() );
+	    	_on_connected( );
 	    }
 
 	    /**
@@ -247,21 +320,12 @@ public class HypFacebook implements DialogListener{
 	    * @public
 	    * @return	void
 	    */
-	    public static void hypfb_init( String appId , HaxeObject cb , String sPerms ){
-	    	Log.i( TAG , "nme_init appId: "+appId +" and callback object ::: "+cb);
-	    	__instance = new HypFacebook( );
-	    	__instance.init( appId , cb , sPerms );
-	    }
+	    public static HypFacebook getInstance( ){
+	    	
+	    	if( __instance == null )
+	    		__instance = new HypFacebook( );
 
-	     /**
-	    * 
-	    * 
-	    * @public
-	    * @return	void
-	    */
-	    public static void hypfb_connect( ){
-	    	Log.i( TAG , "hypfb_connect" );
-	    	__instance.connect( );
+	    	return __instance;
 	    }
 
 	    /**

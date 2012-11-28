@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
@@ -23,6 +24,7 @@ import java.lang.reflect.Method;
 import java.util.Locale;
 
 import org.haxe.nme.GameActivity;
+import org.haxe.nme.HaxeObject;
 
 
 /**
@@ -211,16 +213,67 @@ class HypSystem{
 		*/
 		static public void show_error_dialog( String error_msg ){
 			trace("show_error_dialog ::: "+error_msg);
-			AlertDialog.Builder builder = new AlertDialog.Builder( GameActivity.getContext( ) );  
+			final AlertDialog.Builder builder = new AlertDialog.Builder( GameActivity.getContext( ) );  
            						builder.setMessage( error_msg );  
-           						builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {  
-                @Override  
-                public void onClick(DialogInterface dialog, int which) {  
-                     dialog.cancel();  
-                }  
-           });  
-           AlertDialog 	alert = builder.create();  
-          				alert.show();  
+           						builder.setNegativeButton("OK", 
+           							new DialogInterface.OnClickListener() {  
+						                @Override  
+						                public void onClick(DialogInterface dialog, int which) {  
+						                     dialog.cancel();  
+						                }  
+						           }
+						        );  
+           GameActivity.getInstance( ).runOnUiThread(
+				new Runnable(){
+	                @Override
+	                public void run() {
+	                	AlertDialog alert = builder.create();  
+          							alert.show();  
+	                }                   
+		        }
+            );			
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		static public void show_custom_dialog( 
+												String error_msg , 
+												String sButtonPos , 
+												String sButtonNeg ,
+												final HaxeObject obj_call_back
+											){
+			trace("show_custom_dialog error_msg : "+error_msg+" | sButtonPos : "+sButtonPos+" | sButtonNeg : "+sButtonNeg);
+			final AlertDialog.Builder 	builder = new AlertDialog.Builder( GameActivity.getContext( ) );
+										builder.setMessage( error_msg );  
+										builder.setPositiveButton( sButtonPos , new DialogInterface.OnClickListener() {
+										           public void onClick(DialogInterface dialog, int id) {
+										           	trace("onclick button pos");
+										              obj_call_back.callD0("pos");
+										           }
+										       }
+										);
+										builder.setNegativeButton( sButtonNeg , new DialogInterface.OnClickListener() {
+										           public void onClick(DialogInterface dialog, int id) {
+										               trace("onclick button neg");
+										               obj_call_back.callD0("neg");
+		           									}
+		       									}
+		       							);
+
+			GameActivity.getInstance( ).runOnUiThread(
+				new Runnable(){
+	                @Override
+	                public void run() {
+	                	AlertDialog alert = builder.create();  
+          							alert.show();  
+	                }                   
+		        }
+            );			
+			
 		}
 
 		/**

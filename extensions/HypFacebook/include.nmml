@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	
+	<ndll name="fb" if="android"/>
+	<ndll name="fb" if="ios"/>
+
+	<classpath name="." />
+
+	<!-- android -->
+		<java path="project/android" if="android"/>
+		<template path="templates/android/res" rename="res" if="android"/>
+		<template path="templates/android/MainActivity.java" rename="MainActivity.java" if="android"/>
+
+</project>

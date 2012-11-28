@@ -19,6 +19,7 @@ class HypSystem{
 	private static var _f_hide_system_bar		: Dynamic;
 	private static var _f_is_iphone				: Dynamic;
 	private static var _f_show_dialog			: Dynamic;
+	private static var _f_show_dialog2			: Dynamic;
 	private static var _f_show_loading			: Dynamic;
 	private static var _fisConnectedtoInternet	: Dynamic;
 	private static var _f_screen_bucket			: Dynamic;
@@ -82,9 +83,17 @@ class HypSystem{
 		* @public
 		* @return	void
 		*/
-		static public function show_error_dialog( sText : String ) : Void {
+		static public function show_error_dialog( 
+													sText : String 
+													#if android, 
+													?sNeg	: String , 
+													?sPos	: String ,
+													?fPos	: Void->Void,
+													?fNeg	: Void->Void
+													#end
+												) : Void {
 			#if android
-			_show_error_dialog( sText );
+			_show_error_dialog( sText , sNeg , sPos , fPos , fNeg );
 			#end		
 		}
 
@@ -240,12 +249,25 @@ class HypSystem{
 		* @private
 		* @return	void
 		*/
-		static private function _show_error_dialog( sText : String ) : Void{
+		static private function _show_error_dialog( 
+														sText	: String , 
+														?sNeg	: String , 
+														?sPos	: String ,
+														?fPos	: Void->Void,
+														?fNeg	: Void->Void
+													) : Void{
 			trace('_show_error_dialog ::: '+sText);
+
 			#if android
-			if( _f_show_dialog == null )
-				_f_show_dialog = JNI.createStaticMethod( ANDROID_CLASS , 'show_error_dialog' , '(Ljava/lang/String;)V' );
-				_f_show_dialog( sText );		
+			if( sNeg == null && sPos == null ){
+				if( _f_show_dialog == null )
+					_f_show_dialog = JNI.createStaticMethod( ANDROID_CLASS , 'show_error_dialog' , '(Ljava/lang/String;)V' );
+					_f_show_dialog( sText );		
+			}else{
+				if( _f_show_dialog2 == null )
+					_f_show_dialog2 = JNI.createStaticMethod( ANDROID_CLASS , 'show_custom_dialog' , '(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lorg/haxe/nme/HaxeObject;)V' );
+					_f_show_dialog2( sText , sNeg , sPos , new PopupCallBack( fPos , fNeg ) );		
+			}
 			#end
 		}
 
@@ -296,3 +318,60 @@ class HypSystem{
 	// -------o misc
 	
 }
+
+#if android
+
+/**
+ * ...
+ * @author shoe[box]
+ */
+
+class PopupCallBack{
+
+	public var fPos : Void->Void;
+	public var fNeg : Void->Void;
+
+	// -------o constructor
+		
+		/**
+		* constructor
+		*
+		* @param	
+		* @return	void
+		*/
+		public function new( fPos : Void->Void , fNeg : Void->Void ) {
+			this.fPos = fPos;
+			this.fNeg = fNeg;
+		}
+	
+	// -------o public
+				
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		public function pos( ) : Void {
+			fPos( );	
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		public function neg( ) : Void {
+			fNeg( );			
+		}
+
+	// -------o protected
+	
+		
+
+	// -------o misc
+	
+}
+
+#end

@@ -1,10 +1,17 @@
 package fr.hyperfiction;
 
+
 #if android
 import nme.JNI;
 #end
 
+#if cpp
+import cpp.Lib;
+#end
+
+import nme.events.EventDispatcher;
 import nme.errors.Error;
+import nme.events.Event;
 import org.shoebox.utils.system.Signal1;
 
 /**
@@ -12,10 +19,10 @@ import org.shoebox.utils.system.Signal1;
  * @author shoe[box]
  */
 
-class Facebook{
+class Facebook extends EventDispatcher{
 
-	public var session_token( default , default ) : String;
-	public var app_id( default , default ) : String;
+	public var session_token	( default , default ) : String;
+	public var app_id			( default , default ) : String;
 
 	public var onConnect : Signal1<String>;
 
@@ -23,20 +30,28 @@ class Facebook{
 	private var _bConnected        : Bool;
 	private var _sFb_session_token : String;
 
+	#if mobile
+	static var hypfb_set_callback = Lib.load( "fb" , "hyp_fb_set_callback" , 1 );
+	#end
+
 	#if iphone
 	static var hyp_fb_init               = nme.Loader.load( "hyp_fb_init" , 1 );
 	static var hypfb_connect             = nme.Loader.load( "hyp_fb_connect" , 0 );
-	static var hypfb_set_callback        = nme.Loader.load( "hypfb_set_callback" , 1 );
 	static var hyp_fb_apprequest         = nme.Loader.load( "hyp_fb_apprequest" , 2 );
 	static var hyp_fb_apprequest_to_user = nme.Loader.load( "hyp_fb_apprequest_to_user" , 3 );
 	static var hyp_fb_feed 				 = nme.Loader.load( "hypfb_feed" , 5 );
 	#end
 
 	#if android
-	static private var hyp_fb_init   : Dynamic;
-	static private var hypfb_connect : Dynamic;
-	static private var hypfb_feed    : Dynamic;
-	static private var hypfb_request : Dynamic;
+	static private var hypfb_app_request	: Dynamic;
+	static private var hypfb_request		: Dynamic;
+	static private var hypfb_connect		: Dynamic;
+	static private var hypfb_feed			: Dynamic;
+	static private var hypfb_get_instance	: Dynamic;
+	static private var hypfb_init			: Dynamic;
+	static private var hypfb_token			: Dynamic;
+
+	static private var __java_instance : Dynamic;
 	
 	public static inline var ANDROID_CLASS : String = 'fr.hyperfiction.HypFacebook';
 	#end
@@ -52,7 +67,7 @@ class Facebook{
 		*/
 		private function new( ) {
 			trace('constructor');
-			onConnect = new Signal1<String>( );
+			super( );
 		}
 	
 	// -------o public
@@ -67,6 +82,10 @@ class Facebook{
 
 			if( aPerms == null )
 				aPerms = [ ];
+
+			#if android
+			__java_instance = _get_java_instance( );
+			#end
 
 			_init( app_id , aPerms );	
 		}
@@ -93,16 +112,39 @@ class Facebook{
 		* @public
 		* @return	void
 		*/
+		public function request( sGraphPath : String ) : String {
+
+			var sRes : String = null;
+			#if android
+				if( hypfb_request == null )
+					hypfb_request = JNI.createStaticMethod( ANDROID_CLASS , 'request' , "(Ljava/lang/String;)Ljava/lang/String;" );
+					sRes = hypfb_request( sGraphPath );
+				
+			#end
+			
+			return sRes;
+
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
 		public function appRequest( sTitle : String , sMessage , toUser : String = null ) : Void {
+
 			#if iphone
 				if( toUser != null )
 					hyp_fb_apprequest( sTitle , sMessage );
 				else
 					hyp_fb_apprequest_to_user( sTitle , sMessage , toUser);
-			#else
-				if( hypfb_request == null )
-					hypfb_request = JNI.createStaticMethod( 'fr.hyperfiction.HypFacebook' , 'hypfb_apprequest' , "(Ljava/lang/String;Ljava/lang/String;)V" );
-					hypfb_request( sTitle , sMessage );
+			#end
+
+			#if android
+				if( hypfb_app_request == null )
+					hypfb_app_request = JNI.createMemberMethod( ANDROID_CLASS , 'fbAppRequest' , "(Ljava/lang/String;Ljava/lang/String;)V" );
+					hypfb_app_request( __java_instance , sTitle , sMessage );
 			#end
 			
 		}	
@@ -122,9 +164,11 @@ class Facebook{
 							) : Void {
 			#if iphone
 				hyp_fb_feed( sTitle , sCaption , sDescription , sLink , sPictureUrl );
-			#else
+			#end
+
+			#if android
 				if( hypfb_feed == null )
-					hypfb_feed = JNI.createStaticMethod( 'fr.hyperfiction.HypFacebook' , 'hypfb_feed' , "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V" );
+					hypfb_feed = JNI.createStaticMethod( ANDROID_CLASS , 'hypfb_feed' , "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V" );
 					hypfb_feed( sTitle , sCaption , sDescription , sLink , sPictureUrl );
 											
 			#end
@@ -139,18 +183,62 @@ class Facebook{
 		* @return	void
 		*/
 		public function generateKeyHash( sPackageName : String ) : Void {
-			/*
-			trace('generateKeyHash ::: '+sPackageName);
-			var hyp_key : Dynamic = JNI.createStaticMethod( 'fr.hyperfiction.HypFacebook' , 'hypfb_key_hash' , "(Ljava/lang/String;)V" );
+			
+			var hyp_key : Dynamic = JNI.createStaticMethod( ANDROID_CLASS , 'hypfb_key_hash' , "(Ljava/lang/String;)V" );
 				hyp_key( sPackageName );
-			*/
+			
 		}
 		
 		#end
 
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		public function get_token( ) : String {
+			
+			var sRes : String = null;
+
+			#if android
+				if( hypfb_token == null )
+					hypfb_token = JNI.createStaticMethod( ANDROID_CLASS , 'get_token' , "()Ljava/lang/String;" );
+				
+				sRes = hypfb_token( );
+			#end
+
+			return sRes;
+
+		}
+
 	// -------o protected
-	
 		
+		#if android
+		
+		/**
+		* 
+		* 
+		* @private
+		* @return	void
+		*/
+		private function _get_java_instance( ) : Dynamic{
+			trace('_get_java_instance');
+			if( __java_instance != null )
+				return __java_instance;
+
+			if( hypfb_get_instance == null )
+				hypfb_get_instance = JNI.createStaticMethod( 
+																ANDROID_CLASS , 
+																'getInstance' , 
+																"()Lfr/hyperfiction/HypFacebook;" 
+															);
+			
+			return hypfb_get_instance( );
+			
+		}
+
+		#end
 
 		/**
 		* 
@@ -164,14 +252,17 @@ class Facebook{
 
 			#if iphone
 				hyp_fb_init( _sAppID );
-			#else
+			#end
 
-				if( hyp_fb_init == null )
-					hyp_fb_init = JNI.createStaticMethod( 'fr.hyperfiction.HypFacebook' , 'hypfb_init' , "(Ljava/lang/String;Lorg/haxe/nme/HaxeObject;Ljava/lang/String;)V" );
-					nme.Lib.postUICallback( 
-											function() { 
-												hyp_fb_init( _sAppID , this , aPerms.join('|') );
-											});
+			#if android
+				
+				if( hypfb_init == null )
+					hypfb_init = JNI.createStaticMethod( 
+															ANDROID_CLASS , 
+															'init' , 
+															"(Ljava/lang/String;Lorg/haxe/nme/HaxeObject;Ljava/lang/String;)V" 
+														);
+					hypfb_init( _sAppID , this , aPerms.join('|') );
 				
 			#end
 		}
@@ -185,16 +276,21 @@ class Facebook{
 		private function _connect( ) : Void{
 			trace('connect');
 			//
-			#if iphone
-				hypfb_set_callback( _onCallback );
-				hypfb_connect( );
-			#else
 
+			#if mobile
+				hypfb_set_callback( _on_connected );
+				trace('hypfb_set_callback ::: '+hypfb_set_callback);
+			#end
+
+			#if iphone
+				hypfb_connect( );
+			#end
+
+			#if android
 				if( hypfb_connect == null )
-					hypfb_connect = JNI.createStaticMethod( 'fr.hyperfiction.HypFacebook' , 'hypfb_connect' , "()V" );
-					nme.Lib.postUICallback( function() { 
-						hypfb_connect( );
-					});
+					hypfb_connect = JNI.createStaticMethod( ANDROID_CLASS , 'connect' , "()V" );
+					hypfb_connect( );
+				
 				
 			#end
 		}
@@ -206,14 +302,17 @@ class Facebook{
 		* @return	void
 		*/
 		private function _onCallback( sType : String , arg = null ) : Void{
-			trace('_onCallback ::: '+sType+' - '+arg);
+			trace('_onCallback ::: '+sType+' - '+arg );
 			var type = Type.createEnum( FbCallback , sType );
 			switch( Type.createEnum( FbCallback , sType ) ){
 				
 				case ON_LOGIN:
+					trace('ON_LOGIN');
 					session_token = arg;
 					_bConnected = true;
-					onConnect.emit( session_token );
+					trace('emit');
+					//onConnect.emit( session_token );
+					dispatchEvent( new Event( Event.CONNECT ) );
 				
 				case ON_ERROR:
 					trace('ON_ERROR ::: '+arg );
@@ -226,7 +325,17 @@ class Facebook{
 			}
 		}
 
-		
+		/**
+		* 
+		* 
+		* @private
+		* @return	void
+		*/
+		private function _on_connected( ) : Void{
+			trace('_on_connected ');
+			dispatchEvent( new Event( Event.CONNECT ) );
+		}
+
 	// -------o misc
 		
 		/**

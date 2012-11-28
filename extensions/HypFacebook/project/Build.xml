@@ -36,10 +36,8 @@
   </files>
 
   <files id="android">
-      <!--
       <depend name="${HXCPP}/include/hx/Macros.h"/>
       <depend name="${HXCPP}/include/hx/CFFI.h"/>
-      -->
   </files>
 
   <files id="iphone">
