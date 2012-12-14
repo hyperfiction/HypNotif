@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
 	
-	<ndll name="fb" if="android"/>
-	<ndll name="fb" if="ios"/>
 
 	<classpath name="." />
 
 	<!-- android -->
-		<java path="project/android" if="android"/>
-		<template path="templates/android/res" rename="res" if="android"/>
-		<template path="templates/android/MainActivity.java" rename="MainActivity.java" if="android"/>
+		<section if="android">
+			<ndll name="HypFacebook" if="android"/>
+			<java path="project/android" if="android"/>
+			<template path="templates/android/res" rename="res" if="android"/>
+			<template path="templates/android/MainActivity.java" rename="MainActivity.java" if="android"/>
+		</section>;
 
+	<!-- ios -->
+		<section if="ios">
+			<ndll name="HypFacebook" if="ios"/>
+			<dependency name="Accounts.framework" if="ios" />		
+			<dependency name="AdSupport.framework" if="ios" />		
+			<template path="templates/iphone/FacebookSDKResources.bundle" rename="FacebookSDKResources.bundle" if="ios"/>
+			<template path="templates/iphone/FBUserSettingsViewResources.bundle" rename="FBUserSettingsViewResources.bundle" if="ios"/>
+			<template path="templates/iphone/FacebookSDK.framework" rename="FacebookSDK.framework" if="ios"/>
+		</section>
 </project>

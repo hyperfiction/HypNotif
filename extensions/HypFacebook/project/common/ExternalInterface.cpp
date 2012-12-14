@@ -1,15 +1,22 @@
+#ifndef IPHONE
+#define IMPLEMENT_API
+#endif
 
-/*
-#include <hx/Macros.h>
+#import "Events.h"
+#include "HypFacebook.h"
 #include <hx/CFFI.h>
-
-#include "Fb.h"
+#include <hx/Macros.h>
+#include <hxcpp.h>
+#include <stdio.h>
 
 using namespace Hyperfiction;
 
-
 #ifdef ANDROID
-extern JNIEnv *GetEnv();
+	#include <jni.h>
+	#include <stdio.h>
+	#include <string.h>
+	#include <android/log.h>
+	extern JNIEnv *GetEnv();
 	enum JNIType{
 		jniUnknown,
 		jniVoid,
@@ -23,51 +30,12 @@ extern JNIEnv *GetEnv();
 		jniInt,
 		jniLong,
 		jniFloat,
-		jniDouble,
+		jniDouble
 	};
-#endif
-*/
-
-#ifndef IPHONE
-#define IMPLEMENT_API
-#endif
-
-#include <hx/CFFI.h>
-#include <hx/Macros.h>
-#include <stdio.h>
-#include <hxcpp.h>
-#include "Fb.h"
-
-
-
-#ifdef ANDROID
-#include <jni.h>
-#include <stdio.h>
-#include <string.h>
-#endif
-
-using namespace Hyperfiction;
-
-#ifdef ANDROID
-extern JNIEnv *GetEnv();
-enum JNIType{
-	jniUnknown,
-	jniVoid,
-	jniObjectString,
-	jniObjectArray,
-	jniObject,
-	jniBoolean,
-	jniByte,
-	jniChar,
-	jniShort,
-	jniInt,
-	jniLong,
-	jniFloat,
-	jniDouble
-};
 #endif
 
 AutoGCRoot *eval_onConnect = 0;
+AutoGCRoot *eval_onEvent = 0;
 
 extern "C"{
 
@@ -75,47 +43,120 @@ extern "C"{
 		printf("fb_extensions_main()\n");
 	}
 	//DEFINE_ENTRY_POINT(nme_extensions_main);
-	
-	int fb_register_prims(){
-		printf("fb: register_prims()\n");
+		
+	int HypFacebook_register_prims(){
+		printf("HypFacebook : register_prims()\n");
 		//nme_extensions_main( );
 		return 0;
 	}
-	#ifdef IPHONE
-	void callback( const char* cbType , const char* data ){
-		val_call2( eval_onConnect->get( ), alloc_string( cbType ) , alloc_string( data ) );
+
+	void dispatch_event( EventType eType , const char *sType , const char *sArgs ){
+		val_call3( 
+					eval_onEvent->get( ) , 
+					alloc_string( EnumToString( eType ) ) , 
+					alloc_string( sType ) ,
+					alloc_string( sArgs ) 
+				);
 	}
+
+	#ifdef IPHONE
+
+		void callback( const char* cbType , const char* data ){
+			val_call2( eval_onConnect->get( ), alloc_string( cbType ) , alloc_string( data ) );
+		}
+				
+
 	#endif
 
+// Common ------------------------------------------------------------------------------------------------------
+
+	
+
+// Android ----------------------------------------------------------------------------------------------------------
+
 	#ifdef ANDROID
-	JNIEXPORT void JNICALL Java_fr_hyperfiction_HypFacebook_onConnect( JNIEnv * env ){		
-		val_call0( eval_onConnect->get( ) );	
-	}
+	
+		JNIEXPORT void JNICALL Java_fr_hyperfiction_HypFacebook_onConnectionOK( JNIEnv * env ){		
+			val_call0( eval_onConnect->get( ) );	
+		}
+
+		JNIEXPORT void JNICALL Java_fr_hyperfiction_HypFacebook_onFBEvent( 
+																			JNIEnv * env , 
+																			jobject obj , 
+																			jstring jsEvName , 
+																			jstring jsArgs 
+																		){
+			//Convert jstring to char*
+			__android_log_write(ANDROID_LOG_ERROR, "Tag", "onFBEvent" );
+
+			const char *sEvName	= env->GetStringUTFChars( jsEvName , false );
+			__android_log_print(ANDROID_LOG_ERROR, "Tag", "EventName : %s" , sEvName );
+			value valEvName = alloc_string(sEvName);
+			env->ReleaseStringUTFChars( jsEvName , sEvName );
+
+			const char *sArgs = env->GetStringUTFChars( jsArgs , false );
+			__android_log_print(ANDROID_LOG_ERROR, "Tag", "Args : %s" , sArgs );
+			value valArgs = alloc_string(sArgs);
+			env->ReleaseStringUTFChars( jsArgs , sArgs );
+
+			//Call
+			val_call2( eval_onEvent->get( ) , valEvName , valArgs );
+
+		}
 
 	#endif
 }
 
 // Callbacks ------------------------------------------------------------------------------------------------------
 	
-	static void onConnect( value token ){
-
-	}
-
 	static value hyp_fb_set_callback( value onCall ){
 		eval_onConnect = new AutoGCRoot( onCall );
 	    return alloc_bool( true );
 	}
 	DEFINE_PRIM( hyp_fb_set_callback , 1 );
 
+	static value hyp_fb_set_event_callback( value onCall ){
+		eval_onEvent = new AutoGCRoot( onCall );
+	    return alloc_bool( true );
+	}
+	DEFINE_PRIM( hyp_fb_set_event_callback , 1 );
+
 // iPhone ---------------------------------------------------------------------------------------------------------
 
 	#ifdef IPHONE
 
-	value hyp_fb_init( value token ){
-		return alloc_bool( fbInit( val_string( token ) ) );
+	value CPP_FB_Connect( value app_id ){
+		return alloc_bool(connect( val_string( app_id)));
 	}
-	DEFINE_PRIM( hyp_fb_init , 1 );
+	DEFINE_PRIM( CPP_FB_Connect , 1 );
 
+	value CPP_FB_Disconnect( ){
+		disconnect( );
+		return alloc_null( );
+	}
+	DEFINE_PRIM( CPP_FB_Disconnect , 0 );
+
+	value CPP_FB_authorize( value sPerms ){
+		return alloc_bool(authorize( val_string( sPerms )));
+	}
+	DEFINE_PRIM( CPP_FB_authorize , 1 );
+
+	value CPP_FB_request( value sGraphRequest ){		
+		return alloc_string(request( val_string( sGraphRequest )));
+	}
+	DEFINE_PRIM( CPP_FB_request , 1 );
+
+	value CPP_FB_dialog( value sAction , value sParamsName , value sParamsValues ){		
+		dialog( 
+			val_string( sAction ) , 
+			val_string( sParamsName ) , 
+			val_string( sParamsValues )
+		);
+		return alloc_null( );
+	}
+	DEFINE_PRIM( CPP_FB_dialog , 3 );
+
+	/*
 	value hyp_fb_connect(){
 		fbConnect( );
 		return alloc_null( );
@@ -154,6 +195,7 @@ extern "C"{
 		return alloc_null( );
 	}
 	DEFINE_PRIM( hypfb_feed , 5 );
-
+	*/
+	
 	#endif
 

@@ -1,5 +1,4 @@
-﻿haxelib set hxcpp 2.10
-rm -rf "obj"
+﻿rm -rf "obj"
 echo "compiling for armv6"
 haxelib run hxcpp Build.xml -Diphoneos
 echo "compiling for armv7"
@@ -12,5 +11,3 @@ echo "Copying v6"
 cp ../ndll/iPhone/libHypSystem.iphoneos.a ../../../Export/ios/hypertest/lib/armv6/libHypSystem.a
 echo "Copying v7"
 cp ../ndll/iPhone/libHypSystem.iphoneos-v7.a ../../../Export/ios/hypertest/lib/armv7/libHypSystem.a
-echo "Setting back hxcpp to 2.10.2"
-haxelib set hxcpp 2.10.2

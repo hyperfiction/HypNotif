@@ -1,64 +1,65 @@
 package fr.hyperfiction;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
-import android.content.pm.Signature;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.facebook.android.*;
-import com.facebook.android.AsyncFacebookRunner;
-import com.facebook.android.AsyncFacebookRunner.RequestListener;
 import com.facebook.android.Facebook.*;
 
-import fr.hyperfiction.Base64;
-
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 import org.haxe.nme.GameActivity;
 import org.haxe.nme.HaxeObject;
 import org.haxe.nme.NME;
 
-public class HypFacebook implements DialogListener{
-	
-	static public native void onConnect( );
-	static {
+/**
+ * ...
+ * @author shoe[box]
+ */
+
+public class HypFacebook extends Facebook implements DialogListener{
+
+	static public native void onFBEvent( String jsEvName , String jsArgs );
+	static{
 		System.loadLibrary( "fb" );
 	}
 
-	static private Facebook 			_mFacebook;
-	static private HaxeObject 			_mCallBack;
-	static private SharedPreferences 	_mPrefs;
-	static private String[ ] 			_aPerms;
+	private SharedPreferences _oPrefs;
+	
+	private static String TAG				= "trace";//HypFacebook";
+	private static String ARGS_SEPARATOR	= "-";
+	
+	private static HypFacebook __instance	= null;
 
-	private static String TAG = "HypFB";
 
 	// -------o constructor
-
-		public void HypFacebook( ){
-			Log.i( TAG , "constructor" );
+		
+		/**
+		* constructor
+		*
+		* @param	
+		* @return	void
+		*/
+		public HypFacebook( String sAppID ){
+			super( sAppID );
+			trace("constructor ::: "+sAppID);
+			_oPrefs	= GameActivity.getInstance( ).getPreferences( Activity.MODE_PRIVATE );
 		}
-
+	
 	// -------o public
-
+		
 		/**
 		* 
 		* 
 		* @public
 		* @return	void
 		*/
-		static public Facebook get_fb_instance( ){
-			return _mFacebook;
+		public static HypFacebook getInstance( ){
+			return __instance;
 		}
 
 		/**
@@ -67,8 +68,31 @@ public class HypFacebook implements DialogListener{
 		* @public
 		* @return	void
 		*/
-		static public String get_token( ) {
-			return _mFacebook.getAccessToken( );		
+		public boolean connect( ){
+			trace("connect");
+			String sAccess_Token	= _oPrefs.getString( "access_token" , null );
+			long lExpire			= _oPrefs.getLong( "access_expires" , 0 );	
+
+			trace( "connect" );
+			trace( "sAccess_Token 	:::"+sAccess_Token );
+			trace( "lExpire 		:::"+lExpire );
+
+			if( sAccess_Token != null )
+				setAccessToken( sAccess_Token );
+
+			 if( lExpire != 0 )
+	            setAccessExpires( lExpire );
+
+	       	boolean bSessionValid = isSessionValid( );
+	       	if( bSessionValid ){
+	       		trace("session valide");
+	       		SharedPreferences.Editor 	editor = _oPrefs.edit();
+						                    editor.putString("access_token", sAccess_Token );
+						                    editor.putLong("access_expires", lExpire );
+						                    editor.commit( );
+	       	}
+
+	       	return bSessionValid;
 		}
 
 		/**
@@ -77,34 +101,134 @@ public class HypFacebook implements DialogListener{
 		* @public
 		* @return	void
 		*/
-		static public void init( String appId , HaxeObject oCallback , String sPerms ){
-			Log.i( TAG , "Init : "+appId+" callback : "+oCallback );
-			_aPerms		= sPerms.split("|");
-			_mCallBack	= oCallback;
-			_mFacebook	= new Facebook( appId );
-			_mPrefs		= GameActivity.getInstance( ).getPreferences( Activity.MODE_PRIVATE );
-		}
-
-		/**
-		* 
-		* 
-		* @public
-		* @return	void
-		*/
-		static public String request( final String graphpath ){
-
-			Log.i( TAG , "request : "+graphpath );
+		public String logout( ){
 
 			String res = null;
+
 			try {
-				res = _mFacebook.request( graphpath );
-				Log.i( TAG , "response : "+res );
+	           	res = logout(GameActivity.getContext( ) );
+	        } catch (Exception e) {
+	            Log.e("LogoutException",""+e.getMessage());
+	        }
+
+	        return res;
+		}		
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		public void authorize( String sPerms ) {
+			trace("authorize");
+			String[ ] a_permissions = sPerms.split("|");
+			trace("a_permissions ::: "+a_permissions);
+
+			DialogListener listener = new DialogListener( ){
+
+				@Override
+				public void onComplete( Bundle values ){
+					trace("onComplete ::: "+values);
+					_on_event( "authorize_onComplete" , values.get("access_token")+"" );
+				}
+
+				@Override
+				public void onFacebookError( FacebookError e ){
+					trace("onFacebookError ::: "+e);
+					_on_event( "authorize_onComplete" , e.getErrorCode( ) + ARGS_SEPARATOR + e.getErrorType( ) );
+				}
+
+				@Override
+				public void onError( DialogError e ){
+					trace("onError ::: "+e);
+					_on_event( "authorize_dialog_error" , e.getErrorCode( ) + ARGS_SEPARATOR + e.getFailingUrl( ) );
+				}
+
+				@Override
+				public void onCancel( ){
+					trace("onCancel ::: ");
+					_on_event( "authorize_dialog_cancel" , "" );
+				}
+
+			};
+
+			trace("authorize");
+			authorize( GameActivity.getInstance( ) , a_permissions , listener );
+			trace("ok");
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		public void dialog( String sAction , String sParamsNames , String sParamsValues ){
+			trace("dialog ::: "+sAction+" - "+sParamsNames+" - "+sParamsValues);	
+
+			//Split to array
+				String[ ] aParams = sParamsNames.split( ARGS_SEPARATOR );	
+				String[ ] aValues = sParamsValues.split( ARGS_SEPARATOR );	
+				trace("aParams ::: "+aParams.length);
+				
+			//Bundle
+				int l = aParams.length;
+				trace("l ::: "+l);
+				Bundle params = new Bundle( );
+				for( int i = 0 ; i<l ; i++ ){
+					trace("i ::: "+i+"|"+aParams[i]+" = "+aValues[i]);
+					params.putString( aParams[ i ] , aValues[ i ] );
+				}
+				trace("params ::: "+params);
+
+			//	
+				DialogListener listener = new DialogListener( ){
+
+					@Override
+					public void onComplete( Bundle values ){
+						trace("onComplete ::: "+values);
+					}
+
+					@Override
+					public void onFacebookError( FacebookError e ){
+						trace("onFacebookError ::: "+e);
+					}
+
+					@Override
+					public void onError( DialogError e ){
+						trace("onError ::: "+e);
+					}
+
+					@Override
+					public void onCancel( ){
+						trace("onCancel ::: ");
+					}
+
+				};
+				dialog( GameActivity.getContext( ) , sAction , params , listener );
+			
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		public String graph_request( String sGraphRequest ){
+			trace("graph_request ::: "+sGraphRequest);
+			String res = null;
+			try {
+				res = request( sGraphRequest );
 			} catch (IOException e) {
+				trace("graph_request exception ::: "+e);
 				e.printStackTrace();
 			}
-			return res;
-			
+			return res;			
 		}
+
+		//Dialog listeners
 
 		/**
 		* 
@@ -112,34 +236,11 @@ public class HypFacebook implements DialogListener{
 		* @public
 		* @return	void
 		*/
-		static public void connect( ){
+		 @Override
+        public void onComplete(Bundle values) {
+        	    
+        }
 
-			String sAccess_Token	= _mPrefs.getString( "access_token" , null );
-			long lExpire			= _mPrefs.getLong( "access_expires" , 0 );	
-
-			Log.i( TAG , "connect" );
-			Log.i( TAG , "sAccess_Token 	:::"+sAccess_Token );
-			Log.i( TAG , "lExpire 			:::"+lExpire );
-
-        	if( sAccess_Token != null) 
-	            _mFacebook.setAccessToken( sAccess_Token );
-	        
-	        if( lExpire != 0 )
-	            _mFacebook.setAccessExpires( lExpire );
-	        
-        	Log.i("trace","session valid : "+_mFacebook.isSessionValid());
-			if(!_mFacebook.isSessionValid()){
-	         	_createSession( );
-	        }else{
-	        	Log.i( TAG , "Sessions is valid :::"+sAccess_Token );
-
-	        	SharedPreferences.Editor editor = _mPrefs.edit();
-                    editor.putString("access_token", sAccess_Token );
-                    editor.putLong("access_expires", lExpire );
-                    editor.commit( );
-	        	onConnect( );
-	        }
-		}
 
 		/**
 		* 
@@ -147,9 +248,11 @@ public class HypFacebook implements DialogListener{
 		* @public
 		* @return	void
 		*/
-		public void setCallBack( HaxeObject callbackFunc ) {
-			//_fCallBack = fCallBack;
-		}
+        @Override
+        public void onFacebookError(FacebookError error) {
+	          
+        }
+
 
 		/**
 		* 
@@ -157,271 +260,71 @@ public class HypFacebook implements DialogListener{
 		* @public
 		* @return	void
 		*/
-		public void fbAppRequest( String sTitle , String sMessage ){
-			
-			Bundle 	params = new Bundle();
-					params.putString("title"		, sTitle );
-					params.putString("message"		, sMessage );
-			
-			try{
-				_mFacebook.dialog( GameActivity.getInstance( ) , "apprequests", params , new Dialog_listener( ) );
-			}
-			catch( Throwable e ){
-				_onError( e.toString( ) );
-			}
+        @Override
+        public void onCancel() {
 
-		}
+        }
 
-		/**
-		* 
-		* 
-		* @public
-		* @return	void
-		*/
-		public void fbAppRequestToUser( String sTitle , String sMessage , String sUserId ){
-			
-		}
-
-		/**
-		* 
-		* 
-		* @public
-		* @return	void
-		*/
-		public void fbFeed( 
-								String sTitle,
-								String sMessage,
-								String sDescription,
-								String sLink,
-								String sPictureUrl
-							){
-			
-			Bundle 	params = new Bundle();
-					params.putString("caption"		, sTitle );
-					params.putString("message"		, sMessage );
-					params.putString("link"			, sLink );
-					params.putString("description"	, sDescription);
-					params.putString("picture"		, sPictureUrl );
-
-			try{
-				_mFacebook.dialog( GameActivity.getInstance( ) , "feed", params , new Dialog_listener( ) );
-			}
-			catch( Throwable e ){
-				_onError( e.toString( ) );
-			}
-			
-		}
-
-		/**
-		* 
-		* 
-		* @public
-		* @return	void
-		*/
-		@Override
-	    public void onComplete( Bundle values ) {
-	        Log.i("trace","onConnexion complete : "+_mFacebook.getAccessToken());
-	       
-	        SharedPreferences.Editor    editor = GameActivity.getInstance( ).getPreferences(Activity.MODE_PRIVATE).edit();
-	                                    editor.putString("access_token", _mFacebook.getAccessToken());
-	                                    editor.putLong("access_expires", _mFacebook.getAccessExpires());
-	                                    editor.commit();     
- 			//_mCallBack.call2( "_onCallback" , "ON_LOGIN" , _mFacebook.getAccessToken() );
-
-			_on_connected( );
- 		}
-
- 		/**
-		* 
-		* 
-		* @public
-		* @return	void
-		*/
-	    @Override
-	    public void onFacebookError( FacebookError e ) {
-	        Log.i("trace","onConnexion error"+e);
-	        _mCallBack.call2( "_onCallback" , "ON_FACEBOOK_ERROR" , e );
-	        
-	    }
-
-	    /**
-		* 
-		* 
-		* @public
-		* @return	void
-		*/
-	    @Override
+        /**
+        * 
+        * 
+        * @public
+        * @return	void
+        */
+         @Override
 	    public void onError( DialogError e ) {
 	        Log.i("trace","onDialog Error"+e);
-	        _onError( e.toString( ) );
 	    }
 
-	    /**
+	// -------o protected
+	
+		/**
+		* 
+		* 
+		* @private
+		* @return	void
+		*/
+		private void _onSessionValid( ){
+			trace( "_onSessionValid" );
+		}
+
+		/**
+		* 
+		* 
+		* @private
+		* @return	void
+		*/
+		private void _on_event( String sType , String sConcatArgs ){
+			trace("_on_event ::: "+sType+" = "+sConcatArgs);
+			onFBEvent( sType , sConcatArgs );
+		}
+
+	// -------o misc
+		
+		/**
 		* 
 		* 
 		* @public
 		* @return	void
 		*/
-	    @Override
-	    public void onCancel( ) {
-	        Log.i("trace","onCancel");
-	        _mCallBack.call2( "_onCallback" , "ON_CANCEL" , null );
-	    }
-
-	// -------o private
-
-	    /**
-	    * 
-	    * 
-	    * @private
-	    * @return	void
-	    */
-	   static private void _createSession( ){
-	    	Log.i( TAG ,"_createSession" );
-			_mFacebook.authorize( 
-									GameActivity.getInstance( ) , 
-									_aPerms , 
-									getInstance( ) 
-								);
-	    }
-
-	    private void _on_connected( ){
-	    	Log.i( TAG , "_on_connected ::: "+_mFacebook.getAccessToken());
-	    	onConnect( );
-	    }
-
-	    /**
-	    * 
-	    * 
-	    * @private
-	    * @return	void
-	    */
-	    private void _onSessionValid( ){
-	    	Log.i( TAG ,"_onSessionValid");
-	    	//_mCallBack.call2( "_onCallback" , "ON_LOGIN" , _mFacebook.getAccessToken() );
-	    	_on_connected( );
-	    }
-
-	    /**
-	    * 
-	    * 
-	    * @private
-	    * @return	void
-	    */
-	    private void _onError( String sError ){
-	    	_mCallBack.call2( "_onCallback" , "ON_ERROR" , sError );
-	    }
-
-	// -------o misc
-
-	    /**
-	    * 
-	    * 
-	    * @public
-	    * @return	void
-	    */
-	    public static HypFacebook getInstance( ){
-	    	
-	    	if( __instance == null )
-	    		__instance = new HypFacebook( );
-
-	    	return __instance;
-	    }
-
-	    /**
-	    * 
-	    * 
-	    * @public
-	    * @return	void
-	    */
-	    public static void hypfb_key_hash( String sName ){
-	    	Log.i("trace", "nme_key_hash : "+sName );
-	    	try {
-			   //PackageInfo info = GameActivity.getInstance( ).getPackageManager().getPackageInfo("**YOURPACKAGENAME**", PackageManager.GET_SIGNATURES);
-			   PackageInfo info = GameActivity.getInstance( ).getPackageManager( ).getPackageInfo( sName , PackageManager.GET_SIGNATURES );
-			   for (Signature signature : info.signatures) {
-			        MessageDigest md = MessageDigest.getInstance("SHA");
-			        md.update(signature.toByteArray());
-			        Log.i("trace", "PXR : "+Base64.encodeBytes(md.digest()));
-			   }
-			}
-			catch (NameNotFoundException e) {
-				Log.i("trace","NameNotFoundException : "+e);
-			}
-			catch (NoSuchAlgorithmException e) {
-				Log.i("trace","NoSuchAlgorithmException : "+e);
-			}
-	    }
-
-	    /**
-	    * 
-	    * 
-	    * @public
-	    * @return	void
-	    */
-	    public static void hypfb_feed( 
-	    								String sTitle,
-										String sMessage,
-										String sDescription,
-										String sLink,
-										String sPictureUrl 
-									) {
-	    	__instance.fbFeed( sTitle , sMessage , sDescription , sLink , sPictureUrl );
-	    }
-
-	    /**
-	    * 
-	    * 
-	    * @public
-	    * @return	void
-	    */
-	    public static void hypfb_apprequest( 
-	    								String sTitle,
-										String sMessage
-	    								)  {
-	    	__instance.fbAppRequest( sTitle , sMessage );
-	    }
-
-	    static private HypFacebook __instance;
-
-	  	 /*
-	     * callback for the feed dialog which updates the profile status
-	     */
-	    public class Dialog_listener extends BaseDialogListener {
-
-	        @Override
-	        public void onComplete(Bundle values) {
-	            
-	        }
-
-	        @Override
-	        public void onFacebookError(FacebookError error) {
-		          
-	        }
-
-	        @Override
-	        public void onCancel() {
-
-	        }
-	    }
-
-		public abstract class BaseDialogListener implements DialogListener {
-
-		    @Override
-		    public void onFacebookError(FacebookError e) {
-		        e.printStackTrace();
-		    }
-
-		    @Override
-		    public void onError(DialogError e) {
-		        e.printStackTrace();
-		    }
-
-		    @Override
-		    public void onCancel() {
-
-		    }
-
+		public static void trace( String s ){
+			Log.w( TAG, s );
 		}
 
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		public static HypFacebook create( String sAppId ){
+			Log.i( TAG, "create ::: "+sAppId );			
+			return __instance = new HypFacebook( sAppId );
+		}
+
+	//JNI
+		static public native void onConnect( );
+		static {
+			System.loadLibrary( "fb" );
+		}
 }

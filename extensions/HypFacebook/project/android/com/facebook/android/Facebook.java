@@ -416,7 +416,7 @@ public class Facebook {
      *   Activity.html#onActivityResult(int, int, android.content.Intent)
      */
     public void authorizeCallback(int requestCode, int resultCode, Intent data) {
-        Log.i("trace","mAuthActivityCode ::: "+mAuthActivityCode);
+        Log.i("trace","authorizeCallback :::"+resultCode);
         if (requestCode == mAuthActivityCode) {
 
             // Successfully redirected.

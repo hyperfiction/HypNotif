@@ -11,14 +11,10 @@ public class MainActivity extends org.haxe.nme.GameActivity {
 	protected void onActivityResult( int requestCode , int resultCode , Intent data ) {
 		Log.e("trace", "onActivityResult...");
         super.onActivityResult(requestCode, resultCode, data);
-        /*
-        Facebook fb =  HypFacebook.getInstance( ).get_fb_instance( );
+        Facebook fb =  HypFacebook.getInstance( );
         if( fb != null )
        		fb.authorizeCallback(requestCode, resultCode, data);
-       	*/
-
-       	HypFacebook hypfb = HypFacebook.getInstance( );
-       	Log.i("trace","hypfb ::: "+hypfb);
+       
      }
 
 }
