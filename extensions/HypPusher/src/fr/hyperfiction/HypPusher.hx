@@ -34,17 +34,15 @@ class HypPusher extends EventDispatcher {
 		private var _hyp_bind_on_chan			: Dynamic;
 	#end
 
-	#if mobile
+	#if android
 		private static var hyp_cb_connect				= Lib.load( "hyppusher","hyp_cb_connect", 1 );
 		private static var hyp_cb_disconnect			= Lib.load( "hyppusher","hyp_cb_disconnect", 1 );
 		private static var hyp_cb_message				= Lib.load( "hyppusher","hyp_cb_message", 1 );
-		private static var hyp_cb_message_from_channel	= Lib.load( "hyppusher","hyp_cb_message_from_channel", 1 );
 	#end
 	
 	public var onConnect			: Signal;
 	public var onDisconnect			: Signal;
 	public var onMessage			: Signal1<String>;
-	public var onMessageFromChannel	: Signal3<String,String,String>;
 
 	// -------o constructor
 
@@ -55,18 +53,22 @@ class HypPusher extends EventDispatcher {
 		* @return	void
 		*/
 		public function new() : Void {
+
+			trace( "HypPusher constructor ::: " );
+
 			super();
 			
 			onConnect				= new Signal();
 			onDisconnect			= new Signal();
 			onMessage				= new Signal1<String>();
-			onMessageFromChannel	= new Signal3<String,String,String>();
 
-			#if mobile
+			#if android
 				hyp_cb_connect( _onConnect );
 				hyp_cb_disconnect( _onDisconnect );
 				hyp_cb_message( _onMessage );
-				hyp_cb_message_from_channel( _onMessageFromChannel );
+
+				trace( "callback set ! ");
+
 			#end
 		}
 
@@ -92,7 +94,11 @@ class HypPusher extends EventDispatcher {
 
 		public function sendEventOnChannel( event : String, chan : String, data : Dynamic = "" ) : Void {
 			trace('send event :::'+event+' on channel ::: '+chan+' with data ::: '+data);
-			data = haxe.Json.stringify( data );
+			try{
+				data = haxe.Json.stringify( data );
+			}catch( e  : Dynamic ){
+				trace( "malformed Json data ::: "+data );
+			}
 			#if android
 				if( _hyp_send_on_chan == null )
 					_hyp_send_on_chan = JNI.createStaticMethod( ANDROID_CLASS, 'sendEventOnChannel', "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V" );
@@ -132,12 +138,8 @@ class HypPusher extends EventDispatcher {
 
 		function _onMessage( message : String ) : Void {
 			trace( "_onMessage ::: "+message );
+			
 			onMessage.emit( message );
-		}
-
-		function _onMessageFromChannel( chan : String, evt : String, msg : String ) : Void {
-			trace( "_onMessageFromChannel ::: "+chan+" on event ::: "+evt+" ::: "+msg );
-			onMessageFromChannel.emit( chan, evt, msg );
 		}
 
 	// -------o misc

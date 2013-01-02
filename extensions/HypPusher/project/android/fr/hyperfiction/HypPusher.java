@@ -121,7 +121,7 @@ public class HypPusher {
 					mSurface.queueEvent(new Runnable( ){
 						@Override
 						public void run() {
-							HypPusher.onMessageFromChannel(channelName, eventName, message);
+							HypPusher.onMessage( message );
 						}
 					});
 				}
