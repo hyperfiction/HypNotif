@@ -25,6 +25,8 @@ import java.util.HashMap;
 
 import org.json.JSONObject;
 
+import android.util.Log;
+
 import com.justinschultz.websocket.WebSocket;
 import com.justinschultz.websocket.WebSocketConnection;
 import com.justinschultz.websocket.WebSocketEventHandler;
@@ -66,6 +68,8 @@ public class Pusher {
 					try {
 						JSONObject jsonMessage = new JSONObject(message.getText());
 						String event = jsonMessage.optString("event", null);
+				
+						Log.i( "HypPusher", jsonMessage.toString() );
 
 						if(event.equals("pusher:connection_established" ))
 						{
@@ -243,6 +247,7 @@ public class Pusher {
 
 			try {
 				data.put("channel", channelName);
+				message.put("channel", channelName);
 				message.put("event", eventName);
 				message.put("data", data);
 				webSocket.send(message.toString());

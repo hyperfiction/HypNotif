@@ -4,7 +4,5 @@
 	<ndll name="hyppusher" />
 	<classpath name="src" />
 	<java path="project/android"/>
-	<template path="templates/android/libs" rename="libs" if="android"/>
-	<assets path="templates/android/assets" rename="assets" include="*" if="android"/>
 
 </project>

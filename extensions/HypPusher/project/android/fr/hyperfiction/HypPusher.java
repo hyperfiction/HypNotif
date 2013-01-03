@@ -18,7 +18,7 @@ public class HypPusher {
 	public static String API = "c2216b7ec96e9eb9a409";
 	public static String TAG = "HypPusher";
 
-	public static native void onConnect();
+	public static native void onConnect( String socketId );
 
 	public static native void onDisconnect();
 
@@ -41,12 +41,12 @@ public class HypPusher {
 		
 		_eventListener = new PusherListener() {
 			@Override
-			public void onConnect(String socketId) {
+			public void onConnect(final String socketId) {
 				Log.i(TAG, "Pusher connected. Socket Id is: " + socketId);
 				mSurface.queueEvent(new Runnable(){
 					@Override
 					public void run() {
-						HypPusher.onConnect( );
+						HypPusher.onConnect( socketId );
 					}
 				});
 			}
@@ -94,6 +94,11 @@ public class HypPusher {
 		Log.i(TAG, "[Pusher] trying to connect to pusher...");
 	}
 
+	public static void subscribeToPrivateChannel(String channelName, String auth) {
+		getInstance().getPusher().subscribe(channelName,auth);
+		Log.i(TAG, "[Pusher] subscribed to private channel ::: " + channelName);
+	}
+
 	public static void subscribeToPublicChannel(String channelName) {
 		getInstance().getPusher().subscribe(channelName);
 		Log.i(TAG, "[Pusher] subscribed to public channel ::: " + channelName);
@@ -102,12 +107,17 @@ public class HypPusher {
 	public static void sendEventOnChannel(String eventName, String channelName,
 			String data) {
 		Channel channel = getInstance().getPusher().channel(channelName);
+		JSONObject obj;
+		
+		obj = new JSONObject();
+		
 		if (channel != null) {
 			try {
-				channel.send(eventName, new JSONObject(data));
+				obj = new JSONObject(data);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
+			channel.send(eventName, obj);
 		}
 	}
 

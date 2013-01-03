@@ -10,6 +10,7 @@
 
 #ifdef ANDROID
 #include <jni.h>
+#include <android/log.h>
 #endif
 
 using namespace Hyperfiction;
@@ -31,6 +32,8 @@ using namespace Hyperfiction;
 	   jniFloat,
 	   jniDouble,
 	};
+	#define  LOG_TAG    "trace"
+	#define  ALOG(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 #endif
 
 AutoGCRoot *_on_connect					= 0;
@@ -45,8 +48,13 @@ extern "C" {
 	}
 
 	#ifdef ANDROID
-		JNIEXPORT void JNICALL Java_fr_hyperfiction_HypPusher_onConnect(JNIEnv * env, jobject  obj ){
-	        val_call0( _on_connect -> get( ) );
+		JNIEXPORT void JNICALL Java_fr_hyperfiction_HypPusher_onConnect(JNIEnv * env, jobject  obj, jstring socketId ){
+			const char *sEvName	= "toto";
+			alloc_string(sEvName);
+			ALOG("aloc string toto ok");
+			const char *socketIdString = env->GetStringUTFChars(socketId, 0);
+	        val_call1( _on_connect -> get( ), alloc_string( socketIdString )  );
+			env->ReleaseStringUTFChars( socketId, socketIdString );
 	    }
 	    JNIEXPORT void JNICALL Java_fr_hyperfiction_HypPusher_onDisconnect(JNIEnv * env, jobject  obj ){
 	        val_call0( _on_disconnect -> get( ) );

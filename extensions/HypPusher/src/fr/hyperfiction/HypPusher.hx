@@ -40,9 +40,15 @@ class HypPusher extends EventDispatcher {
 		private static var hyp_cb_message				= Lib.load( "hyppusher","hyp_cb_message", 1 );
 	#end
 	
-	public var onConnect			: Signal;
+	public var onConnect			: Signal1<String>;
 	public var onDisconnect			: Signal;
-	public var onMessage			: Signal1<String>;
+	public var onMessage			: Signal3<String, String, Dynamic>;
+
+	public var authEndPoint			: String;
+
+	private var _socketId 			: String;
+	private var _channelName		: String;
+	private var _auth 				: String;
 
 	// -------o constructor
 
@@ -56,19 +62,18 @@ class HypPusher extends EventDispatcher {
 
 			trace( "HypPusher constructor ::: " );
 
+			authEndPoint = "/pusher/auth";
+
 			super();
 			
-			onConnect				= new Signal();
+			onConnect				= new Signal1<String>();
 			onDisconnect			= new Signal();
-			onMessage				= new Signal1<String>();
+			onMessage				= new Signal3<String, String, Dynamic>();
 
 			#if android
 				hyp_cb_connect( _onConnect );
 				hyp_cb_disconnect( _onDisconnect );
 				hyp_cb_message( _onMessage );
-
-				trace( "callback set ! ");
-
 			#end
 		}
 
@@ -83,8 +88,44 @@ class HypPusher extends EventDispatcher {
 			#end
 		}
 
+		public function subscribeToPrivateChannel( chan : String ) : Void {
+			trace('subscribe to private channel ::: '+chan);
+
+			var auth : String;
+			var pusherAuth : HypPusherAuth;
+
+			_channelName = chan;
+
+			pusherAuth = new HypPusherAuth();
+			pusherAuth.sgAuthSuccessful.connect( _on_auth_success );
+			pusherAuth.sgAuthFailed.connect( _on_auth_failed );
+			pusherAuth.sgAuthError.connect( _on_auth_error );
+
+			pusherAuth.authenticate( _socketId, authEndPoint, _channelName );
+		}
+
+		function _on_auth_success( auth : String ) : Void {
+			trace( "on auth success ::: " );
+
+			_auth = auth;
+
+			#if android
+				if( _hyp_subscribe_public_chan == null )
+					_hyp_subscribe_public_chan = JNI.createStaticMethod( ANDROID_CLASS, 'subscribeToPrivateChannel', "(Ljava/lang/String;Ljava/lang/String;)V" );
+					_hyp_subscribe_public_chan( _channelName, auth );
+			#end
+		}
+
+		function _on_auth_error( ) : Void {
+			trace( "on auth error ::: " );
+		}
+
+		function _on_auth_failed( ) : Void {
+			trace( "on auth failed ::: " );
+		}
+
 		public function subscribeToPublicChannel( chan : String ) : Void {
-			trace('subscribe to channel ::: '+chan);
+			trace('subscribe to public channel ::: '+chan);
 			#if android
 				if( _hyp_subscribe_public_chan == null )
 					_hyp_subscribe_public_chan = JNI.createStaticMethod( ANDROID_CLASS, 'subscribeToPublicChannel', "(Ljava/lang/String;)V" );
@@ -92,8 +133,12 @@ class HypPusher extends EventDispatcher {
 			#end
 		}
 
-		public function sendEventOnChannel( event : String, chan : String, data : Dynamic = "" ) : Void {
+		public function sendEventOnChannel( event : String, chan : String, data : Dynamic ) : Void {
 			trace('send event :::'+event+' on channel ::: '+chan+' with data ::: '+data);
+			if( data == null )
+				data = {};
+			data.auth = _auth;
+			
 			try{
 				data = haxe.Json.stringify( data );
 			}catch( e  : Dynamic ){
@@ -126,9 +171,10 @@ class HypPusher extends EventDispatcher {
 
 	// -------o protected
 
-		function _onConnect( ) : Void {
+		function _onConnect( socketId : String ) : Void {
 			trace( "_onConnect" );
-			onConnect.emit();
+			_socketId = socketId;
+			onConnect.emit( socketId );
 		}
 
 		function _onDisconnect( ) : Void {
@@ -139,7 +185,24 @@ class HypPusher extends EventDispatcher {
 		function _onMessage( message : String ) : Void {
 			trace( "_onMessage ::: "+message );
 			
-			onMessage.emit( message );
+			var msg 	: Dynamic;
+			var data 	: Dynamic;
+			var event 	: String;
+			var channel : String;
+				
+			try{
+				msg = haxe.Json.parse( message );
+				if( msg != null ){	
+					data = haxe.Json.parse( msg.data );
+					event = msg.event;
+					channel = msg.channel;
+					trace( "channel ::: "+channel+" event ::: "+event+" with data ::: "+data );
+					onMessage.emit( event, channel, data );
+				}
+			}catch( e : Dynamic ) {
+				trace( "[Pusher] Error ::: "+ e + " parsing Json message ::: "+message );
+			}
+
 		}
 
 	// -------o misc
