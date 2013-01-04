@@ -4,12 +4,7 @@ package fr.hyperfiction;
 import nme.JNI;
 #end
 
-#if cpp
-import cpp.Lib;
-#end
-
 import nme.Lib;
-import nme.events.EventDispatcher;
 import nme.events.Event;
 
 import org.shoebox.utils.system.Signal;
@@ -22,26 +17,9 @@ import org.shoebox.utils.system.Signal3;
 * @author LouisBL
 */
 
-class HypPusher extends EventDispatcher
+@:build( org.shoebox.utils.NativeMirror.build() )class HypPusher
 {
-	
-	#if android	
-		public static inline var ANDROID_CLASS : String = 'fr/hyperfiction/HypPusher';
-		
-		private var _hyp_connect				: Dynamic;
-		private var _hyp_disconnect				: Dynamic;
-		private var _hyp_subscribe_public_chan	: Dynamic;
-		private var _hyp_subscribe_private_chan	: Dynamic;
-		private var _hyp_send_on_chan			: Dynamic;
-		private var _hyp_bind_on_chan			: Dynamic;
-	#end
 
-	#if ( android || ios )
-		private static var hyp_cb_connect		= Lib.load( "hyppusher","hyp_cb_connect", 1 );
-		private static var hyp_cb_disconnect	= Lib.load( "hyppusher","hyp_cb_disconnect", 1 );
-		private static var hyp_cb_message		= Lib.load( "hyppusher","hyp_cb_message", 1 );
-	#end
-	
 	public var onConnect			: Signal1<String>;
 	public var onDisconnect			: Signal;
 	public var onMessage			: Signal3<String, String, Dynamic>;
@@ -49,6 +27,9 @@ class HypPusher extends EventDispatcher
 	private var _socketId 			: String;
 	private var _channelName		: String;
 	private var _auth 				: String;
+
+	private var _instance 			: Dynamic;
+	private var _authEndPoint 		: String;
 
 	// -------o constructor
 
@@ -58,18 +39,20 @@ class HypPusher extends EventDispatcher
 		* @public
 		* @return	void
 		*/
-		public function new() : Void
+		public function new( apiKey : String, ?authEndPoint : String ) : Void
 		{
 
 			trace( "HypPusher constructor ::: " );
-			
-			super();
 			
 			onConnect		= new Signal1<String>();
 			onDisconnect	= new Signal();
 			onMessage		= new Signal3<String, String, Dynamic>();
 
 			#if ( android || ios )
+
+				_authEndPoint = authEndPoint;
+				_instance = create( apiKey );
+
 				hyp_cb_connect( _onConnect );
 				hyp_cb_disconnect( _onDisconnect );
 				hyp_cb_message( _onMessage );
@@ -79,18 +62,50 @@ class HypPusher extends EventDispatcher
 
 	// -------o public
 
-		public function connectToServer( apiKey : String  ) : Void
+		public function connectToServer( ) : Void
 		{
-			#if android	
-
-				if( _hyp_connect == null ) {
-					_hyp_connect = JNI.createStaticMethod( ANDROID_CLASS, 'connect', "(Ljava/lang/String;)V");
-				}
-				_hyp_connect( apiKey );
-			#end
+			connect( _instance );
 		}
 
-		public function subscribeToPrivateChannel( chan : String, authEndPoint : String ) : Void
+		public function disconnectFromServer( ) : Void
+		{
+			disconnect( _instance );
+		}
+
+		public function setChannel( channelName : String ) : Void
+		{
+			if( StringTools.startsWith( channelName, "private-" ) ){
+				authenticate( channelName, _authEndPoint );
+			} else {
+				subscribeToPublic( _instance, channelName );
+			}
+		}
+
+		public function bind( event : String ) : Void
+		{
+			bindToEventOnChannel( _instance, event, _channelName );
+		}
+
+		public function sendEvent( event : String, ?data : Dynamic ) : Void
+		{
+			trace('send event :::'+event+' on channel ::: '+_channelName+' with data ::: '+data);
+			
+			if( data == null ) {
+				data = {};
+			}
+
+			data.auth = _auth;
+			
+			try{
+				data = haxe.Json.stringify( data );
+			} catch ( e  : Dynamic ){
+				trace( "malformed Json data ::: "+data );
+			}
+
+			sendEventOnChannel( _instance, event, _channelName, data );
+		}
+
+		public function authenticate( chan : String, authEndPoint : String ) : Void
 		{
 			trace('subscribe to private channel ::: '+chan);
 
@@ -113,16 +128,7 @@ class HypPusher extends EventDispatcher
 
 			_auth = auth;
 
-			#if android
-				
-				if( _hyp_subscribe_private_chan == null ) {
-					_hyp_subscribe_private_chan = JNI.createStaticMethod( 
-					                                                    ANDROID_CLASS, 'subscribeToPrivateChannel',
-					                                                    "(Ljava/lang/String;Ljava/lang/String;)V"
-					                                                    );
-				}
-				_hyp_subscribe_private_chan( _channelName, auth );
-			#end
+			subscribeToPrivate( _instance, _channelName, _auth );
 		}
 
 		function _on_auth_error( ) : Void
@@ -135,79 +141,55 @@ class HypPusher extends EventDispatcher
 			trace( "on auth failed ::: " );
 		}
 
-		public function subscribeToPublicChannel( chan : String ) : Void
+
+		@JNI
+		public static function create( apiKey : String ) : HypPusher
 		{
-			trace('subscribe to public channel ::: '+chan);
-			
-			#if android
-			
-				if( _hyp_subscribe_public_chan == null ) {
-					_hyp_subscribe_public_chan = JNI.createStaticMethod(
-					                                                    ANDROID_CLASS,
-					                                                    'subscribeToPublicChannel',
-					                                                    "(Ljava/lang/String;)V"
-					                                                    );
-				}
-				_hyp_subscribe_public_chan( chan );
-			#end
 		}
 
-		public function sendEventOnChannel( event : String, chan : String, data : Dynamic ) : Void
+		@JNI
+		public function connect( instance : Dynamic ) : Void
 		{
-			trace('send event :::'+event+' on channel ::: '+chan+' with data ::: '+data);
-			
-			if( data == null ) {
-				data = {};
-			}
-
-			data.auth = _auth;
-			
-			try{
-				data = haxe.Json.stringify( data );
-			} catch ( e  : Dynamic ){
-				trace( "malformed Json data ::: "+data );
-			}
-
-			#if android
-			
-				if( _hyp_send_on_chan == null ){
-					_hyp_send_on_chan = JNI.createStaticMethod(
-					                                           ANDROID_CLASS,
-					                                           'sendEventOnChannel',
-					                                           "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"
-					                                           );
-				}
-				_hyp_send_on_chan( event, chan, data );
-			#end
 		}
 
-		public function bindToEventOnChannel( event : String, chan : String ) : Void
+		@JNI
+		public function subscribeToPublic( instance : Dynamic, chan : String ) : Void
 		{
-			trace('bind to event ::: '+event+' on channel ::: '+chan);
-
-			#if android
-			
-				if( _hyp_bind_on_chan == null ) {
-					_hyp_bind_on_chan = JNI.createStaticMethod(
-					                                           ANDROID_CLASS,
-					                                           'bindToEventOnChannel',
-					                                           "(Ljava/lang/String;Ljava/lang/String;)V"
-					                                           );
-				}
-				_hyp_bind_on_chan( event, chan );
-			#end
+		}
+		
+		@JNI
+		public function subscribeToPrivate( instance : Dynamic, chan : String, auth : String ) : Void
+		{
 		}
 
-		public function disconnect() : Void
+		@JNI
+		public function bindToEventOnChannel( instance : Dynamic, event : String, chan : String ) : Void
 		{
-			trace( "disconnect ::: " );
+		}
 
-			#if android
-				if( _hyp_disconnect == null ) {
-					_hyp_disconnect = JNI.createStaticMethod( ANDROID_CLASS, 'disconnect', "()V" );
-				}
-				_hyp_disconnect( );
-			#end
+		@JNI
+		public function sendEventOnChannel( instance : Dynamic, event : String, chan : String, data : String ) : Void
+		{
+		}
+
+		@JNI
+		public function disconnect( instance : Dynamic ) : Void
+		{
+		}
+
+		@CPP("hyppusher")
+		public function hyp_cb_connect( cb : Dynamic ) : Void
+		{
+		}
+
+		@CPP("hyppusher")
+		public function hyp_cb_disconnect( cb : Dynamic ) : Void
+		{
+		}
+
+		@CPP("hyppusher")
+		public function hyp_cb_message( cb : Dynamic ) : Void
+		{
 		}
 
 	// -------o protected
@@ -223,7 +205,7 @@ class HypPusher extends EventDispatcher
 		function _onDisconnect( ) : Void
 		{
 			trace( "_onDisconnect" );
-			
+
 			onDisconnect.emit();
 		}
 

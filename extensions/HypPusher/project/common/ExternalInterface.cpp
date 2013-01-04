@@ -74,21 +74,18 @@ extern "C" {
 // Callbacks -----------------------------------------------------------------------------------------------------------
 
 static value hyp_cb_connect( value onCall ) {
-	printf("on connect");
 	_on_connect = new AutoGCRoot( onCall );
     return alloc_bool(true);
 }
 DEFINE_PRIM(hyp_cb_connect,1);
 
 static value hyp_cb_disconnect( value onCall ) {
-	printf("on disconnect");
 	_on_disconnect = new AutoGCRoot( onCall );
     return alloc_bool(true);
 }
 DEFINE_PRIM(hyp_cb_disconnect,1);
 
 static value hyp_cb_message( value onCall ) {
-	printf("on message");
 	_on_message = new AutoGCRoot( onCall );
     return alloc_bool(true);
 }

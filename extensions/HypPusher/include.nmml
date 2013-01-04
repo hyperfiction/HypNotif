@@ -5,8 +5,8 @@
 	<classpath name="src" />
 
 	<!-- android -->
-	<java path="project/android" if="android"/>
-	
+	<java path="project/android"/>
+
 	<!-- ios -->
 	<section if="ios">
 	</section>

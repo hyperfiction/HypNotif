@@ -13,31 +13,30 @@ import com.justinschultz.pusherclient.Pusher;
 import com.justinschultz.pusherclient.Pusher.Channel;
 import com.justinschultz.pusherclient.PusherListener;
 
-public class HypPusher
+public class HypPusher extends Pusher
 {
 
-	public static String API_KEY = "";
 	public static String TAG = "HypPusher";
 
 	public static native void onConnect( String socketId );
-
 	public static native void onDisconnect();
-
 	public static native void onMessage(String message);
 
-	private PusherListener _eventListener;
-	private Pusher _pusher;
-
 	public static GLSurfaceView mSurface;
+
+	private PusherListener _eventListener;
 
 	static {
 		System.loadLibrary("hyppusher");
 		System.setProperty("java.net.preferIPv6Addresses", "false");
 	}
 
-	public HypPusher()
+	public HypPusher( String apiKey )
 	{
+		super( apiKey );
+
 		Log.i( TAG, "new HypPusher ::: ");
+
 		
 		mSurface = (GLSurfaceView) GameActivity.getInstance().getCurrentFocus();
 		
@@ -87,45 +86,27 @@ public class HypPusher
 			}
 		};
 
-		Log.i( TAG, "event listener constructed, keep going...");
-
-		_pusher = new Pusher(API_KEY);
-		_pusher.setPusherListener(_eventListener);
+		setPusherListener(_eventListener);
 	}
 
-	public Pusher getPusher()
+	public static HypPusher create( String apiKey )
 	{
-		return _pusher;
+		return new HypPusher( apiKey );
 	}
 
-	public static void disconnect()
+	public void subscribeToPublic( String channelName )
 	{
-		getInstance().getPusher().disconnect();
+		subscribe( channelName );
+	}
+	
+	public void subscribeToPrivate( String channelName, String authToken )
+	{
+		subscribe( channelName, authToken );
 	}
 
-	public static void connect( String apiKey )
+	public void sendEventOnChannel( String eventName, String channelName, String data )
 	{
-		API_KEY = apiKey;
-
-		getInstance().getPusher().connect();
-		Log.i(TAG, "[Pusher] trying to connect to pusher...");
-	}
-
-	public static void subscribeToPrivateChannel(String channelName, String auth)
-	{
-		getInstance().getPusher().subscribe(channelName,auth);
-		Log.i(TAG, "[Pusher] subscribed to private channel ::: " + channelName);
-	}
-
-	public static void subscribeToPublicChannel(String channelName)
-	{
-		getInstance().getPusher().subscribe(channelName);
-		Log.i(TAG, "[Pusher] subscribed to public channel ::: " + channelName);
-	}
-
-	public static void sendEventOnChannel( String eventName, String channelName, String data )
-	{
-		Channel channel = getInstance().getPusher().channel(channelName);
+		Channel channel = channel(channelName);
 		JSONObject obj;
 		
 		obj = new JSONObject();
@@ -141,9 +122,9 @@ public class HypPusher
 		}
 	}
 
-	public static void bindToEventOnChannel(final String eventName, final String channelName)
+	public void bindToEventOnChannel( final String eventName, final String channelName)
 	 {
-		Channel channel = getInstance().getPusher().channel(channelName);
+		Channel channel = channel(channelName);
 		if (channel != null) {
 			channel.bind(eventName, new ChannelListener()
 			{
@@ -163,15 +144,4 @@ public class HypPusher
 			});
 		}
 	}
-
-	public static HypPusher getInstance()
-	{
-		if (__instance == null) {
-			__instance = new HypPusher();
-		}
-
-		return __instance;
-	}
-
-	private static HypPusher __instance = null;
 }
