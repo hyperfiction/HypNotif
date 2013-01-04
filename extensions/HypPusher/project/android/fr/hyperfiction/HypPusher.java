@@ -13,9 +13,10 @@ import com.justinschultz.pusherclient.Pusher;
 import com.justinschultz.pusherclient.Pusher.Channel;
 import com.justinschultz.pusherclient.PusherListener;
 
-public class HypPusher {
+public class HypPusher
+{
 
-	public static String API = "c2216b7ec96e9eb9a409";
+	public static String API_KEY = "";
 	public static String TAG = "HypPusher";
 
 	public static native void onConnect( String socketId );
@@ -34,29 +35,37 @@ public class HypPusher {
 		System.setProperty("java.net.preferIPv6Addresses", "false");
 	}
 
-	public HypPusher() {
+	public HypPusher()
+	{
 		Log.i( TAG, "new HypPusher ::: ");
 		
 		mSurface = (GLSurfaceView) GameActivity.getInstance().getCurrentFocus();
 		
-		_eventListener = new PusherListener() {
+		_eventListener = new PusherListener()
+		{
 			@Override
-			public void onConnect(final String socketId) {
+			public void onConnect(final String socketId)
+			{
 				Log.i(TAG, "Pusher connected. Socket Id is: " + socketId);
-				mSurface.queueEvent(new Runnable(){
+				mSurface.queueEvent(new Runnable()
+				{                    
 					@Override
-					public void run() {
+					public void run()
+					{
 						HypPusher.onConnect( socketId );
 					}
 				});
 			}
 
 			@Override
-			public void onMessage(final String message) {
+			public void onMessage(final String message)
+			{
 				Log.i(TAG, "Received message from Pusher: " + message);
-				mSurface.queueEvent(new Runnable( ){
+				mSurface.queueEvent(new Runnable( )
+				{
 					@Override
-					public void run() {
+					public void run()
+					{
 						HypPusher.onMessage(message);
 					}
 				});
@@ -64,11 +73,14 @@ public class HypPusher {
 			}
 
 			@Override
-			public void onDisconnect() {
+			public void onDisconnect()
+			{
 				Log.i(TAG, "Pusher disconnected.");
-				mSurface.queueEvent(new Runnable( ){
+				mSurface.queueEvent(new Runnable( )
+				{
 					@Override
-					public void run() {
+					public void run()
+					{
 						HypPusher.onDisconnect();
 					}
 				});
@@ -77,41 +89,49 @@ public class HypPusher {
 
 		Log.i( TAG, "event listener constructed, keep going...");
 
-		_pusher = new Pusher(API);
+		_pusher = new Pusher(API_KEY);
 		_pusher.setPusherListener(_eventListener);
 	}
 
-	public Pusher getPusher() {
+	public Pusher getPusher()
+	{
 		return _pusher;
 	}
 
-	public static void disconnect() {
+	public static void disconnect()
+	{
 		getInstance().getPusher().disconnect();
 	}
 
-	public static void connect() {
+	public static void connect( String apiKey )
+	{
+		API_KEY = apiKey;
+
 		getInstance().getPusher().connect();
 		Log.i(TAG, "[Pusher] trying to connect to pusher...");
 	}
 
-	public static void subscribeToPrivateChannel(String channelName, String auth) {
+	public static void subscribeToPrivateChannel(String channelName, String auth)
+	{
 		getInstance().getPusher().subscribe(channelName,auth);
 		Log.i(TAG, "[Pusher] subscribed to private channel ::: " + channelName);
 	}
 
-	public static void subscribeToPublicChannel(String channelName) {
+	public static void subscribeToPublicChannel(String channelName)
+	{
 		getInstance().getPusher().subscribe(channelName);
 		Log.i(TAG, "[Pusher] subscribed to public channel ::: " + channelName);
 	}
 
-	public static void sendEventOnChannel(String eventName, String channelName,
-			String data) {
+	public static void sendEventOnChannel( String eventName, String channelName, String data )
+	{
 		Channel channel = getInstance().getPusher().channel(channelName);
 		JSONObject obj;
 		
 		obj = new JSONObject();
 		
 		if (channel != null) {
+
 			try {
 				obj = new JSONObject(data);
 			} catch (JSONException e) {
@@ -121,16 +141,21 @@ public class HypPusher {
 		}
 	}
 
-	public static void bindToEventOnChannel(final String eventName, final String channelName) {
+	public static void bindToEventOnChannel(final String eventName, final String channelName)
+	 {
 		Channel channel = getInstance().getPusher().channel(channelName);
 		if (channel != null) {
-			channel.bind(eventName, new ChannelListener() {
+			channel.bind(eventName, new ChannelListener()
+			{
 				@Override
-				public void onMessage(final String message) {
+				public void onMessage(final String message)
+				{
 					Log.i(TAG, "[Pusher] receive message ::: " + message);
-					mSurface.queueEvent(new Runnable( ){
+					mSurface.queueEvent(new Runnable( )
+					{
 						@Override
-						public void run() {
+						public void run()
+						{
 							HypPusher.onMessage( message );
 						}
 					});
@@ -139,9 +164,11 @@ public class HypPusher {
 		}
 	}
 
-	public static HypPusher getInstance() {
-		if (__instance == null)
+	public static HypPusher getInstance()
+	{
+		if (__instance == null) {
 			__instance = new HypPusher();
+		}
 
 		return __instance;
 	}

@@ -47,11 +47,14 @@ extern "C" {
 		return 0;
 	}
 
+// Common --------------------------------------------------------------------------------------------------------------
+
+// iOS -----------------------------------------------------------------------------------------------------------------
+
+// Android -------------------------------------------------------------------------------------------------------------
+
 	#ifdef ANDROID
 		JNIEXPORT void JNICALL Java_fr_hyperfiction_HypPusher_onConnect(JNIEnv * env, jobject  obj, jstring socketId ){
-			const char *sEvName	= "toto";
-			alloc_string(sEvName);
-			ALOG("aloc string toto ok");
 			const char *socketIdString = env->GetStringUTFChars(socketId, 0);
 	        val_call1( _on_connect -> get( ), alloc_string( socketIdString )  );
 			env->ReleaseStringUTFChars( socketId, socketIdString );
@@ -66,6 +69,9 @@ extern "C" {
 	    }
 	#endif
 }
+
+
+// Callbacks -----------------------------------------------------------------------------------------------------------
 
 static value hyp_cb_connect( value onCall ) {
 	printf("on connect");

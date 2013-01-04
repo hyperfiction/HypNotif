@@ -3,6 +3,12 @@
 	
 	<ndll name="hyppusher" />
 	<classpath name="src" />
-	<java path="project/android"/>
+
+	<!-- android -->
+	<java path="project/android" if="android"/>
+	
+	<!-- ios -->
+	<section if="ios">
+	</section>
 
 </project>
