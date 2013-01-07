@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
 	
+<<<<<<< HEAD
 	<app title="TestHypFacebook" file="Tests" main="TestFacebook" package="fr.hyperfiction.Tests" version="1.0.0" company="Hyperfiction" debug="true"/>
 	
 	<window width="1024" height="768" fps="60" orientation="portrait" resizable="true" if="target_flash" background="0x696969"/>
 	<window width="1024" height="768" fps="60" orientation="portrait" resizable="true" unless="target_flash" background="0x696969"/>
+=======
+	<app title="HyperTest(s)" file="hypertest" main="TestFacebook" package="fr.hyperfiction.Tests" version="1.0.0" company="Hyperfiction" debug="true"/>
+	
+	<window width="1024" height="768" fps="60" orientation="landscape" resizable="true" if="target_flash" background="0x696969"/>
+	<window width="1024" height="768" fps="60" orientation="landscape" resizable="true" unless="target_flash" background="0x696969"/>
+>>>>>>> e8d2e589e80680aaccdd98e8e1bcbb7aa7d0bdfc
  	
 	<set name="BUILD_DIR" value="Export" />
 		<set name="SWF_VERSION" value="10.1" />
@@ -42,12 +49,22 @@
   	<icon name="Assets/hypicon.svg" />
 
   	<section if="android">
+<<<<<<< HEAD
   		<echo value="Compiling for android"/>
   		<template path="AndroidManifest.xml"/>
 		<template path="bin/android/bin/MainActivity.java" rename="src/fr/hyperfiction/Tests/MainActivity.java"/>
 		<!--
   		<template path="build.xml" if="android" />
 		-->
+=======
+	
+		<template 
+					path="Export/android/bin/MainActivity.java" 
+					rename="src/fr/hyperfiction/Tests/MainActivity.java" 
+					if="android"
+		 />
+		 
+>>>>>>> e8d2e589e80680aaccdd98e8e1bcbb7aa7d0bdfc
 	</section>
 
 	

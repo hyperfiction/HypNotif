@@ -11,7 +11,6 @@
 #ifdef ANDROID
 #include <jni.h>
 #endif
-
 using namespace Hyperfiction;
 
 #ifdef ANDROID
@@ -33,11 +32,11 @@ using namespace Hyperfiction;
 	};
 	#define  LOG_TAG    "trace"
 	#define  ALOG(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+
 #endif
 
 AutoGCRoot *eval_onConnect = 0;
 AutoGCRoot *eval_onEvent = 0;
-
 
 extern "C"{
 
@@ -53,7 +52,6 @@ extern "C"{
 					alloc_string( sArg1 ) ,
 					alloc_string( sArg2 ) 
 				);
-		
 	}
 
 	#ifdef IPHONE
@@ -103,6 +101,12 @@ extern "C"{
 		return alloc_bool( true );
 	}
 	DEFINE_PRIM( HypFB_set_event_callback , 1 );
+
+	static value hyp_fb_set_event_callback( value onCall ){
+		eval_onEvent = new AutoGCRoot( onCall );
+	    return alloc_bool( true );
+	}
+	DEFINE_PRIM( hyp_fb_set_event_callback , 1 );
 
 // iPhone ---------------------------------------------------------------------------------------------------------
 

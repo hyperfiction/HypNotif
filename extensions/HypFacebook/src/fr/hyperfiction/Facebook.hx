@@ -1,5 +1,36 @@
 package fr.hyperfiction;
 
+/**
+ * ...
+ * @author shoe[box]
+ */
+
+class HypFacebook{
+
+	// -------o constructor
+		
+		/**
+		* constructor
+		*
+		* @param	
+		* @return	void
+		*/
+		public function new( sAppId : String ) {
+			trace('constructor ::: '+sAppId );
+		}
+	
+	// -------o public
+				
+				
+
+	// -------o protected
+	
+		
+
+	// -------o misc
+		
+}package fr.hyperfiction;
+
 
 #if android
 import nme.JNI;
@@ -31,15 +62,15 @@ class Facebook extends EventDispatcher{
 	private var _sFb_session_token : String;
 
 	#if mobile
-	static var hypfb_set_callback = Lib.load( "fb" , "hyp_fb_set_callback" , 1 );
+	static var hypfb_set_callback = Lib.load( "HypFacebook" , "hyp_fb_set_callback" , 1 );
 	#end
 
 	#if iphone
-	static var hyp_fb_init               = nme.Loader.load( "hyp_fb_init" , 1 );
-	static var hypfb_connect             = nme.Loader.load( "hyp_fb_connect" , 0 );
-	static var hyp_fb_apprequest         = nme.Loader.load( "hyp_fb_apprequest" , 2 );
-	static var hyp_fb_apprequest_to_user = nme.Loader.load( "hyp_fb_apprequest_to_user" , 3 );
-	static var hyp_fb_feed 				 = nme.Loader.load( "hypfb_feed" , 5 );
+	static var HypFacebook_connect	 : String->Bool = Lib.load( "HypFacebook" , "CPP_FB_Connect" , 1 );
+	static var HypFacebook_authorize : String->Bool = Lib.load( "HypFacebook" , "CPP_FB_authorize" , 1 );
+	// static var hyp_fb_apprequest         = nme.Loader.load( "hyp_fb_apprequest" , 2 );
+	// static var hyp_fb_apprequest_to_user = nme.Loader.load( "hyp_fb_apprequest_to_user" , 3 );
+	// static var hyp_fb_feed 				 = nme.Loader.load( "hypfb_feed" , 5 );
 	#end
 
 	#if android
@@ -250,10 +281,6 @@ class Facebook extends EventDispatcher{
 			trace( 'init ::: ' + sAppId );
 			_sAppID = sAppId;
 
-			#if iphone
-				hyp_fb_init( _sAppID );
-			#end
-
 			#if android
 				
 				if( hypfb_init == null )
@@ -283,7 +310,7 @@ class Facebook extends EventDispatcher{
 			#end
 
 			#if iphone
-				hypfb_connect( );
+				HypFacebook_connect( _sAppID );
 			#end
 
 			#if android

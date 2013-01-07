@@ -51,12 +51,18 @@ public class DialogError extends Throwable {
         mFailingUrl = failingUrl;
     }
 
+<<<<<<< HEAD
     @Deprecated
+=======
+>>>>>>> e8d2e589e80680aaccdd98e8e1bcbb7aa7d0bdfc
     public int getErrorCode() {
         return mErrorCode;
     }
 
+<<<<<<< HEAD
     @Deprecated
+=======
+>>>>>>> e8d2e589e80680aaccdd98e8e1bcbb7aa7d0bdfc
     public String getFailingUrl() {
         return mFailingUrl;
     }

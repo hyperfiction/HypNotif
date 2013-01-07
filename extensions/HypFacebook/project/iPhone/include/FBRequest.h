@@ -73,10 +73,10 @@ typedef NSUInteger FBRequestState __attribute__((deprecated));
     NSString*             _url;
     NSURLConnection*      _connection;
     NSMutableData*        _responseText;
-//#pragma GCC diagnostic push
-//#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-    //FBRequestState        _state;
-//#pragma GCC diagnostic pop
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+    FBRequestState        _state;
+#pragma GCC diagnostic pop
     NSError*              _error;
     BOOL                  _sessionDidExpire;
     id<FBGraphObject>     _graphObject;
