@@ -1,19 +1,18 @@
 package ;
 
-import nme.display.Bitmap;
-import nme.display.Sprite;
-import nme.events.MouseEvent;
+import fr.hyperfiction.HypFacebook;
 import nme.Lib;
-import fr.hyperfiction.Facebook;
+import nme.display.Sprite;
 
 /**
  * ...
  * @author shoe[box]
  */
-class TestFacebook extends Sprite{
 
-	private static var hyp_fb_connect : Dynamic;
-	private static var hyp_fb_init : Dynamic;
+class TestFacebook extends Sprite{
+	
+	private var _fb : HypFacebook;
+
 
 	// -------o constructor
 		
@@ -24,13 +23,25 @@ class TestFacebook extends Sprite{
 		* @return	void
 		*/
 		public function new() {
-			trace('constructor');	
 			super( );
-			_run( );
+			trace('constructor');
+			_fb = new HypFacebook( '397904743584044' );
+			HypFacebook.trace_hash( );
+			_fb.addEventListener( HypFacebookEvent.OPENED , _onConn_opened , false );
+			
+			
+			if( _fb.connect( ) ){
+				trace('session valide');
+			}else{
+				trace('session non valide, authorize');
+				_fb.authorize( ["basic_info"] );
+			}
 		}
 	
 	// -------o public
-		
+				
+				
+
 	// -------o protected
 	
 		/**
@@ -39,16 +50,32 @@ class TestFacebook extends Sprite{
 		* @private
 		* @return	void
 		*/
-		private function _run( ) : Void{
+		private function _onConn_opened( e : HypFacebookEvent ) : Void{
+			trace('_onConn_opened');
 
-			var fb = Facebook.getInstance( );
-				fb.init('397904743584044');
-			#if android
-				fb.generateKeyHash( 'fr.hyperfiction.Tests' );
-			#end
-				fb.onConnect.connect( _on_fb_connected );
-				fb.connect( );
-			
+			/*
+			var h = new Hash<String>( );
+				h.set("message","toto");
+
+			_fb.request_dialog( h );
+			*/
+
+			var h = new Hash<String>( );
+				h.set("name", "Facebook SDK for Android");
+			    h.set("caption", "Build great social apps and get more installs.");
+			    h.set("description", "The Facebook SDK for Android makes it easier and faster to develop Facebook integrated Android apps.");
+			    h.set("link", "https://developers.facebook.com/android");
+			    h.set("picture", "https://raw.github.com/fbsamples/ios-3.x-howtos/master/Images/iossdk_logo.png");
+
+
+			//_fb.feed_dialog( h );
+			//_fb.call_request('me');
+			//_fb.call_request('me');
+
+			_fb.addEventListener( HypFacebookRequestEvent.GRAPH_REQUEST_ERROR , _onGraphRequest_results );
+			_fb.addEventListener( HypFacebookRequestEvent.GRAPH_REQUEST_RESULTS , _onGraphRequest_results );
+			_fb.graph_request( 'me/feed' );
+
 		}
 
 		/**
@@ -57,11 +84,8 @@ class TestFacebook extends Sprite{
 		* @private
 		* @return	void
 		*/
-		private function _on_fb_connected( sToken : String ) : Void{
-			trace('_on_fb_connected ::: '+sToken);
-			//Facebook.getInstance( ).appRequest('Hello','World','100');
-			//Facebook.getInstance( ).feed( 'Hello World title' , 'hello world caption' , 'description de test' , 'http://www.hyperfiction.fr','http://hyperfiction.fr/LogoHyperfiction.png');
-			Facebook.getInstance( ).appRequest( 'Hello !!! ' , 'from android' );
+		private function _onGraphRequest_results( e : HypFacebookRequestEvent ) : Void{
+			trace('_onGraphRequest_results ::: ');
 		}
 
 	// -------o misc

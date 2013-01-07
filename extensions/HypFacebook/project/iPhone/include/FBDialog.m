@@ -16,9 +16,10 @@
 
 
 #import "FBDialog.h"
+#import "FBSBJSON.h"
 #import "Facebook.h"
 #import "FBFrictionlessRequestSettings.h"
-#import "JSON.h"
+#import "FBUtility.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // global
@@ -219,15 +220,8 @@ params   = _params;
         NSMutableArray* pairs = [NSMutableArray array];
         for (NSString* key in params.keyEnumerator) {
             NSString* value = [params objectForKey:key];
-            NSString* escaped_value = (NSString *)CFURLCreateStringByAddingPercentEscapes(
-                                                                                          NULL, /* allocator */
-                                                                                          (CFStringRef)value,
-                                                                                          NULL, /* charactersToLeaveUnescaped */
-                                                                                          (CFStringRef)@"!*'();:@&=+$,/?%#[]",
-                                                                                          kCFStringEncodingUTF8);
-            
+            NSString* escaped_value = [FBUtility stringByURLEncodingString:value];
             [pairs addObject:[NSString stringWithFormat:@"%@=%@", key, escaped_value]];
-            [escaped_value release];
         }
         
         NSString* query = [pairs componentsJoinedByString:@"&"];
@@ -303,7 +297,7 @@ params   = _params;
                                               needle:@"frictionless_recipients="];
     if (recipientJson) {
         // if value parses as an array, treat as set of fbids
-        SBJsonParser *parser = [[[SBJsonParser alloc]
+        FBSBJsonParser *parser = [[[FBSBJsonParser alloc]
                                  init]
                                 autorelease];
         id recipients = [parser objectWithString:recipientJson];
@@ -343,7 +337,7 @@ params   = _params;
         _webView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         [self addSubview:_webView];
         
-        UIImage* closeImage = [UIImage imageNamed:@"FBDialog.bundle/images/close.png"];
+        UIImage* closeImage = [UIImage imageNamed:@"FacebookSDKResources.bundle/FBDialog/images/close.png"];
         
         UIColor* color = [UIColor colorWithRed:167.0/255 green:184.0/255 blue:216.0/255 alpha:1];
         _closeButton = [[UIButton buttonWithType:UIButtonTypeCustom] retain];
@@ -500,7 +494,13 @@ params   = _params;
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
     // 102 == WebKitErrorFrameLoadInterruptedByPolicyChange
-    if (!([error.domain isEqualToString:@"WebKitErrorDomain"] && error.code == 102)) {
+    // -999 == "Operation could not be completed", note -999 occurs when the user clicks away before
+    // the page has completely loaded, if we find cases where we want this to result in dialog failure
+    // (usually this just means quick-user), then we should add something more robust here to account
+    // for differences in application needs
+    NSLog(@"didFailWithError %@",error.code);
+    if (!(([error.domain isEqualToString:@"NSURLErrorDomain"] && error.code == -999) ||
+          ([error.domain isEqualToString:@"WebKitErrorDomain"] && error.code == 102))) {
         [self dismissWithError:error animated:YES];
     }
 }
@@ -660,13 +660,15 @@ params   = _params;
 }
 
 - (void)dialogWillAppear {
+    NSLog(@"dialogWillAppear");
 }
 
 - (void)dialogWillDisappear {
+    NSLog(@"dialogWillDisappear");
 }
 
 - (void)dialogDidSucceed:(NSURL *)url {
-    
+    NSLog(@"dialogDidSucceed %@",url);
     if ([_delegate respondsToSelector:@selector(dialogCompleteWithUrl:)]) {
         [_delegate dialogCompleteWithUrl:url];
     }
@@ -674,6 +676,7 @@ params   = _params;
 }
 
 - (void)dialogDidCancel:(NSURL *)url {
+    NSLog(@"dialogWillAppear %@",url);
     if ([_delegate respondsToSelector:@selector(dialogDidNotCompleteWithUrl:)]) {
         [_delegate dialogDidNotCompleteWithUrl:url];
     }

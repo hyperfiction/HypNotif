@@ -40,17 +40,21 @@ namespace hyperfiction{
 	}
 
 	int get_screen_width( ){
-		UIScreen *MainScreen = [UIScreen mainScreen];
-		UIScreenMode *ScreenMode = [MainScreen currentMode];
-		CGSize Size = [ScreenMode size]; // <--- Real screen size
-		return Size.width;
+		// UIScreen *MainScreen = [UIScreen mainScreen];
+		// UIScreenMode *ScreenMode = [MainScreen currentMode];
+		// CGSize Size = [ScreenMode size]; // <--- Real screen size
+		// return Size.width;
+		CGFloat fScl = [[UIScreen mainScreen] scale];
+		return [[UIScreen mainScreen] bounds].size.width * fScl;
 	}
 
 	int get_screen_height( ){
-		UIScreen *MainScreen = [UIScreen mainScreen];
-		UIScreenMode *ScreenMode = [MainScreen currentMode];
-		CGSize Size = [ScreenMode size]; // <--- Real screen size
-		return Size.height;
+		// UIScreen *MainScreen = [UIScreen mainScreen];
+		// UIScreenMode *ScreenMode = [MainScreen currentMode];
+		// CGSize Size = [ScreenMode size]; // <--- Real screen size
+		// return Size.height;
+		CGFloat fScl = [[UIScreen mainScreen] scale];
+		return [[UIScreen mainScreen] bounds].size.height * fScl;
 	}
 
 	const char* get_system_lang( ){

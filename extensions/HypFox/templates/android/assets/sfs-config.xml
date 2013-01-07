@@ -1,0 +1,4 @@
+<!-- SFS2X Client Configuration file -->
+<SmartFoxConfig>
+    <httpPort>80</httpPort>
+</SmartFoxConfig>
