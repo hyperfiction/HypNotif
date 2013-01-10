@@ -15,6 +15,7 @@
  */
 
 package com.facebook.widget;
+
 import ::APP_PACKAGE::.R;
 import android.annotation.SuppressLint;
 import android.app.Dialog;

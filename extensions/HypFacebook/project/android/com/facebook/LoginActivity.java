@@ -16,13 +16,11 @@
 
 package com.facebook;
 
-import ::APP_PACKAGE::.R;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-
+import ::APP_PACKAGE::.R;
 
 /**
  * This Activity is a necessary part of the overall Facebook login process

@@ -7,7 +7,6 @@ import nme.events.EventDispatcher;
  * ...
  * @author shoe[box]
  */
-
 @:build(org.shoebox.utils.NativeMirror.build( )) class HypFacebook extends EventDispatcher{
 
 	private var _sApp_id : String;
@@ -40,11 +39,14 @@ import nme.events.EventDispatcher;
 		* @return	void
 		*/
 		public function connect( ) : Bool {
+			trace("connect");
+
 			var bSessionValid = false;	
 			#if android
 			bSessionValid = jni_connect( _JNI_instance );
 			#end
 
+			trace('bSessionValid ::: '+bSessionValid);
 			return bSessionValid;
 		}
 
@@ -56,9 +58,11 @@ import nme.events.EventDispatcher;
 		*/
 		public function authorize( a : Array<String> ) : Void {
 			trace('authorize ::: '+a);
+
 			#if android
-			jni_authorize( _JNI_instance , a.join('&'));
+			jni_authorize( _JNI_instance , a.join('&') );				
 			#end
+
 		}
 
 		/**

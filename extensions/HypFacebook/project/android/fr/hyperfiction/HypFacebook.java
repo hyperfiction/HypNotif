@@ -7,24 +7,23 @@ import com.facebook.internal.SessionAuthorizationType;
 import com.facebook.internal.SessionTracker;
 import com.facebook.internal.Utility;
 
+import android.opengl.GLSurfaceView;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.app.Activity;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.util.Log;
 
-<<<<<<< HEAD
 import fr.hyperfiction.Base64;
 
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-=======
-import com.facebook.android.*;
-import com.facebook.android.Facebook.*;
 
-import java.io.IOException;
->>>>>>> e8d2e589e80680aaccdd98e8e1bcbb7aa7d0bdfc
 import java.util.Arrays;
 
 import org.haxe.nme.GameActivity;
@@ -35,8 +34,6 @@ import org.haxe.nme.NME;
  * ...
  * @author shoe[box]
  */
-<<<<<<< HEAD
-
 public class HypFacebook implements Session.StatusCallback{
 
 	static public native void onFBEvent( String jsEvName , String javaArg1 , String javaArg2 );
@@ -113,6 +110,8 @@ public class HypFacebook implements Session.StatusCallback{
 	private static String GRAPH_REQUEST_ERROR		= "GRAPH_REQUEST_ERROR";
 	private static String GRAPH_REQUEST_RESULTS		= "GRAPH_REQUEST_RESULTS";
 
+	public static GLSurfaceView mSurface;
+
 	// -------o constructor
 		
 		/**
@@ -123,40 +122,10 @@ public class HypFacebook implements Session.StatusCallback{
 		*/
 		public HypFacebook( String sAppID ){
 			trace("constructor ::: "+sAppID);
+			mSurface = ( GLSurfaceView ) GameActivity.getInstance( ).getCurrentFocus( );	
 			_sAppID = sAppID;
 		}
-=======
 
-public class HypFacebook extends Facebook implements DialogListener{
-
-	static public native void onFBEvent( String jsEvName , String jsArgs );
-	static{
-		System.loadLibrary( "fb" );
-	}
-
-	private SharedPreferences _oPrefs;
-	
-	private static String TAG				= "trace";//HypFacebook";
-	private static String ARGS_SEPARATOR	= "-";
-	
-	private static HypFacebook __instance	= null;
-
-
-	// -------o constructor
-		
-		/**
-		* constructor
-		*
-		* @param	
-		* @return	void
-		*/
-		public HypFacebook( String sAppID ){
-			super( sAppID );
-			trace("constructor ::: "+sAppID);
-			_oPrefs	= GameActivity.getInstance( ).getPreferences( Activity.MODE_PRIVATE );
-		}
->>>>>>> e8d2e589e80680aaccdd98e8e1bcbb7aa7d0bdfc
-	
 	// -------o public
 		
 		/**
@@ -177,40 +146,30 @@ public class HypFacebook extends Facebook implements DialogListener{
 		*/
 		public boolean connect( ){
 			trace("connect");
-<<<<<<< HEAD
-
 			boolean bRes = true;
 
+			/*
 			_session = Session.getActiveSession( );
-			if( _session == null || !_session.isOpened() || _session.isClosed() )
+
+			if( _session == null || !_session.isOpened() || _session.isClosed() ){
+				_session = new Session.Builder( GameActivity.getContext( ) ).setApplicationId( _sAppID ).build( );
+				Session.setActiveSession( _session );
 				bRes = false;
+			}
+			trace("_session ::: "+_session);
+			*/
+
+			Session activeSession = Session.getActiveSession();
+		    if ( activeSession == null || activeSession.getState().isClosed( ) ) {
+		        activeSession = new Session.Builder( GameActivity.getContext( ) ).setApplicationId( _sAppID ).build();
+		        Session.setActiveSession(activeSession);
+		        bRes = false;
+		    }
+
+		    _session = activeSession;
+		    _session.addCallback( statusCallback );
 
 			return bRes;
-=======
-			String sAccess_Token	= _oPrefs.getString( "access_token" , null );
-			long lExpire			= _oPrefs.getLong( "access_expires" , 0 );	
-
-			trace( "connect" );
-			trace( "sAccess_Token 	:::"+sAccess_Token );
-			trace( "lExpire 		:::"+lExpire );
-
-			if( sAccess_Token != null )
-				setAccessToken( sAccess_Token );
-
-			 if( lExpire != 0 )
-	            setAccessExpires( lExpire );
-
-	       	boolean bSessionValid = isSessionValid( );
-	       	if( bSessionValid ){
-	       		trace("session valide");
-	       		SharedPreferences.Editor 	editor = _oPrefs.edit();
-						                    editor.putString("access_token", sAccess_Token );
-						                    editor.putLong("access_expires", lExpire );
-						                    editor.commit( );
-	       	}
-
-	       	return bSessionValid;
->>>>>>> e8d2e589e80680aaccdd98e8e1bcbb7aa7d0bdfc
 		}
 
 		/**
@@ -219,22 +178,34 @@ public class HypFacebook extends Facebook implements DialogListener{
 		* @public
 		* @return	void
 		*/
-<<<<<<< HEAD
-		public void logout( ){
-			
-=======
-		public String logout( ){
+		public void call_callback( final String s , final String sArg1 , final String sArg2 ){
+			trace("call_callback >> ::: "+s);
+			GameActivity.getInstance( ).runOnUiThread( 
+					new Runnable(){
+						public void run( ) {
+							onFBEvent( s , sArg1 , sArg2 );			
+						}
+					});
 
-			String res = null;
+		}
 
-			try {
-	           	res = logout(GameActivity.getContext( ) );
-	        } catch (Exception e) {
-	            Log.e("LogoutException",""+e.getMessage());
+		private class SessionStatusCallback implements Session.StatusCallback {
+	        @Override
+	        public void call( final Session session , SessionState state, Exception exception) {
+	        	trace("call ::: "+session);
+	        	call_callback( session.getState( ).toString( ) , "" , "" );
 	        }
+	    }
+		private Session.StatusCallback statusCallback = new SessionStatusCallback();
 
-	        return res;
->>>>>>> e8d2e589e80680aaccdd98e8e1bcbb7aa7d0bdfc
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		public void logout( ){
+
 		}		
 
 		/**
@@ -243,53 +214,25 @@ public class HypFacebook extends Facebook implements DialogListener{
 		* @public
 		* @return	void
 		*/
-		public void authorize( String sPerms ) {
+		public void authorize( final String sPerms ) {
 			trace("authorize");
-<<<<<<< HEAD
+			
+			//
 
-			_session = new Session.Builder( GameActivity.getContext( ) ).setApplicationId( _sAppID ).build();
-			Session.setActiveSession( _session );
+			GameActivity.getInstance().mHandler.post(
+				new Runnable() {
+					@Override
+					public void run() {
 
-			Session.OpenRequest req = new Session.OpenRequest( GameActivity.getInstance( ) );
-								req.setPermissions(Arrays.asList( sPerms.split("&") ));
-			_session.addCallback( this );
-			_session.openForRead( req );
-=======
-			String[ ] a_permissions = sPerms.split("|");
-			trace("a_permissions ::: "+a_permissions);
+						final Session.OpenRequest 	req = new Session.OpenRequest( GameActivity.getInstance( ) );
+													req.setPermissions(Arrays.asList( sPerms.split("&") ));
 
-			DialogListener listener = new DialogListener( ){
+						Session.getActiveSession( ).openForRead( req );
 
-				@Override
-				public void onComplete( Bundle values ){
-					trace("onComplete ::: "+values);
-					_on_event( "authorize_onComplete" , values.get("access_token")+"" );
+					}
 				}
+			);
 
-				@Override
-				public void onFacebookError( FacebookError e ){
-					trace("onFacebookError ::: "+e);
-					_on_event( "authorize_onComplete" , e.getErrorCode( ) + ARGS_SEPARATOR + e.getErrorType( ) );
-				}
-
-				@Override
-				public void onError( DialogError e ){
-					trace("onError ::: "+e);
-					_on_event( "authorize_dialog_error" , e.getErrorCode( ) + ARGS_SEPARATOR + e.getFailingUrl( ) );
-				}
-
-				@Override
-				public void onCancel( ){
-					trace("onCancel ::: ");
-					_on_event( "authorize_dialog_cancel" , "" );
-				}
-
-			};
-
-			trace("authorize");
-			authorize( GameActivity.getInstance( ) , a_permissions , listener );
-			trace("ok");
->>>>>>> e8d2e589e80680aaccdd98e8e1bcbb7aa7d0bdfc
 		}
 
 		/**
@@ -298,7 +241,6 @@ public class HypFacebook extends Facebook implements DialogListener{
 		* @public
 		* @return	void
 		*/
-<<<<<<< HEAD
 		public void requestDialog( String sKeys , String sVals ){
 			trace("sKeys ::: "+sKeys);
 			trace("sVals ::: "+sVals);
@@ -319,52 +261,6 @@ public class HypFacebook extends Facebook implements DialogListener{
 							requestsDialog.setOnCompleteListener( listener_request_dialog );
 							requestsDialog.show( );
 		        
-=======
-		public void dialog( String sAction , String sParamsNames , String sParamsValues ){
-			trace("dialog ::: "+sAction+" - "+sParamsNames+" - "+sParamsValues);	
-
-			//Split to array
-				String[ ] aParams = sParamsNames.split( ARGS_SEPARATOR );	
-				String[ ] aValues = sParamsValues.split( ARGS_SEPARATOR );	
-				trace("aParams ::: "+aParams.length);
-				
-			//Bundle
-				int l = aParams.length;
-				trace("l ::: "+l);
-				Bundle params = new Bundle( );
-				for( int i = 0 ; i<l ; i++ ){
-					trace("i ::: "+i+"|"+aParams[i]+" = "+aValues[i]);
-					params.putString( aParams[ i ] , aValues[ i ] );
-				}
-				trace("params ::: "+params);
-
-			//	
-				DialogListener listener = new DialogListener( ){
-
-					@Override
-					public void onComplete( Bundle values ){
-						trace("onComplete ::: "+values);
-					}
-
-					@Override
-					public void onFacebookError( FacebookError e ){
-						trace("onFacebookError ::: "+e);
-					}
-
-					@Override
-					public void onError( DialogError e ){
-						trace("onError ::: "+e);
-					}
-
-					@Override
-					public void onCancel( ){
-						trace("onCancel ::: ");
-					}
-
-				};
-				dialog( GameActivity.getContext( ) , sAction , params , listener );
-			
->>>>>>> e8d2e589e80680aaccdd98e8e1bcbb7aa7d0bdfc
 		}
 
 		/**
@@ -373,7 +269,6 @@ public class HypFacebook extends Facebook implements DialogListener{
 		* @public
 		* @return	void
 		*/
-<<<<<<< HEAD
 		public void feedDialog( String sKeys , String sVals ){
 			trace("sKeys ::: "+sKeys);
 			trace("sVals ::: "+sVals);
@@ -394,18 +289,6 @@ public class HypFacebook extends Facebook implements DialogListener{
 							requestsDialog.setOnCompleteListener( listener_feed_dialog );
 							requestsDialog.show( );
 		        
-=======
-		public String graph_request( String sGraphRequest ){
-			trace("graph_request ::: "+sGraphRequest);
-			String res = null;
-			try {
-				res = request( sGraphRequest );
-			} catch (IOException e) {
-				trace("graph_request exception ::: "+e);
-				e.printStackTrace();
-			}
-			return res;			
->>>>>>> e8d2e589e80680aaccdd98e8e1bcbb7aa7d0bdfc
 		}
 
 		//Dialog listeners
@@ -416,18 +299,10 @@ public class HypFacebook extends Facebook implements DialogListener{
 		* @public
 		* @return	void
 		*/
-<<<<<<< HEAD
 		public void dialog( String sAction , String sParamsNames , String sParamsValues ){
 			
 			
 		}
-=======
-		 @Override
-        public void onComplete(Bundle values) {
-        	    
-        }
-
->>>>>>> e8d2e589e80680aaccdd98e8e1bcbb7aa7d0bdfc
 
 		/**
 		* 
@@ -435,20 +310,12 @@ public class HypFacebook extends Facebook implements DialogListener{
 		* @public
 		* @return	void
 		*/
-<<<<<<< HEAD
 		public void graph_request( String sGraphRequest ){
 			trace("request ::: "+sGraphRequest);
 			Request req = new Request( Session.getActiveSession( ) , sGraphRequest , null , null , listener_request );
 					req.executeAsync( );
 
 		}
-=======
-        @Override
-        public void onFacebookError(FacebookError error) {
-	          
-        }
-
->>>>>>> e8d2e589e80680aaccdd98e8e1bcbb7aa7d0bdfc
 
 		/**
 		* 
@@ -456,7 +323,6 @@ public class HypFacebook extends Facebook implements DialogListener{
 		* @public
 		* @return	void
 		*/
-<<<<<<< HEAD
 		public void call(Session session, SessionState state, Exception exception){
 			
 			final String s = session.getState( ).toString( );
@@ -471,39 +337,14 @@ public class HypFacebook extends Facebook implements DialogListener{
 	
 	// -------o misc
 		
-=======
-        @Override
-        public void onCancel() {
-
-        }
-
-        /**
-        * 
-        * 
-        * @public
-        * @return	void
-        */
-         @Override
-	    public void onError( DialogError e ) {
-	        Log.i("trace","onDialog Error"+e);
-	    }
-
-	// -------o protected
-	
->>>>>>> e8d2e589e80680aaccdd98e8e1bcbb7aa7d0bdfc
 		/**
 		* 
 		* 
 		* @private
 		* @return	void
 		*/
-<<<<<<< HEAD
 		public static void trace( String s ){
 			Log.w( TAG, s );
-=======
-		private void _onSessionValid( ){
-			trace( "_onSessionValid" );
->>>>>>> e8d2e589e80680aaccdd98e8e1bcbb7aa7d0bdfc
 		}
 
 		/**
@@ -512,34 +353,21 @@ public class HypFacebook extends Facebook implements DialogListener{
 		* @private
 		* @return	void
 		*/
-<<<<<<< HEAD
 		public static HypFacebook create( String sAppId ){
 			Log.i( TAG, "create ::: "+sAppId );			
 			return __instance = new HypFacebook( sAppId );
 		}
 
-=======
-		private void _on_event( String sType , String sConcatArgs ){
-			trace("_on_event ::: "+sType+" = "+sConcatArgs);
-			onFBEvent( sType , sConcatArgs );
-		}
-
 	// -------o misc
-		
->>>>>>> e8d2e589e80680aaccdd98e8e1bcbb7aa7d0bdfc
+
 		/**
 		* 
 		* 
 		* @public
 		* @return	void
 		*/
-<<<<<<< HEAD
 		static void req_dialog( String sKeys , String sVals ){
 			__instance.requestDialog( sKeys , sVals );
-=======
-		public static void trace( String s ){
-			Log.w( TAG, s );
->>>>>>> e8d2e589e80680aaccdd98e8e1bcbb7aa7d0bdfc
 		}
 
 		/**
@@ -548,7 +376,6 @@ public class HypFacebook extends Facebook implements DialogListener{
 		* @public
 		* @return	void
 		*/
-<<<<<<< HEAD
 		static void feed_dialog( String sKeys , String sVals ){
 			__instance.feedDialog( sKeys , sVals );
 		}
@@ -576,9 +403,9 @@ public class HypFacebook extends Facebook implements DialogListener{
 		public static void trace_hash( ){
 			trace("trace_hash");
 	    	
+	    	
 	    	Log.i("trace", "nme_key_hash : +::APP_PACKAGE:: ");
 	    	try {
-			   //PackageInfo info = GameActivity.getInstance( ).getPackageManager().getPackageInfo("**YOURPACKAGENAME**", PackageManager.GET_SIGNATURES);
 			   PackageInfo info = GameActivity.getInstance( ).getPackageManager( ).getPackageInfo( "::APP_PACKAGE::" , PackageManager.GET_SIGNATURES );
 			   for (Signature signature : info.signatures) {
 			        MessageDigest 	md = MessageDigest.getInstance("SHA");
@@ -594,17 +421,5 @@ public class HypFacebook extends Facebook implements DialogListener{
 			}
 			
 	    }
-	
-=======
-		public static HypFacebook create( String sAppId ){
-			Log.i( TAG, "create ::: "+sAppId );			
-			return __instance = new HypFacebook( sAppId );
-		}
 
-	//JNI
-		static public native void onConnect( );
-		static {
-			System.loadLibrary( "fb" );
-		}
->>>>>>> e8d2e589e80680aaccdd98e8e1bcbb7aa7d0bdfc
 }

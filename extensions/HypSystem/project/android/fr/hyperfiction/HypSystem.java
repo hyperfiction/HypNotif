@@ -133,7 +133,7 @@ class HypSystem{
 					sRes = "hdpi";
 					break;
 
-				case DisplayMetrics.DENSITY_XHIGH :
+				case 0x00000140://DisplayMetrics.DENSITY_XHIGH :
 					sRes = "xhdpi";
 					break;
 

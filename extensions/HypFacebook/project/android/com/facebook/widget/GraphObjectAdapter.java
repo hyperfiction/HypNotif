@@ -33,8 +33,6 @@ import java.net.URL;
 import java.text.Collator;
 import java.util.*;
 
-import ::APP_PACKAGE::.R;
-
 class GraphObjectAdapter<T extends GraphObject> extends BaseAdapter implements SectionIndexer {
     private static final int DISPLAY_SECTIONS_THRESHOLD = 1;
     private static final int HEADER_VIEW_TYPE = 0;

@@ -16,8 +16,6 @@
 
 package com.facebook;
 
-import ::APP_PACKAGE::.R;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -27,6 +25,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.webkit.CookieSyncManager;
+import ::APP_PACKAGE::.R;
 import com.facebook.internal.ServerProtocol;
 import com.facebook.internal.Utility;
 import com.facebook.model.GraphMultiResult;

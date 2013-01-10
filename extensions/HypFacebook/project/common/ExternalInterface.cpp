@@ -87,7 +87,6 @@ extern "C"{
 			const char *sArg2 = env->GetStringUTFChars( javaArg2 , false );
 
 			dispatch_event( sEvName , sArg1 , sArg2 );
-
 		}
 
 	#endif
@@ -101,12 +100,6 @@ extern "C"{
 		return alloc_bool( true );
 	}
 	DEFINE_PRIM( HypFB_set_event_callback , 1 );
-
-	static value hyp_fb_set_event_callback( value onCall ){
-		eval_onEvent = new AutoGCRoot( onCall );
-	    return alloc_bool( true );
-	}
-	DEFINE_PRIM( hyp_fb_set_event_callback , 1 );
 
 // iPhone ---------------------------------------------------------------------------------------------------------
 

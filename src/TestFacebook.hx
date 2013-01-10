@@ -26,16 +26,7 @@ class TestFacebook extends Sprite{
 			super( );
 			trace('constructor');
 			_fb = new HypFacebook( '397904743584044' );
-			HypFacebook.trace_hash( );
-			_fb.addEventListener( HypFacebookEvent.OPENED , _onConn_opened , false );
-			
-			
-			if( _fb.connect( ) ){
-				trace('session valide');
-			}else{
-				trace('session non valide, authorize');
-				_fb.authorize( ["basic_info"] );
-			}
+			_run( );
 		}
 	
 	// -------o public
@@ -43,7 +34,37 @@ class TestFacebook extends Sprite{
 				
 
 	// -------o protected
-	
+		
+		/**
+		* 
+		* 
+		* @private
+		* @return	void
+		*/
+		private function _run( ) : Void{
+			HypFacebook.trace_hash( );
+			//_fb.addEventListener( HypFacebookEvent.OPENED , _onConn_opened , false );
+			
+			
+			if( _fb.connect( ) ){
+				trace('session valide');
+			}else{
+				trace('session non valide, authorize');
+				_authorize( );				
+			}
+		}
+
+		/**
+		* 
+		* 
+		* @private
+		* @return	void
+		*/
+		private function _authorize( ) : Void{
+			trace('_authorize');
+			_fb.authorize( ["basic_info"] );
+		}
+
 		/**
 		* 
 		* 
