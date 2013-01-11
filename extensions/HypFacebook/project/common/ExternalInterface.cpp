@@ -82,11 +82,14 @@ extern "C"{
 																			jstring javaArg1 ,
 																			jstring javaArg2
 																		){
+			ALOG("Java_fr_hyperfiction_HypFacebook_onFBEvent" );
+			
 			const char *sEvName	= env->GetStringUTFChars( jsEvName , false );
 			const char *sArg1 = env->GetStringUTFChars( javaArg1 , false );
 			const char *sArg2 = env->GetStringUTFChars( javaArg2 , false );
 
 			dispatch_event( sEvName , sArg1 , sArg2 );
+			
 		}
 
 	#endif

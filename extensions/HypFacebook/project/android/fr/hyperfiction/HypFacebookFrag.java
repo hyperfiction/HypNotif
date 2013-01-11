@@ -13,13 +13,15 @@ import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.Settings;
 
-import android.util.Log;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.TextView;
 import android.view.ViewGroup;
+
+import java.util.List;
 
 import fr.hyperfiction.HypFacebookView;
 
@@ -30,11 +32,10 @@ import org.haxe.nme.GameActivity;
  * @author shoe[box]
  */
 
-public class HypFacebookFragment extends Fragment{
-
-	public HypFacebookView view;
+public class HypFacebookFrag extends Fragment{
 
 	private UiLifecycleHelper uiHelper;
+	private List<String> aPermissions;
 
 	private static String TAG = "trace";//HypFacebook";
 
@@ -46,12 +47,17 @@ public class HypFacebookFragment extends Fragment{
 		* @param	
 		* @return	void
 		*/
-		public HypFacebookFragment() {
+		public HypFacebookFrag() {
 			trace("constructor");			
 		}
 	
 	// -------o public
 		
+		public void setPermissions( List<String> perms ) {
+			trace("setPermissions");
+            this.aPermissions = perms;
+        }
+
 		/**
 		* 
 		* 
@@ -60,11 +66,25 @@ public class HypFacebookFragment extends Fragment{
 		*/
 		public void onCreate(Bundle savedInstanceState) {
 			trace("onCreate");
-			__instance = this;
 			super.onCreate(savedInstanceState);
 			uiHelper = new UiLifecycleHelper( GameActivity.getInstance( ) , callback);
         	uiHelper.onCreate(savedInstanceState);
 		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		@Override
+	    public void onStart() {
+	        super.onStart( );
+	    	trace("onStart");
+	    	if( Session.getActiveSession( ).isOpened( ) )
+	    		return;
+	       _authorize( );
+	    }
 
 		/**
 		* 
@@ -87,6 +107,7 @@ public class HypFacebookFragment extends Fragment{
 		*/
 	    @Override
 	    public void onDestroy() {
+	    	trace("onDestroy");
 	        super.onDestroy();
 	        uiHelper.onDestroy();
    		}
@@ -97,37 +118,7 @@ public class HypFacebookFragment extends Fragment{
 		* @public
 		* @return	void
 		*/
-		@Override
-    	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-			trace("onCreateView");
-
-			Settings.addLoggingBehavior(LoggingBehavior.INCLUDE_ACCESS_TOKENS);
-
-	        Session session = Session.getActiveSession();
-	        if (session == null) {
-	            if (savedInstanceState != null) {
-	                session = Session.restoreSession(getActivity(), null, callback, savedInstanceState);
-	            }
-	            if (session == null) {
-	                session = new Session(getActivity());
-	            }
-	            Session.setActiveSession(session);
-	            if (session.getState().equals(SessionState.CREATED_TOKEN_LOADED)) {
-	                session.openForRead(new Session.OpenRequest(this).setCallback( callback ));
-	            }
-	        }
-
-			return view = new HypFacebookView( );
-		}
-
-		/**
-		* 
-		* 
-		* @public
-		* @return	void
-		*/
 		public void authorize( ){
-			trace("authorize");
 			Session session = Session.getActiveSession();
 	        if (!session.isOpened() && !session.isClosed() ) {
 	            session.openForRead( new Session.OpenRequest(this).setCallback( callback ) );
@@ -135,6 +126,13 @@ public class HypFacebookFragment extends Fragment{
 	            Session.openActiveSession( getActivity( ), this , true , callback );
 	        }
 		}
+
+		@Override
+    	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    		trace("onActivityResult");
+    		super.onActivityResult(requestCode, resultCode, data);
+    		Session.getActiveSession().onActivityResult( getActivity( ) , requestCode , resultCode , data );
+    	}
 
 	// -------o protected
 	
@@ -156,6 +154,20 @@ public class HypFacebookFragment extends Fragment{
 	    	trace("onSessionStateChange");
 	    }
 
+	    /**
+	    * 
+	    * 
+	    * @private
+	    * @return	void
+	    */
+	    private void _authorize( ){
+	    	trace("_authorize");
+
+	    	final Session.OpenRequest 	req = new Session.OpenRequest( this );
+										req.setPermissions( aPermissions );
+			Session.getActiveSession( ).openForRead( req );
+	    }
+
 	// -------o misc
 		
 		/**
@@ -165,7 +177,7 @@ public class HypFacebookFragment extends Fragment{
 		* @return	void
 		*/
 		public static void trace( String s ){
-			Log.w( TAG, "HypFacebookFragment ::: "+s );
+			Log.w( TAG, "HypFacebookFrag ::: "+s );
 		}
 
 		/**
@@ -174,9 +186,13 @@ public class HypFacebookFragment extends Fragment{
 		* @public
 		* @return	void
 		*/
-		public static HypFacebookFragment getInstance( ){
+		public static HypFacebookFrag getInstance( ){
 			trace("getInstance ::: "+__instance);
+
+			if( __instance == null )
+				__instance = new HypFacebookFrag( );
+
 			return __instance;
 		}
-		private static HypFacebookFragment __instance = null;
+		private static HypFacebookFrag __instance = null;
 }

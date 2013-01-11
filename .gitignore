@@ -5,3 +5,5 @@
 build.build
 *.sublime-project
 *.sublime-workspace
+obj/
+all_objs

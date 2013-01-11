@@ -42,11 +42,12 @@ class TestFacebook extends Sprite{
 		* @return	void
 		*/
 		private function _run( ) : Void{
-			HypFacebook.trace_hash( );
-			//_fb.addEventListener( HypFacebookEvent.OPENED , _onConn_opened , false );
+			//HypFacebook.trace_hash( );
+			_fb.addEventListener( HypFacebookEvent.OPENED , _onConn_opened , false );
 			
-			
-			if( _fb.connect( ) ){
+			var bRes = _fb.connect( );
+			trace('run :::: '+bRes);
+			if( bRes  ){
 				trace('session valide');
 			}else{
 				trace('session non valide, authorize');
@@ -89,13 +90,13 @@ class TestFacebook extends Sprite{
 			    h.set("picture", "https://raw.github.com/fbsamples/ios-3.x-howtos/master/Images/iossdk_logo.png");
 
 
-			//_fb.feed_dialog( h );
+			_fb.feed_dialog( h );
 			//_fb.call_request('me');
 			//_fb.call_request('me');
 
-			_fb.addEventListener( HypFacebookRequestEvent.GRAPH_REQUEST_ERROR , _onGraphRequest_results );
-			_fb.addEventListener( HypFacebookRequestEvent.GRAPH_REQUEST_RESULTS , _onGraphRequest_results );
-			_fb.graph_request( 'me/feed' );
+			//_fb.addEventListener( HypFacebookRequestEvent.GRAPH_REQUEST_ERROR , _onGraphRequest_results );
+			//_fb.addEventListener( HypFacebookRequestEvent.GRAPH_REQUEST_RESULTS , _onGraphRequest_results );
+			//_fb.graph_request( 'me/feed' );
 
 		}
 
@@ -106,7 +107,7 @@ class TestFacebook extends Sprite{
 		* @return	void
 		*/
 		private function _onGraphRequest_results( e : HypFacebookRequestEvent ) : Void{
-			trace('_onGraphRequest_results ::: ');
+			trace('_onGraphRequest_results ::: '+e.sResult);
 		}
 
 	// -------o misc

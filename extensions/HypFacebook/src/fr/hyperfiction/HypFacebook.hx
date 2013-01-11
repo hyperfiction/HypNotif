@@ -149,16 +149,14 @@ import nme.events.EventDispatcher;
 		private function _init( ) : Void{
 			trace('_init');
 			
-			#if cpp
-			trace('set_callback');
-			HypFB_set_event_callback( _onEvent );
-			#end
-
 			#if android
 				
 				#if debug
 				trace_hash( );
 				#end
+
+				trace('set_callback');
+				HypFB_set_event_callback( _onEvent );
 
 				_JNI_instance = create( _sApp_id );
 
@@ -173,7 +171,7 @@ import nme.events.EventDispatcher;
 		* @return	void
 		*/
 		private function _onEvent( sEventType : String , sArg1 : String , sArg2 : String ) : Void{
-			//trace('_onEvent ::: '+sEventType+' - '+sArg1+' - '+sArg2);
+			trace('_onEvent ::: '+sEventType+' - '+sArg1+' - '+sArg2);
 			
 			var e = Type.createEnum( EventTypes , sEventType );
 			var ev : HypFacebookEvent = null;
@@ -205,7 +203,7 @@ import nme.events.EventDispatcher;
 					ev = _dispatch_request_event( sEventType , sArg1 , null , sArg2 );
 
 				case GRAPH_REQUEST_RESULTS:
-					ev = _dispatch_request_event( sEventType , sArg1 , sArg2 );
+					ev = _dispatch_request_event( sEventType , sArg2 , sArg1 );
 
 				default:
 					
@@ -231,7 +229,8 @@ import nme.events.EventDispatcher;
 														sPostID	: String = null , 
 														sError	: String = null 
 													) : HypFacebookEvent{
-
+			
+			trace('_dispatch_feeddialog_event ::: '+sType);
 			var ev = new HypFacebookFeedDialogEvent( sType );	
 				ev.sPostID	= sPostID;
 				ev.sError	= sError;
@@ -250,6 +249,7 @@ import nme.events.EventDispatcher;
 															sError		: String = null 
 														) : HypFacebookEvent{
 
+			trace('_dispatch_requestdialog_event ::: '+sType);
 			var ev = new HypFacebookRequestDialogEvent( sType );
 				ev.sRequestID	= sRequestID;
 				ev.sError		= sError;
@@ -268,7 +268,7 @@ import nme.events.EventDispatcher;
 													sGraphPath	: String,
 													sError		: String = null 
 												 ) : HypFacebookRequestEvent{
-
+			
 			var ev = new HypFacebookRequestEvent( sType );
 				ev.sResult		= sResult;
 				ev.sGraphPath	= sGraphPath;

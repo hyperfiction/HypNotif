@@ -8,4 +8,7 @@
 		<java path="project/android" if="android" />
 		<template path="/templates/android/hypvideo.xml" rename="res/layout/hypvideo.xml" if="android"/>		
 
+	<!-- iOS -->
+		<ndll name="HypVideo" if="ios"/>
+
 </project>

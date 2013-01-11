@@ -7,7 +7,11 @@ import com.facebook.internal.SessionAuthorizationType;
 import com.facebook.internal.SessionTracker;
 import com.facebook.internal.Utility;
 
-import android.opengl.GLSurfaceView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
@@ -17,6 +21,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.util.Log;
+import android.widget.FrameLayout;
 
 import fr.hyperfiction.Base64;
 
@@ -30,6 +35,8 @@ import org.haxe.nme.GameActivity;
 import org.haxe.nme.HaxeObject;
 import org.haxe.nme.NME;
 
+import ::APP_PACKAGE::.R;
+
 /**
  * ...
  * @author shoe[box]
@@ -42,75 +49,19 @@ public class HypFacebook implements Session.StatusCallback{
 	}
 
 	private String _sAppID;
-	private Session _session;
-	private WebDialog.OnCompleteListener listener_feed_dialog = new WebDialog.OnCompleteListener( ){
-					
-					@Override
-                	public void onComplete(Bundle values, FacebookException error) {
-                		trace("onComplete");
-                		if( error != null ){
-                			onFBEvent( FEEDDIALOG_ERROR , error.toString( ) , "" );
-                		}else{
-                			final String postId = values.getString("post_id");
-                			if ( postId != null )
-                				onFBEvent( FEEDDIALOG_SENT , postId , "" );
-                			else
-                				onFBEvent( FEEDDIALOG_CANCELED , "" , "" );
-                		}
-                	}
-				};
 
-	private WebDialog.OnCompleteListener listener_request_dialog = new WebDialog.OnCompleteListener( ){
-					
-					@Override
-                	public void onComplete(Bundle values, FacebookException error) {
-                		trace("onComplete");
-                		if( error != null ){
-                			onFBEvent( REQUESTDIALOG_ERROR , error.toString( ) , "" );
-                		}else{
-                			final String requestId = values.getString("request");
-                			if (requestId != null)
-                				onFBEvent( REQUESTDIALOG_SENT , requestId , "" );
-                			else
-                				onFBEvent( REQUESTDIALOG_CANCELED , "" , "" );
-                		}
-                	}
-				};
-
-	private Request.Callback listener_request = new Request.Callback( ){
-
-		@Override
-        public void onCompleted(Response response) {
-			
-        	String sGraphPath = response.getRequest( ).getGraphPath( );
-
-			FacebookRequestError error = response.getError( );
-			if( error != null ){
-				trace( "error : "+error );
-				onFBEvent( REQUESTDIALOG_ERROR , sGraphPath , error.toString( ) );
-			}else{
-				onFBEvent( GRAPH_REQUEST_RESULTS , sGraphPath , response.getGraphObject( ).getInnerJSONObject().toString() );
-			}
-
-		}
-
-	};
-
-	private static String TAG				= "trace";//HypFacebook";
-	private static String ARGS_SEPARATOR	= "-";	
-	private static HypFacebook __instance	= null;
-
-	private static String OPENED					= "OPENED";
+	private static HypFacebook __instance			= null;
+	private static String ARGS_SEPARATOR			= "-";	
 	private static String FEEDDIALOG_CANCELED		= "FEEDDIALOG_CANCELED";
 	private static String FEEDDIALOG_ERROR			= "FEEDDIALOG_ERROR";
 	private static String FEEDDIALOG_SENT			= "FEEDDIALOG_SENT";
+	private static String GRAPH_REQUEST_ERROR		= "GRAPH_REQUEST_ERROR";
+	private static String GRAPH_REQUEST_RESULTS		= "GRAPH_REQUEST_RESULTS";
+	private static String OPENED					= "OPENED";
 	private static String REQUESTDIALOG_CANCELED	= "REQUESTDIALOG_CANCELED";
 	private static String REQUESTDIALOG_ERROR		= "REQUESTDIALOG_ERROR";
 	private static String REQUESTDIALOG_SENT		= "REQUESTDIALOG_SENT";
-	private static String GRAPH_REQUEST_ERROR		= "GRAPH_REQUEST_ERROR";
-	private static String GRAPH_REQUEST_RESULTS		= "GRAPH_REQUEST_RESULTS";
-
-	public static GLSurfaceView mSurface;
+	private static String TAG						= "trace";//HypFacebook";
 
 	// -------o constructor
 		
@@ -122,7 +73,6 @@ public class HypFacebook implements Session.StatusCallback{
 		*/
 		public HypFacebook( String sAppID ){
 			trace("constructor ::: "+sAppID);
-			mSurface = ( GLSurfaceView ) GameActivity.getInstance( ).getCurrentFocus( );	
 			_sAppID = sAppID;
 		}
 
@@ -148,28 +98,17 @@ public class HypFacebook implements Session.StatusCallback{
 			trace("connect");
 			boolean bRes = true;
 
-			/*
-			_session = Session.getActiveSession( );
+			//Session
+				Session session = Session.getActiveSession( );						
+				if( session == null || !session.isOpened() || session.isClosed() ){
+					session = new Session.Builder( GameActivity.getContext( ) ).setApplicationId( _sAppID ).build( );
+					Session.setActiveSession( session );
+					bRes = false;
+				}
 
-			if( _session == null || !_session.isOpened() || _session.isClosed() ){
-				_session = new Session.Builder( GameActivity.getContext( ) ).setApplicationId( _sAppID ).build( );
-				Session.setActiveSession( _session );
-				bRes = false;
-			}
-			trace("_session ::: "+_session);
-			*/
+				session.addCallback( this );
 
-			Session activeSession = Session.getActiveSession();
-		    if ( activeSession == null || activeSession.getState().isClosed( ) ) {
-		        activeSession = new Session.Builder( GameActivity.getContext( ) ).setApplicationId( _sAppID ).build();
-		        Session.setActiveSession(activeSession);
-		        bRes = false;
-		    }
-
-		    _session = activeSession;
-		    _session.addCallback( statusCallback );
-
-			return bRes;
+			return false;
 		}
 
 		/**
@@ -179,14 +118,7 @@ public class HypFacebook implements Session.StatusCallback{
 		* @return	void
 		*/
 		public void call_callback( final String s , final String sArg1 , final String sArg2 ){
-			trace("call_callback >> ::: "+s);
-			GameActivity.getInstance( ).runOnUiThread( 
-					new Runnable(){
-						public void run( ) {
-							onFBEvent( s , sArg1 , sArg2 );			
-						}
-					});
-
+			onFBEvent( s , sArg1 , sArg2 );	
 		}
 
 		private class SessionStatusCallback implements Session.StatusCallback {
@@ -218,20 +150,20 @@ public class HypFacebook implements Session.StatusCallback{
 			trace("authorize");
 			
 			//
+				GameActivity.getInstance( ).runOnUiThread(
+					new Runnable(){
+		                @Override
+		                public void run() {
+		                	
+	            			FrameLayout frame = new FrameLayout( GameActivity.getInstance( ) );
+	            			HypFacebookFrag newFragment = HypFacebookFrag.getInstance( );
+	            							newFragment.setPermissions(Arrays.asList( sPerms.split("&") ));
 
-			GameActivity.getInstance().mHandler.post(
-				new Runnable() {
-					@Override
-					public void run() {
-
-						final Session.OpenRequest 	req = new Session.OpenRequest( GameActivity.getInstance( ) );
-													req.setPermissions(Arrays.asList( sPerms.split("&") ));
-
-						Session.getActiveSession( ).openForRead( req );
-
-					}
-				}
-			);
+	            			FragmentTransaction ft = GameActivity.getInstance( ).getSupportFragmentManager( ).beginTransaction( );
+	            								ft.add( newFragment , TAG ).commit( );
+	            								
+		                }
+		            });
 
 		}
 
@@ -242,6 +174,7 @@ public class HypFacebook implements Session.StatusCallback{
 		* @return	void
 		*/
 		public void requestDialog( String sKeys , String sVals ){
+			
 			trace("sKeys ::: "+sKeys);
 			trace("sVals ::: "+sVals);
 
@@ -260,7 +193,7 @@ public class HypFacebook implements Session.StatusCallback{
 				WebDialog 	requestsDialog = new WebDialog.RequestsDialogBuilder( GameActivity.getInstance() , Session.getActiveSession() , params).build();
 							requestsDialog.setOnCompleteListener( listener_request_dialog );
 							requestsDialog.show( );
-		        
+		     
 		}
 
 		/**
@@ -270,6 +203,7 @@ public class HypFacebook implements Session.StatusCallback{
 		* @return	void
 		*/
 		public void feedDialog( String sKeys , String sVals ){
+			
 			trace("sKeys ::: "+sKeys);
 			trace("sVals ::: "+sVals);
 
@@ -288,7 +222,7 @@ public class HypFacebook implements Session.StatusCallback{
 				WebDialog 	requestsDialog = new WebDialog.FeedDialogBuilder( GameActivity.getInstance() , Session.getActiveSession() , params).build();
 							requestsDialog.setOnCompleteListener( listener_feed_dialog );
 							requestsDialog.show( );
-		        
+		   
 		}
 
 		//Dialog listeners
@@ -311,10 +245,11 @@ public class HypFacebook implements Session.StatusCallback{
 		* @return	void
 		*/
 		public void graph_request( String sGraphRequest ){
+			
 			trace("request ::: "+sGraphRequest);
 			Request req = new Request( Session.getActiveSession( ) , sGraphRequest , null , null , listener_request );
 					req.executeAsync( );
-
+			
 		}
 
 		/**
@@ -324,13 +259,12 @@ public class HypFacebook implements Session.StatusCallback{
 		* @return	void
 		*/
 		public void call(Session session, SessionState state, Exception exception){
-			
+			trace("call ::: "+session);
 			final String s = session.getState( ).toString( );
 			if( s == OPENED )
 				onFBEvent( s , session.getAccessToken( ) , "" );
 			else
 				onFBEvent( s , "" , "" );
-
 		}
 
 	// -------o protected
@@ -354,7 +288,7 @@ public class HypFacebook implements Session.StatusCallback{
 		* @return	void
 		*/
 		public static HypFacebook create( String sAppId ){
-			Log.i( TAG, "create ::: "+sAppId );			
+			Log.i( TAG, "HypFacebook :: create ::: "+sAppId );			
 			return __instance = new HypFacebook( sAppId );
 		}
 
@@ -421,5 +355,59 @@ public class HypFacebook implements Session.StatusCallback{
 			}
 			
 	    }
+
+
+	private WebDialog.OnCompleteListener listener_feed_dialog = new WebDialog.OnCompleteListener( ){
+					
+					@Override
+                	public void onComplete(Bundle values, FacebookException error) {
+                		trace("onComplete");
+                		if( error != null ){
+                			onFBEvent( FEEDDIALOG_ERROR , error.toString( ) , "" );
+                		}else{
+                			final String postId = values.getString("post_id");
+                			if ( postId != null )
+                				onFBEvent( FEEDDIALOG_SENT , postId , "" );
+                			else
+                				onFBEvent( FEEDDIALOG_CANCELED , "" , "" );
+                		}
+                	}
+				};
+
+	private WebDialog.OnCompleteListener listener_request_dialog = new WebDialog.OnCompleteListener( ){
+					
+					@Override
+                	public void onComplete(Bundle values, FacebookException error) {
+                		trace("onComplete");
+                		if( error != null ){
+                			onFBEvent( REQUESTDIALOG_ERROR , error.toString( ) , "" );
+                		}else{
+                			final String requestId = values.getString("request");
+                			if (requestId != null)
+                				onFBEvent( REQUESTDIALOG_SENT , requestId , "" );
+                			else
+                				onFBEvent( REQUESTDIALOG_CANCELED , "" , "" );
+                		}
+                	}
+				};
+
+	private Request.Callback listener_request = new Request.Callback( ){
+
+		@Override
+        public void onCompleted(Response response) {
+			
+        	String sGraphPath = response.getRequest( ).getGraphPath( );
+
+			FacebookRequestError error = response.getError( );
+			if( error != null ){
+				trace( "error : "+error );
+				onFBEvent( REQUESTDIALOG_ERROR , sGraphPath , error.toString( ) );
+			}else{
+				onFBEvent( GRAPH_REQUEST_RESULTS , sGraphPath , response.getGraphObject( ).getInnerJSONObject().toString() );
+			}
+
+		}
+
+	};
 
 }
