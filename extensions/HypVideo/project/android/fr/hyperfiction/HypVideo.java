@@ -87,6 +87,7 @@ public class HypVideo{
 
 						FragmentTransaction ft = GameActivity.getInstance( ).getSupportFragmentManager( ).beginTransaction( );
             								ft.add( android.R.id.content , newFragment );
+            								ft.addToBackStack( null );
             								ft.commit( );
             			trace("test");
                     }                   

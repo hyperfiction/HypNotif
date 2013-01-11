@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.KeyEvent;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout.LayoutParams;
@@ -37,7 +38,7 @@ import org.haxe.nme.GameActivity;
  * @author shoe[box]
  */
 
-public class HypVideoFrag extends DialogFragment{
+public class HypVideoFrag extends Fragment{
 
 	private MediaController mc;
 	private VideoView mVideoView;
@@ -59,7 +60,6 @@ public class HypVideoFrag extends DialogFragment{
 		*/
 		public HypVideoFrag( String sUrl ) {
 			super( );
-			trace("constructor");			
 			_sUrl = sUrl;
 		}
 	
@@ -73,7 +73,7 @@ public class HypVideoFrag extends DialogFragment{
 		*/
 		@Override public void onDetach() {
 			super.onDetach();
-			trace("onDetach");
+			getActivity( ).setRequestedOrientation( _iPrev );
 		}
 
 		/**
@@ -83,13 +83,15 @@ public class HypVideoFrag extends DialogFragment{
 		* @return	void
 		*/
 		@Override public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle bundle ) {
-			trace("onCreateView ::: "+container);
 			
+			//
+				//setCancelable( true );
 				_iPrev = getActivity( ).getRequestedOrientation( );
 				getActivity( ).setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE );
 			
 			//
-				View view = inflater.inflate( R.layout.hypvideo , container , false );
+				View 	view = inflater.inflate( R.layout.hypvideo , container , false );
+
 
 			//
 				progressDialog = new LoadingDialog( GameActivity.getContext( ) );
