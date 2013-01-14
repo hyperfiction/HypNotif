@@ -2,36 +2,37 @@
 #define IMPLEMENT_API
 #endif
 
-#import "Events.h"
-#include "HypFacebook.h"
 #include <hx/CFFI.h>
 #include <hx/Macros.h>
-#include <hxcpp.h>
 #include <stdio.h>
+#include <hxcpp.h>
+#include "HypFacebook.h"
 
+#ifdef ANDROID
+#include <jni.h>
+#endif
 using namespace Hyperfiction;
 
 #ifdef ANDROID
-	#include <jni.h>
-	#include <stdio.h>
-	#include <string.h>
-	#include <android/log.h>
 	extern JNIEnv *GetEnv();
 	enum JNIType{
-		jniUnknown,
-		jniVoid,
-		jniObjectString,
-		jniObjectArray,
-		jniObject,
-		jniBoolean,
-		jniByte,
-		jniChar,
-		jniShort,
-		jniInt,
-		jniLong,
-		jniFloat,
-		jniDouble
+	   jniUnknown,
+	   jniVoid,
+	   jniObjectString,
+	   jniObjectArray,
+	   jniObject,
+	   jniBoolean,
+	   jniByte,
+	   jniChar,
+	   jniShort,
+	   jniInt,
+	   jniLong,
+	   jniFloat,
+	   jniDouble,
 	};
+	#define  LOG_TAG    "trace"
+	#define  ALOG(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+
 #endif
 
 AutoGCRoot *eval_onConnect = 0;
@@ -39,23 +40,17 @@ AutoGCRoot *eval_onEvent = 0;
 
 extern "C"{
 
-	void nme_extensions_main(){
-		printf("fb_extensions_main()\n");
-	}
-	//DEFINE_ENTRY_POINT(nme_extensions_main);
-		
 	int HypFacebook_register_prims(){
 		printf("HypFacebook : register_prims()\n");
-		//nme_extensions_main( );
 		return 0;
 	}
 
-	void dispatch_event( EventType eType , const char *sType , const char *sArgs ){
+	void dispatch_event( const char *sType , const char *sArg1 , const char *sArg2 ){
 		val_call3( 
 					eval_onEvent->get( ) , 
-					alloc_string( EnumToString( eType ) ) , 
 					alloc_string( sType ) ,
-					alloc_string( sArgs ) 
+					alloc_string( sArg1 ) ,
+					alloc_string( sArg2 ) 
 				);
 	}
 
@@ -84,24 +79,17 @@ extern "C"{
 																			JNIEnv * env , 
 																			jobject obj , 
 																			jstring jsEvName , 
-																			jstring jsArgs 
+																			jstring javaArg1 ,
+																			jstring javaArg2
 																		){
-			//Convert jstring to char*
-			__android_log_write(ANDROID_LOG_ERROR, "Tag", "onFBEvent" );
-
+			ALOG("Java_fr_hyperfiction_HypFacebook_onFBEvent" );
+			
 			const char *sEvName	= env->GetStringUTFChars( jsEvName , false );
-			__android_log_print(ANDROID_LOG_ERROR, "Tag", "EventName : %s" , sEvName );
-			value valEvName = alloc_string(sEvName);
-			env->ReleaseStringUTFChars( jsEvName , sEvName );
+			const char *sArg1 = env->GetStringUTFChars( javaArg1 , false );
+			const char *sArg2 = env->GetStringUTFChars( javaArg2 , false );
 
-			const char *sArgs = env->GetStringUTFChars( jsArgs , false );
-			__android_log_print(ANDROID_LOG_ERROR, "Tag", "Args : %s" , sArgs );
-			value valArgs = alloc_string(sArgs);
-			env->ReleaseStringUTFChars( jsArgs , sArgs );
-
-			//Call
-			val_call2( eval_onEvent->get( ) , valEvName , valArgs );
-
+			dispatch_event( sEvName , sArg1 , sArg2 );
+			
 		}
 
 	#endif
@@ -109,17 +97,12 @@ extern "C"{
 
 // Callbacks ------------------------------------------------------------------------------------------------------
 	
-	static value hyp_fb_set_callback( value onCall ){
-		eval_onConnect = new AutoGCRoot( onCall );
-	    return alloc_bool( true );
-	}
-	DEFINE_PRIM( hyp_fb_set_callback , 1 );
-
-	static value hyp_fb_set_event_callback( value onCall ){
+	static value HypFB_set_event_callback( value onCall ){
+		ALOG("HypFB_set_event_callback %d", __LINE__ );
 		eval_onEvent = new AutoGCRoot( onCall );
-	    return alloc_bool( true );
+		return alloc_bool( true );
 	}
-	DEFINE_PRIM( hyp_fb_set_event_callback , 1 );
+	DEFINE_PRIM( HypFB_set_event_callback , 1 );
 
 // iPhone ---------------------------------------------------------------------------------------------------------
 

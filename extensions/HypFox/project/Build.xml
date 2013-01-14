@@ -41,7 +41,6 @@
   </files>
 
   <files id="iphone">
-
       <depend name="${HXCPP}/include/hx/Macros.h"/>
       <depend name="${HXCPP}/include/hx/CFFI.h"/>
       <compilerflag value="-IiPhone/include"/>

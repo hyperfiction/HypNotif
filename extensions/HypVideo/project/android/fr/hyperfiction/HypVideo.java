@@ -1,8 +1,19 @@
 package fr.hyperfiction;
 
+import ::APP_PACKAGE::.R;
+
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.content.pm.ActivityInfo;
+import fr.hyperfiction.HypVideoFrag;
+
 import android.net.Uri;
 import android.util.Log;
 import android.widget.VideoView;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnPreparedListener;
 
 import org.haxe.nme.GameActivity;
 
@@ -60,18 +71,29 @@ public class HypVideo{
 		* @return	void
 		*/
 		static public void play_remote_video( final String sUrl ) {
-			trace( "play_remote_video ::: " + sUrl );		
+			trace( "play_remote_video ::: " + sUrl );	
+			
 			GameActivity.getInstance( ).runOnUiThread(
 				new Runnable(){
 	                @Override
 	                public void run() {
-	                	VideoView 	player = _get_video_view( );
-									player.setVideoURI( Uri.parse( sUrl ));
-									player.start( );
-						GameActivity.getInstance( ).pushView( player );
-	                }                   
+	                	
+						
+						HypVideoFrag newFragment = new HypVideoFrag( sUrl );
+						FragmentActivity fa = (FragmentActivity) GameActivity.getInstance( );
+						trace("fa ::: "+fa);
+						//FragmentManager fm = fa.getFragmentManager( );
+						//trace("fm ::: "+fm);
+
+						FragmentTransaction ft = GameActivity.getInstance( ).getSupportFragmentManager( ).beginTransaction( );
+            								ft.add( android.R.id.content , newFragment );
+            								ft.addToBackStack( null );
+            								ft.commit( );
+            			trace("test");
+                    }                   
 		        }
             );			
+			
 		}
 
 	// -------o protected

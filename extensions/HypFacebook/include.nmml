@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
 	
-
-	<classpath name="." />
+	<classpath name="src" />
 
 	<!-- android -->
-		<section if="android">
-			<ndll name="HypFacebook" if="android"/>
-			<java path="project/android" if="android"/>
-			<template path="templates/android/res" rename="res" if="android"/>
-			<template path="templates/android/MainActivity.java" rename="MainActivity.java" if="android"/>
-		</section>;
+	
+		<java path="project/android" if="android"/>
+		<ndll name="HypFacebook" if="android"/>
+		
+		<template path="/templates/android/res" rename="res" if="android"/>		
+		<!--
+		<template path="/templates/android/MainActivity.java" rename="MainActivity.java"/>
+		-->
+		<echo value="------------------------------------------------------------------------------" if="android"/>
+		<echo value="  /!\ [HypFacebook] Don't forget to add the LoginActivity to your Manifest" if="android"/>
+		<echo value="------------------------------------------------------------------------------" if="android"/>
+		
+		<template path="/templates/android/libs/android-support-v4.jar" rename="libs/android-support-v4.jar" if="android"/>
+			
+
 
 	<!-- ios -->
 		<section if="ios">

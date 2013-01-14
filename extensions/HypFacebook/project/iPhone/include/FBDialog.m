@@ -498,7 +498,6 @@ params   = _params;
     // the page has completely loaded, if we find cases where we want this to result in dialog failure
     // (usually this just means quick-user), then we should add something more robust here to account
     // for differences in application needs
-    NSLog(@"didFailWithError %@",error.code);
     if (!(([error.domain isEqualToString:@"NSURLErrorDomain"] && error.code == -999) ||
           ([error.domain isEqualToString:@"WebKitErrorDomain"] && error.code == 102))) {
         [self dismissWithError:error animated:YES];
@@ -660,15 +659,13 @@ params   = _params;
 }
 
 - (void)dialogWillAppear {
-    NSLog(@"dialogWillAppear");
 }
 
 - (void)dialogWillDisappear {
-    NSLog(@"dialogWillDisappear");
 }
 
 - (void)dialogDidSucceed:(NSURL *)url {
-    NSLog(@"dialogDidSucceed %@",url);
+    
     if ([_delegate respondsToSelector:@selector(dialogCompleteWithUrl:)]) {
         [_delegate dialogCompleteWithUrl:url];
     }
@@ -676,7 +673,6 @@ params   = _params;
 }
 
 - (void)dialogDidCancel:(NSURL *)url {
-    NSLog(@"dialogWillAppear %@",url);
     if ([_delegate respondsToSelector:@selector(dialogDidNotCompleteWithUrl:)]) {
         [_delegate dialogDidNotCompleteWithUrl:url];
     }

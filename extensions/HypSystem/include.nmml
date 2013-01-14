@@ -4,7 +4,7 @@
 	<!-- misc --> 
 		<ndll name="HypSystem" if="ios"/>
 		<ndll name="HypSystem" if="blackberry"/>
-		<classpath name="." />
+		<classpath name="src" />
 
 	<!-- Android -->
 		<java path="project/android" if="android" />
