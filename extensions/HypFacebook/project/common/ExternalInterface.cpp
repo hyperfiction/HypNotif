@@ -71,10 +71,6 @@ extern "C"{
 
 	#ifdef ANDROID
 	
-		JNIEXPORT void JNICALL Java_fr_hyperfiction_HypFacebook_onConnectionOK( JNIEnv * env ){		
-			val_call0( eval_onConnect->get( ) );	
-		}
-
 		JNIEXPORT void JNICALL Java_fr_hyperfiction_HypFacebook_onFBEvent( 
 																			JNIEnv * env , 
 																			jobject obj , 
@@ -89,6 +85,10 @@ extern "C"{
 			const char *sArg2 = env->GetStringUTFChars( javaArg2 , false );
 
 			dispatch_event( sEvName , sArg1 , sArg2 );
+
+			env->ReleaseStringUTFChars( jsEvName	, sEvName );
+			env->ReleaseStringUTFChars( javaArg1 	, sArg1 );
+			env->ReleaseStringUTFChars( javaArg2 	, sArg2 );
 			
 		}
 
@@ -98,7 +98,6 @@ extern "C"{
 // Callbacks ------------------------------------------------------------------------------------------------------
 	
 	static value HypFB_set_event_callback( value onCall ){
-		ALOG("HypFB_set_event_callback %d", __LINE__ );
 		eval_onEvent = new AutoGCRoot( onCall );
 		return alloc_bool( true );
 	}
@@ -112,7 +111,7 @@ extern "C"{
 		return alloc_bool(connect( val_string( app_id)));
 	}
 	DEFINE_PRIM( CPP_FB_Connect , 1 );
-
+	
 	value CPP_FB_Disconnect( ){
 		disconnect( );
 		return alloc_null( );

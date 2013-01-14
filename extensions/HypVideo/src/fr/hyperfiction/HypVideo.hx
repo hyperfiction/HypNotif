@@ -7,16 +7,7 @@ import nme.JNI;
  * @author shoe[box]
  */
 
-class HypVideo{
-
-	#if android
-		
-		private static inline var ANDROID_CLASS		: String = 'fr.hyperfiction.HypVideo';
-		
-		private static var _f_play_local_video	: String->Void;
-		private static var _f_play_remote_video	: String->Void;
-
-	#end
+@:build(org.shoebox.utils.NativeMirror.build( )) class HypVideo{
 
 	// -------o constructor
 		
@@ -28,6 +19,12 @@ class HypVideo{
 		*/
 		public function new() {
 			trace('constructor');
+
+			#if( ios || android )
+			trace("ios ou android HypVideo_set_event_callback( )");
+			HypVideo_set_event_callback( _onCallBack );
+			#end
+
 		}
 	
 	// -------o public
@@ -38,13 +35,27 @@ class HypVideo{
 		* @public
 		* @return	void
 		*/
-		static public function play( sUrl : String , bRemote : Bool = false ) : Void {
+		public function play( sUrl : String , bRemote : Bool = false ) : Void {
 			trace('play_video ::: '+sUrl+' remote ? : '+bRemote);
 
 			if( bRemote )
 				_play_remote_video( sUrl );
 			else
 				_play_local_video( sUrl );
+
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		public function dispose( ) : Void {
+			
+			#if ios
+				HypVideo_dispose( );
+			#end
 
 		}
 
@@ -56,13 +67,20 @@ class HypVideo{
 		* @private
 		* @return	void
 		*/
-		static private function _play_local_video( sUrl : String ) : Void{
-			trace('_play_local_video ::: '+sUrl);
-			#if android
-				if( _f_play_local_video == null )
-					_f_play_local_video = JNI.createStaticMethod( ANDROID_CLASS , 'play_local_video' , '(Ljava/lang/String;)V' );
-					_f_play_local_video( sUrl );
+		private function _onCallBack( sEvent : String , sArg : String ) : Void{
+			trace("_onCallBack ::: ev : "+sEvent+' arg : '+sArg);
+		}
 
+		/**
+		* 
+		* 
+		* @private
+		* @return	void
+		*/
+		static private function _play_local_video( sURL : String ) : Void{
+			
+			#if android
+				play_local_video( sURL );
 			#end
 		}
 
@@ -72,16 +90,80 @@ class HypVideo{
 		* @private
 		* @return	void
 		*/
-		static private function _play_remote_video( sUrl : String ) : Void{
-			trace('_play_remote_video ::: '+sUrl);
-
+		static private function _play_remote_video( sURL : String ) : Void{
+			
 			#if android
-				if( _f_play_remote_video == null )
-					_f_play_remote_video = JNI.createStaticMethod( ANDROID_CLASS , 'play_remote_video' , '(Ljava/lang/String;)V' );
-					_f_play_remote_video( sUrl );
-
+				play_remote_video( sURL );
 			#end
+
+			#if ios
+				HypVideo_play_remote( sURL );
+			#end
+			
 		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		@JNI
+		static public function play_remote_video( sURL : String ) : Void {
+						
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		@JNI
+		static public function play_local_video( sURL : String ) : Void {
+						
+		}
+
+		#if( ios )
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/		
+		@CPP("HypVideo")
+		static public function HypVideo_play_remote( sURL : String ) : Void {
+						
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/		
+		@CPP("HypVideo")
+		static public function HypVideo_dispose( ) : Void {
+						
+		}
+
+		#end
+
+		#if( ios || android )
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		@CPP("HypVideo")
+		public function HypVideo_set_event_callback( f : String->String->Void ) : Void {
+						
+		}
+
+		#end
 
 	// -------o misc
 	

@@ -1,9 +1,10 @@
 #ifndef Device
 #define Device
 
-namespace Hyperfiction{
+namespace hyperfiction{
 
-	bool playRemove_video( const char *sVideoURL );
+	void play_remote( const char *sURL );
+	void dispose( );
 
 }	
 
