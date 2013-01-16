@@ -39,6 +39,7 @@ using namespace hyperfiction;
 AutoGCRoot *_on_connect					= 0;
 AutoGCRoot *_on_disconnect				= 0;
 AutoGCRoot *_on_message					= 0;
+AutoGCRoot *_on_subscribed				= 0;
 
 extern "C"
 {
@@ -56,6 +57,11 @@ extern "C"
 		void hyp_on_connect( const char *socketId )
 		{
 			val_call1( _on_connect -> get( ), alloc_string( socketId ) );
+		}
+
+		void hyp_on_subscribed( const char *channel )
+		{
+			val_call1( _on_subscribed-> get( ), alloc_string( channel ) );
 		}
 
 		void hyp_on_disconnect( )
@@ -99,11 +105,11 @@ extern "C"
 		}
 		DEFINE_PRIM( hyp_create, 1 );
 
-		void hyp_set_authurl( value url )
+		void hyp_set_authurl( value url, value token )
 		{
-			setAuthEndPoint( val_string( url ) );
+			setAuthEndPoint( val_string( url ), val_string( token ) );
 		}
-		DEFINE_PRIM( hyp_set_authurl, 1 );
+		DEFINE_PRIM( hyp_set_authurl, 2 );
 
 		void hyp_subscribe( value channel )
 		{
@@ -182,3 +188,9 @@ extern "C"
 	    return alloc_bool(true);
 	}
 	DEFINE_PRIM(hyp_cb_message,1);
+
+	static value hyp_cb_subscribed( value onCall ) {
+		_on_subscribed = new AutoGCRoot( onCall );
+	    return alloc_bool(true);
+	}
+	DEFINE_PRIM(hyp_cb_subscribed,1);

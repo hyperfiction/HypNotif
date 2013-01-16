@@ -20,7 +20,8 @@ public class HypPusher extends Pusher
 
 	public static native void onConnect( String socketId );
 	public static native void onDisconnect();
-	public static native void onMessage(String message);
+	public static native void onMessage(String event, String data, String channel);
+	public static native void onSubscribed(String channel);
 
 	public static GLSurfaceView mSurface;
 

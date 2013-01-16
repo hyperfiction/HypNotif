@@ -5,7 +5,7 @@ namespace hyperfiction {
 
 	void createClient( const char *apiKey );
 	void connect( );
-	void setAuthEndPoint( const char *url );
+	void setAuthEndPoint( const char *url, const char *token );
 	void disconnect( );
 	void subscribe( const char *channel );
 	void sendEvent( const char *event, const char *data, const char *channel );
