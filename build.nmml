@@ -14,6 +14,8 @@
 	
 	<haxelib name="actuate" />
 	<haxelib name="nme" />
+	<haxedef name="cpp" if="ios"/>
+	<haxedef name="cpp" if="android"/>
 		
 	<assets path="Assets" rename="assets" include="*" exclude="*.fla"/>
 	
@@ -31,6 +33,7 @@
 
 	<include path="extensions/HypWebView" />
 	<include path="extensions/hyperlocation" />
+	<include path="extensions/HypVideo" />
 	-->
 	<include path="extensions/HypFacebook" />
 		

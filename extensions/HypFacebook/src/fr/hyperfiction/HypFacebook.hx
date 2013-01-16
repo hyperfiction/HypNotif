@@ -25,7 +25,6 @@ import nme.events.EventDispatcher;
 		*/
 		public function new( sAppId : String ) {
 			super( );
-			trace('constructor ::: '+sAppId);
 			_sApp_id = sAppId;
 			_init( );
 		}
@@ -46,6 +45,10 @@ import nme.events.EventDispatcher;
 			bSessionValid = jni_connect( _JNI_instance );
 			#end
 
+			#if ios
+			bSessionValid = CPP_FB_Connect( _sApp_id );
+			#end
+
 			trace('bSessionValid ::: '+bSessionValid);
 			return bSessionValid;
 		}
@@ -63,6 +66,10 @@ import nme.events.EventDispatcher;
 			jni_authorize( _JNI_instance , a.join('&') );				
 			#end
 
+			#if ios
+			CPP_FB_authorize( a.join('|') );
+			#end
+
 		}
 
 		/**
@@ -72,7 +79,11 @@ import nme.events.EventDispatcher;
 		* @return	void
 		*/
 		public function logout( ) : Void {
-						
+			
+			#if ios
+			CPP_FB_Disconnect( );
+			#end
+
 		}
 
 		/**
@@ -99,17 +110,7 @@ import nme.events.EventDispatcher;
 				req_dialog( aKeys.join("&") , aVals.join("&") );
 			#end
 
-		}
-
-		/**
-		* 
-		* 
-		* @public
-		* @return	void
-		*/
-		public function feed_dialog( h : Hash<String> ) : Void {
-			trace('feed_dialog');
-			#if android
+			#if ios
 				//call_request_dialog( _JNI_instance , "toto" );
 				//req_dialog( "toto" , "tata" );
 
@@ -121,7 +122,7 @@ import nme.events.EventDispatcher;
 					aVals.push( h.get( key ) );
 				}
 
-				call_feed_dialog( aKeys.join("&") , aVals.join("&") );
+				CPP_FB_dialog( "" , aKeys.join("|") , aVals.join("|") );
 			#end
 
 		}
@@ -132,10 +133,43 @@ import nme.events.EventDispatcher;
 		* @public
 		* @return	void
 		*/
+		public function feed_dialog( h : Hash<String> ) : Void {
+			trace('feed_dialog');
+
+			//
+				var aKeys : Array<String> = [ ];
+				var aVals : Array<String> = [ ];
+
+				for( key in h.keys( ) ){
+					aKeys.push( key );
+					aVals.push( h.get( key ) );
+				}
+
+			#if android
+				call_feed_dialog( aKeys.join("&") , aVals.join("&") );
+			#end
+
+			#if ios
+				CPP_FB_dialog( "feed" , aKeys.join("|") , aVals.join("|") );
+			#end
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
 		public function graph_request( sRequest : String ) : Void {
+
 			#if android
 			jni_graph_request( sRequest );
 			#end
+
+			#if ios
+			CPP_FB_request( sRequest );
+			#end
+			
 		}
 
 	// -------o protected
@@ -161,7 +195,10 @@ import nme.events.EventDispatcher;
 				_JNI_instance = create( _sApp_id );
 
 			#end
-
+			
+			#if ios
+				HypFB_set_event_callback( _onEvent );
+			#end
 		}
 
 		/**
@@ -292,6 +329,65 @@ import nme.events.EventDispatcher;
 		public function HypFB_set_event_callback( fCallBack : Dynamic) : Void {
 						
 		}
+
+		#if ios
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		@CPP("HypFacebook")
+		public function CPP_FB_Connect( sAppID : String ) : Bool {
+						
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		@CPP("HypFacebook")
+		public function CPP_FB_authorize( s : String ) : Bool {
+						
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		@CPP("HypFacebook")
+		public function CPP_FB_Disconnect( ) : Void {
+						
+		}	
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		@CPP("HypFacebook")
+		public function CPP_FB_request( sGraphRequest : String ) : Void {
+						
+		}		
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		@CPP("HypFacebook")
+		public function CPP_FB_dialog( sAction : String , sParamsName : String , sParamsValues : String ) : Void {
+					
+		}				
+
+		#end	
 
 	// -------o JNI
 

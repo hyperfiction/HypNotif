@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	
+	<ndll name="hyppusher" />
+	<classpath name="src" />
+
+	<!-- android -->
+	<java path="project/android" if="android"/>
+
+	<!-- ios -->
+		<template path="/templates/iphone/libPusher-iphonesimulator6.0.a" rename="lib/i386/libpusher.a" if="ios"/>
+		<template path="/templates/iphone/libPusher-iphonesimulator6.0.a" rename="lib/i386-debug/libpusher.a" if="ios"/>
+		<template path="/templates/iphone/libPusher-iphoneos6.0.a" rename="lib/armv7/libpusher.a" if="ios"/>
+		<template path="/templates/iphone/libPusher-iphoneos6.0.a" rename="lib/armv7-debug/libpusher.a" if="ios"/>
+	    
+	    <dependency name="pusher" if="ios"/>
+	    <dependency name="icucore" if="ios"/>
+    	<dependency name="CFNetwork.framework" if="ios"/>
+    	<dependency name="Security.framework" if="ios"/>
+    	<dependency name="SystemConfiguration.framework" if="ios"/>
+
+</project>

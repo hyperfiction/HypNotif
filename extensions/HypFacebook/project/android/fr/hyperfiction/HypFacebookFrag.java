@@ -9,7 +9,6 @@ import com.facebook.model.GraphUser;
 import com.facebook.widget.*;
 import com.facebook.LoggingBehavior;
 import com.facebook.Session;
-// import com.facebook.Session.SessionStatusCallback;
 import com.facebook.SessionState;
 import com.facebook.Settings;
 
@@ -65,9 +64,9 @@ public class HypFacebookFrag extends Fragment{
 		* @return	void
 		*/
 		public void onCreate(Bundle savedInstanceState) {
-			trace("onCreate");
+			trace("onCreate :::");
 			super.onCreate(savedInstanceState);
-			uiHelper = new UiLifecycleHelper( GameActivity.getInstance( ) , callback);
+			uiHelper = new UiLifecycleHelper( getActivity( ) , callback);
         	uiHelper.onCreate(savedInstanceState);
 		}
 
@@ -119,6 +118,7 @@ public class HypFacebookFrag extends Fragment{
 		* @return	void
 		*/
 		public void authorize( ){
+			trace("authorize");
 			Session session = Session.getActiveSession();
 	        if (!session.isOpened() && !session.isClosed() ) {
 	            session.openForRead( new Session.OpenRequest(this).setCallback( callback ) );
