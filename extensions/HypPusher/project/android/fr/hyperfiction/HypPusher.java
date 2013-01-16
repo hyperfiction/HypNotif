@@ -104,7 +104,7 @@ public class HypPusher extends Pusher
 		subscribe( channelName, authToken );
 	}
 
-	public void sendEventOnChannel( String eventName, String channelName, String data )
+	public void sendEventOnChannel( String eventName, String data, String channelName )
 	{
 		Channel channel = channel(channelName);
 		JSONObject obj;
