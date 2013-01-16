@@ -20,7 +20,7 @@
 //Externs
 	typedef void( *FunctionType)( );
 	extern "C"{
-		void dispatch_event( int iEventCode , const char *sType , const char *sArgs );
+		void dispatch_event( const char *sType , const char *sArg1 , const char *sArg2 );
 	}
 	
 
@@ -63,6 +63,10 @@
 		    [self setActive:true];
 		}
 		*/
+
+		- (void)request:(FBRequest *)request didReceiveResponse:(NSURLResponse *)response{
+			NSLog(@"didReceiveResponse");
+		}
 
 	@end
 
@@ -165,22 +169,28 @@
 
 		#pragma mark - FBDelegate Methods
 
-		- (void)fbDidLogin {
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		- (void) fbDidLogin {
 		    NSLog(@"FB login OK");
-		    dispatch_event( CONNECTION_OK , "" , [[facebook accessToken] UTF8String] );
+			dispatch_event( "OPENED" , "toto" , "titi" );
 		}
 
 		/**
 		 * Called when the user canceled the authorization dialog.
 		 */
-		-(void)fbDidNotLogin:(BOOL)cancelled {
+		- (void) fbDidNotLogin:(BOOL)cancelled {
 		    NSLog(@"FB did not login");
 		}
 
 		/**
 		 * Called when the request logout has succeeded.
 		 */
-		- (void)fbDidLogout {
+		- (void) fbDidLogout {
 		    NSLog(@"FB logout OK");
 		 }
 
@@ -191,44 +201,85 @@
 		 * The resulting object may be a dictionary, an array, a string, or a number,
 		 * depending on thee format of the API response.
 		 */
-		- (void)request:(FBRequest *)request didLoad:(id)result {
-		    NSLog(@"FB request OK");
-		    NSLog(@"req : %@",request);
-
-		    NSString *req = (NSString*) request.graphPath;
-		    NSLog(@"req : %@",req);
-
-		    NSString *res = [NSString stringWithFormat:@"%@", result];
-		    NSLog(@"res : %@",res);
-
-
-		   dispatch_event( ON_REQUEST_COMPLETE , [req UTF8String] , [res UTF8String] );
-
+		- (void) request:(FBRequest *)request didLoad:(id)result {
+			
+			dispatch_event( 
+			   					"GRAPH_REQUEST_RESULTS" , 
+			   					[(NSString*) request.graphPath UTF8String] , 
+			   					[[NSString stringWithFormat:@"%@", result] UTF8String] 
+			   				);
 		}
 
 		/**
 		 * Called when an error prevents the Facebook API request from completing
 		 * successfully.
 		 */
-		- (void)request:(FBRequest *)request didFailWithError:(NSError *)error {
-			NSLog(@"FB error: %@", [error localizedDescription]);
-			NSString *req = (NSString*) request.graphPath;
-			dispatch_event( ON_REQUEST_FAILED , [(NSString*) request.graphPath UTF8String] , [[error localizedDescription] UTF8String] );
+		- (void) request:(FBRequest *)request didFailWithError:(NSError *)error {
+			
+			dispatch_event( 
+								"GRAPH_REQUEST_ERROR" , 
+								[(NSString*) request.graphPath UTF8String], 
+								[[error localizedDescription] UTF8String] 
+							);
+
 		}
 
 		/**
 		 * Called when a UIServer Dialog successfully return.
 		 */
-		- (void)dialogDidComplete:(FBDialog *)dialog {
-		    NSLog(@"published successfully on FB %@",dialog);
-		    dispatch_event( ON_DIALOG_SUCCESS , "" , "" );
+		- (void) dialogDidComplete:(FBDialog *)dialog {
+
+		    dispatch_event( "REQUESTDIALOG_SENT" , "" , "" );
+
 		} 
 
-		-(void)fbSessionInvalidated{
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		- (void) dialogCompleteWithUrl:(NSURL *)url{
+			dispatch_event( "REQUESTDIALOG_SENT" , [[url absoluteString] UTF8String] , "" );	
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		- (void) dialogDidNotComplete:(FBDialog *)dialog{
+			dispatch_event( "REQUESTDIALOG_CANCELED" , "" , "" );
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		- (void) dialog:(FBDialog*)dialog didFailWithError:(NSError *)error{
+			dispatch_event( "REQUESTDIALOG_ERROR" , [error.localizedDescription UTF8String] , "" );		
+		}
+
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		- (void) fbSessionInvalidated{
 
 		}
 
-		- (void)fbDidExtendToken:(NSString*)accessToken expiresAt:(NSDate*)expiresAt{
+		/**
+		* 
+		* 
+		* @public
+		* @return	void
+		*/
+		- (void) fbDidExtendToken:(NSString*)accessToken expiresAt:(NSDate*)expiresAt{
 		
 		}
 
@@ -289,7 +340,6 @@ namespace Hyperfiction{
 	* @return	void
 	*/
 	const char* request( const char *sGraphRequest ){
-
 		NSString *NSReq = [[NSString alloc] initWithUTF8String:sGraphRequest];
 		NSString *NSRes = [[HypFacebookDelegate instance] fbRequest:NSReq];
 		return [ NSRes UTF8String];
@@ -303,31 +353,21 @@ namespace Hyperfiction{
 	*/
 	void dialog( const char *sAction , const char *sParamsName , const char *sParamsVals ){		
 
-		NSArray *NSANames = [[[NSString alloc] initWithUTF8String:sParamsName] componentsSeparatedByString:@"|"];
-		NSArray *NSAValues = [[[NSString alloc] initWithUTF8String:sParamsVals] componentsSeparatedByString:@"|"];
+		//
+			NSArray *NSANames = [[[NSString alloc] initWithUTF8String:sParamsName] componentsSeparatedByString:@"|"];
+			NSArray *NSAValues = [[[NSString alloc] initWithUTF8String:sParamsVals] componentsSeparatedByString:@"|"];
 		
-		int l = [NSANames count];
+		//Params
+			int l = [NSANames count];
+			NSMutableDictionary *NDParams = [[NSMutableDictionary alloc] initWithCapacity:l];		
+			for( int i=0 ; i<l ; i++ ){
+				NSLog(@"key ::: %@",[NSANames objectAtIndex:i]);
+				NSLog(@"val ::: %@",[NSAValues objectAtIndex:i]);
+				[NDParams setValue:[NSAValues objectAtIndex:i] forKey:[NSANames objectAtIndex:i]];
+			}
 
-		NSMutableDictionary *NDParams = [[NSMutableDictionary alloc] initWithCapacity:l];
-
-		
-		for( int i=0 ; i<l ; i++ ){
-			NSLog(@"key ::: %@",[NSANames objectAtIndex:i]);
-			NSLog(@"val ::: %@",[NSAValues objectAtIndex:i]);
-			[NDParams setValue:[NSAValues objectAtIndex:i] forKey:[NSANames objectAtIndex:i]];
-		}
-
-		NSLog(@"Dictionary: %@", [NDParams description]);
-		
-		 NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                   @"Facebook SDK for iOS", @"name",
-                                   @"Build great social apps and get more installs.", @"caption",
-                                   @"The Facebook SDK for iOS makes it easier and faster to develop Facebook integrated iOS apps.", @"description",
-                                   @"https://developers.facebook.com/ios", @"link",
-                                   @"https://raw.github.com/fbsamples/ios-3.x-howtos/master/Images/iossdk_logo.png", @"picture",
-                                   nil];
-		NSLog(@"Dictionary: %@", [params description]);
-		
-		[[HypFacebookDelegate instance] open_dialog:[[NSString alloc] initWithUTF8String:sAction] andParams:NDParams];
+		//
+			NSLog(@"Dictionary: %@", [NDParams description]);
+			[[HypFacebookDelegate instance] open_dialog:[[NSString alloc] initWithUTF8String:sAction] andParams:NDParams];
 	}
 }

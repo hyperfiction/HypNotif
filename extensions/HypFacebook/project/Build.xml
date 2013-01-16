@@ -7,7 +7,6 @@
   <set name="mobile" value="1" if="iphone"/>
   <set name="mobile" value="1" if="android"/>
   <set name="mobile" value="1" if="webos"/>
-  <set name="mobile" value="1" if="blackberry"/>
 
   <set name="SLIBEXT" value=".lib" if="windows"/>
   <set name="SLIBEXT" value=".a" unless="windows"/>

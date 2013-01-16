@@ -21,12 +21,31 @@
 
 
 	<!-- ios -->
+		
+		<ndll name="HypFacebook" if="ios"/>
+		
+		<template path="/templates/iphone/FacebookSDKResources.bundle" rename="FacebookSDKResources.bundle" if="ios"/>
+		<template path="/templates/iphone/FBUserSettingsViewResources.bundle" rename="FBUserSettingsViewResources.bundle" if="ios"/>
+		<template path="/templates/iphone/FacebookSDK.framework" rename="FacebookSDK.framework" if="ios"/>
+		
 		<section if="ios">
-			<ndll name="HypFacebook" if="ios"/>
-			<dependency name="Accounts.framework" if="ios" />		
-			<dependency name="AdSupport.framework" if="ios" />		
-			<template path="templates/iphone/FacebookSDKResources.bundle" rename="FacebookSDKResources.bundle" if="ios"/>
-			<template path="templates/iphone/FBUserSettingsViewResources.bundle" rename="FBUserSettingsViewResources.bundle" if="ios"/>
-			<template path="templates/iphone/FacebookSDK.framework" rename="FacebookSDK.framework" if="ios"/>
+			<echo value="------------------------------------------------------------------------------"/>
+			<echo value="  /!\ [HypFacebook]  iOS"/>
+			<echo value="------------------------------------------------------------------------------"/>	
+
+			<echo value="<key>CFBundleURLTypes</key>
+				<array>
+					<dict>
+						<key>CFBundleURLSchemes</key>
+						<array>
+							<string>fb210849718975311</string>
+						</array>
+					</dict>
+				</array>";
+
+			<dependency name="Accounts.framework" />		
+			<dependency name="AdSupport.framework"/>				
+			<dependency name="sqlite-3.0"/>				
 		</section>
+
 </project>

@@ -1,9 +1,11 @@
 [Bb]in-deploy*/
 [Ee]xports*/
 [Ee]xport*/
+[Bb]in*/
 .build
 build.build
 *.sublime-project
 *.sublime-workspace
+*.DS_Store
 obj/
 all_objs

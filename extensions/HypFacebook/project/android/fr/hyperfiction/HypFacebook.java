@@ -49,6 +49,7 @@ public class HypFacebook implements Session.StatusCallback{
 	}
 
 	private String _sAppID;
+	private HypFacebookFrag _oFrag;
 
 	private static HypFacebook __instance			= null;
 	private static String ARGS_SEPARATOR			= "-";	
@@ -73,6 +74,7 @@ public class HypFacebook implements Session.StatusCallback{
 		*/
 		public HypFacebook( String sAppID ){
 			trace("constructor ::: "+sAppID);
+			_oFrag = HypFacebookFrag.getInstance( );
 			_sAppID = sAppID;
 		}
 
@@ -121,15 +123,6 @@ public class HypFacebook implements Session.StatusCallback{
 			onFBEvent( s , sArg1 , sArg2 );	
 		}
 
-		private class SessionStatusCallback implements Session.StatusCallback {
-	        @Override
-	        public void call( final Session session , SessionState state, Exception exception) {
-	        	trace("call ::: "+session);
-	        	call_callback( session.getState( ).toString( ) , "" , "" );
-	        }
-	    }
-		private Session.StatusCallback statusCallback = new SessionStatusCallback();
-
 		/**
 		* 
 		* 
@@ -155,12 +148,10 @@ public class HypFacebook implements Session.StatusCallback{
 		                @Override
 		                public void run() {
 		                	
-	            			FrameLayout frame = new FrameLayout( GameActivity.getInstance( ) );
-	            			HypFacebookFrag newFragment = HypFacebookFrag.getInstance( );
-	            							newFragment.setPermissions(Arrays.asList( sPerms.split("&") ));
+	            			_oFrag.setPermissions(Arrays.asList( sPerms.split("&") ));
 
 	            			FragmentTransaction ft = GameActivity.getInstance( ).getSupportFragmentManager( ).beginTransaction( );
-	            								ft.add( newFragment , TAG ).commit( );
+	            								ft.add( android.R.id.content , _oFrag ).commit( );
 	            								
 		                }
 		            });
@@ -185,7 +176,6 @@ public class HypFacebook implements Session.StatusCallback{
 				Bundle params = new Bundle( );
 
 				for( int i = 0 ; i < aKeys.length ; i++ ){
-					trace("---"+i);
 					params.putString( aKeys[ i ] , aVals[ i ] );
 				}
 
@@ -357,57 +347,67 @@ public class HypFacebook implements Session.StatusCallback{
 	    }
 
 
-	private WebDialog.OnCompleteListener listener_feed_dialog = new WebDialog.OnCompleteListener( ){
-					
-					@Override
-                	public void onComplete(Bundle values, FacebookException error) {
-                		trace("onComplete");
-                		if( error != null ){
-                			onFBEvent( FEEDDIALOG_ERROR , error.toString( ) , "" );
-                		}else{
-                			final String postId = values.getString("post_id");
-                			if ( postId != null )
-                				onFBEvent( FEEDDIALOG_SENT , postId , "" );
-                			else
-                				onFBEvent( FEEDDIALOG_CANCELED , "" , "" );
-                		}
-                	}
-				};
+		private WebDialog.OnCompleteListener listener_feed_dialog = new WebDialog.OnCompleteListener( ){
+						
+						@Override
+		            	public void onComplete(Bundle values, FacebookException error) {
+		            		trace("onComplete");
+		            		if( error != null ){
+		            			onFBEvent( FEEDDIALOG_ERROR , error.toString( ) , "" );
+		            		}else{
+		            			final String postId = values.getString("post_id");
+		            			if ( postId != null )
+		            				onFBEvent( FEEDDIALOG_SENT , postId , "" );
+		            			else
+		            				onFBEvent( FEEDDIALOG_CANCELED , "" , "" );
+		            		}
+		            	}
+					};
 
-	private WebDialog.OnCompleteListener listener_request_dialog = new WebDialog.OnCompleteListener( ){
-					
-					@Override
-                	public void onComplete(Bundle values, FacebookException error) {
-                		trace("onComplete");
-                		if( error != null ){
-                			onFBEvent( REQUESTDIALOG_ERROR , error.toString( ) , "" );
-                		}else{
-                			final String requestId = values.getString("request");
-                			if (requestId != null)
-                				onFBEvent( REQUESTDIALOG_SENT , requestId , "" );
-                			else
-                				onFBEvent( REQUESTDIALOG_CANCELED , "" , "" );
-                		}
-                	}
-				};
+		private WebDialog.OnCompleteListener listener_request_dialog = new WebDialog.OnCompleteListener( ){
+						
+						@Override
+		            	public void onComplete(Bundle values, FacebookException error) {
+		            		trace("onComplete");
+		            		if( error != null ){
+		            			onFBEvent( REQUESTDIALOG_ERROR , error.toString( ) , "" );
+		            		}else{
+		            			final String requestId = values.getString("request");
+		            			if (requestId != null)
+		            				onFBEvent( REQUESTDIALOG_SENT , requestId , "" );
+		            			else
+		            				onFBEvent( REQUESTDIALOG_CANCELED , "" , "" );
+		            		}
+		            	}
+					};
 
-	private Request.Callback listener_request = new Request.Callback( ){
+		private Request.Callback listener_request = new Request.Callback( ){
 
-		@Override
-        public void onCompleted(Response response) {
-			
-        	String sGraphPath = response.getRequest( ).getGraphPath( );
+			@Override
+		    public void onCompleted(Response response) {
+				
+		    	String sGraphPath = response.getRequest( ).getGraphPath( );
 
-			FacebookRequestError error = response.getError( );
-			if( error != null ){
-				trace( "error : "+error );
-				onFBEvent( REQUESTDIALOG_ERROR , sGraphPath , error.toString( ) );
-			}else{
-				onFBEvent( GRAPH_REQUEST_RESULTS , sGraphPath , response.getGraphObject( ).getInnerJSONObject().toString() );
+				FacebookRequestError error = response.getError( );
+				if( error != null ){
+					trace( "error : "+error );
+					onFBEvent( REQUESTDIALOG_ERROR , sGraphPath , error.toString( ) );
+				}else{
+					onFBEvent( GRAPH_REQUEST_RESULTS , sGraphPath , response.getGraphObject( ).getInnerJSONObject().toString() );
+				}
+
 			}
 
-		}
+		};
 
-	};
+		private class SessionStatusCallback implements Session.StatusCallback {
+		        
+		    @Override
+		    public void call( final Session session , SessionState state, Exception exception) {
+		    	call_callback( session.getState( ).toString( ) , "" , "" );
+		    }
+
+		}
+		private Session.StatusCallback statusCallback = new SessionStatusCallback( );
 
 }
