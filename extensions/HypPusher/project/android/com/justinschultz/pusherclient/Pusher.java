@@ -33,8 +33,9 @@ import com.justinschultz.websocket.WebSocketEventHandler;
 import com.justinschultz.websocket.WebSocketMessage;
 
 public class Pusher {
-	private static final String PUSHER_CLIENT = "java-android-client";
-	private final String VERSION = "1.11";
+	private static final String PUSHER_CLIENT = "android-JavaPusherClient";
+	private final String VERSION = "1.12";
+	private final String PROTOCOL = "5";
 	private final String HOST = "ws.pusherapp.com";
 	private final int WS_PORT = 443;
 	private final String PREFIX = "wss://";
@@ -51,7 +52,8 @@ public class Pusher {
 	}
 
 	public void connect() {
-		String path = "/app/" + apiKey + "?client=" + PUSHER_CLIENT + "&version=" + VERSION;
+		// String path = "/app/" + apiKey + "?client=" + PUSHER_CLIENT + "&protocol=" + PROTOCOL + "&version=" + VERSION;
+		String path = "/app/" + apiKey + "?protocol=" + PROTOCOL;
 
 		try {
 			URI url = new URI(PREFIX + HOST + ":" + WS_PORT + path);
@@ -76,7 +78,8 @@ public class Pusher {
 							JSONObject data = new JSONObject(jsonMessage.getString("data"));
 							pusherEventListener.onConnect(data.getString("socket_id"));
 						} else {
-							pusherEventListener.onMessage(jsonMessage.toString());
+							// pusherEventListener.onMessage(jsonMessage.toString());
+							pusherEventListener.onMessage(jsonMessage);
 							dispatchChannelEvent(jsonMessage, event);
 						}
 					} catch (Exception e) {
@@ -182,7 +185,7 @@ public class Pusher {
 		try {
 			data.put("auth", authToken);
 		} catch(Exception ex) {
-
+			ex.printStackTrace();
 		}
 
 		c.send("pusher:subscribe", data);
@@ -194,7 +197,7 @@ public class Pusher {
 			data.put("auth", authToken);
 			data.put("channel_data", new JSONObject().put("user_id", userId));
 		} catch(Exception ex) {
-
+			ex.printStackTrace();
 		}
 
 		c.send("pusher:subscribe", data);
@@ -213,7 +216,8 @@ public class Pusher {
 			ChannelListener channelListener = channel.channelEvents.get(event);
 
 			if(channelListener != null)
-				channelListener.onMessage(jsonMessage.toString());
+				// channelListener.onMessage(jsonMessage.toString());
+				channelListener.onMessage(jsonMessage);
 		}
 	}
 

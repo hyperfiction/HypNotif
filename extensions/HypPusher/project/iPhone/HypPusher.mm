@@ -120,7 +120,7 @@ extern "C"
 	{
 		NSLog(@"[pusher-%@] Authorizing channel access...", pusher.connection.socketID);
 		
-		if( _token != [NSNull null]){
+		if( _token != (NSString *)[NSNull null]){
 			NSMutableData *data = (NSMutableData *)[request HTTPBody];
 
 			[data appendData:[_token dataUsingEncoding:NSUTF8StringEncoding]];	

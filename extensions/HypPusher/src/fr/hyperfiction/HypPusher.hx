@@ -130,15 +130,15 @@ import org.shoebox.utils.system.Signal3;
 		*/
 		public function setChannel( channelName : String ) : Void
 		{
-			var private : Bool;
-			private = false;
+			var chanIsPrivate : Bool;
+			chanIsPrivate = false;
 
 			if( StringTools.startsWith( channelName, "private-" ) ){
 				if( _authEndPoint == null || _token == null ){
 					throw "authEndPoint or token not set before subscribing to private channel";
 					return;
 				}else{
-					private = true;
+					chanIsPrivate = true;
 				}
 			}
 
@@ -149,7 +149,7 @@ import org.shoebox.utils.system.Signal3;
 			#end
 
 			#if android
-				if( private ){
+				if( chanIsPrivate ){
 					_authenticate( );
 				} else {
 					subscribeToPublic( _instance, channelName );

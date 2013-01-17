@@ -49,6 +49,57 @@ extern "C"
 		printf("HypPusher ::: register_prims() \n");
 		return 0;
 	}
+	
+// Android -------------------------------------------------------------------------------------------------------------
+
+	#ifdef ANDROID
+
+		JNIEXPORT void JNICALL Java_fr_hyperfiction_HypPusher_onConnect(JNIEnv * env, jobject  obj, jstring socketId )
+		{
+			const char *socketIdString = env->GetStringUTFChars(socketId, 0);
+	        val_call1( _on_connect -> get( ), alloc_string( socketIdString )  );
+			env->ReleaseStringUTFChars( socketId, socketIdString );
+	    }
+	    
+	    JNIEXPORT void JNICALL Java_fr_hyperfiction_HypPusher_onDisconnect(JNIEnv * env, jobject  obj )
+	    {
+	        val_call0( _on_disconnect -> get( ) );
+	    }
+		
+		JNIEXPORT void JNICALL Java_fr_hyperfiction_HypPusher_onMessage(
+		                                                                JNIEnv * env, 
+		                                                                jobject  obj, 
+		                                                                jstring event,
+		                                                                jstring data, 
+		                                                                jstring channel
+		                                                                )
+		{
+			 const char *eventString = env->GetStringUTFChars(event, 0);
+			 const char *dataString = env->GetStringUTFChars(data, 0);
+			 const char *channelString = env->GetStringUTFChars(channel, 0);
+			 
+			 val_call3( _on_message -> get( ), 
+			           alloc_string( eventString ), 
+			           alloc_string( dataString ), 
+			           alloc_string( channelString ) 
+			           );
+			 
+			 env->ReleaseStringUTFChars( event, eventString );
+			 env->ReleaseStringUTFChars( data, dataString );
+			 env->ReleaseStringUTFChars( channel, channelString );
+	    }
+
+	    JNIEXPORT void JNICALL Java_fr_hyperfiction_HypPusher_onSubscribed( 
+	                                                                       JNIEnv * env, 
+	                                                                       jobject obj, 
+	                                                                       jstring channel 
+	                                                                       )
+	    {
+			const char *channelString = env->GetStringUTFChars(channel, 0);
+	        val_call1( _on_subscribed -> get( ), alloc_string( channelString )  );
+			env->ReleaseStringUTFChars( channel, channelString );
+	    }
+	#endif
 
 // iOS -----------------------------------------------------------------------------------------------------------------
 	
@@ -131,42 +182,7 @@ extern "C"
 
 	#endif
 
-// Android -------------------------------------------------------------------------------------------------------------
 
-	#ifdef ANDROID
-
-		JNIEXPORT void JNICALL Java_fr_hyperfiction_HypPusher_onConnect(JNIEnv * env, jobject  obj, jstring socketId ){
-			const char *socketIdString = env->GetStringUTFChars(socketId, 0);
-	        val_call1( _on_connect -> get( ), alloc_string( socketIdString )  );
-			env->ReleaseStringUTFChars( socketId, socketIdString );
-	    }
-	    
-	    JNIEXPORT void JNICALL Java_fr_hyperfiction_HypPusher_onDisconnect(JNIEnv * env, jobject  obj ){
-	        val_call0( _on_disconnect -> get( ) );
-	    }
-		
-		JNIEXPORT void JNICALL Java_fr_hyperfiction_HypPusher_onMessage(
-		                                                                JNIEnv * env, 
-		                                                                jobject  obj, 
-		                                                                jstring event,
-		                                                                jstring data, 
-		                                                                jstring channel,
-		                                                                ){
-			 const char *eventString = env->GetStringUTFChars(event, 0);
-			 const char *dataString = env->GetStringUTFChars(data, 0);
-			 const char *channelString = env->GetStringUTFChars(channel, 0);
-			 
-			 val_call3( _on_message -> get( ), 
-			           alloc_string( eventString ), 
-			           alloc_string( dataString ), 
-			           alloc_string( channelString ) 
-			           );
-			 
-			 env->ReleaseStringUTFChars( event, eventString );
-			 env->ReleaseStringUTFChars( data, dataString );
-			 env->ReleaseStringUTFChars( channel, channelString );
-	    }
-	#endif
 
 
 // Callbacks -----------------------------------------------------------------------------------------------------------

@@ -58,15 +58,45 @@ public class HypPusher extends Pusher
 			}
 
 			@Override
-			public void onMessage(final String message)
+			public void onMessage(JSONObject message)
 			{
-				Log.i(TAG, "Received message from Pusher: " + message);
+				Log.i(TAG, "Received message from Pusher: " + message.toString() );
+				
+				String event;
+				String data;
+				String channel;
+				
+				try{
+					event	= message.getString("event");
+				}catch(JSONException e){
+					e.printStackTrace();
+					event = "";
+				}				
+				
+				try{
+					data	= message.getString("data");
+				}catch(JSONException e){
+					e.printStackTrace();
+					data = "";
+				}				
+				
+				try{
+					channel	= message.getString("channel");
+				}catch(JSONException e){
+					e.printStackTrace();
+					channel = "";
+				}
+
+				final String msgEvent	= event;
+				final String msgData	= data;
+				final String msgChannel	= channel;
+
 				mSurface.queueEvent(new Runnable( )
 				{
 					@Override
 					public void run()
 					{
-						HypPusher.onMessage(message);
+						HypPusher.onMessage(msgEvent, msgData, msgChannel);
 					}
 				});
 
@@ -102,6 +132,7 @@ public class HypPusher extends Pusher
 	
 	public void subscribeToPrivate( String channelName, String authToken )
 	{
+		Log.i(TAG, "[Pusher] subscribeToPrivate ::: " + channelName);
 		subscribe( channelName, authToken );
 	}
 
@@ -130,15 +161,35 @@ public class HypPusher extends Pusher
 			channel.bind(eventName, new ChannelListener()
 			{
 				@Override
-				public void onMessage(final String message)
+				public void onMessage(JSONObject message)
 				{
-					Log.i(TAG, "[Pusher] receive message ::: " + message);
+					String event;
+					String data;
+					
+					try{
+						event	= message.getString("event");
+					}catch(JSONException e){
+						e.printStackTrace();
+						event = "";
+					}				
+					
+					try{
+						data	= message.getString("data");
+					}catch(JSONException e){
+						e.printStackTrace();
+						data = "";
+					}				
+
+					final String msgEvent	= event;
+					final String msgData	= data;
+
+					Log.i(TAG, "[Pusher] receive message ::: " + message.toString());
 					mSurface.queueEvent(new Runnable( )
 					{
 						@Override
 						public void run()
 						{
-							HypPusher.onMessage( message );
+							HypPusher.onMessage( msgEvent, msgData, channelName );
 						}
 					});
 				}
