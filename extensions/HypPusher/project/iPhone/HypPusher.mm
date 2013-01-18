@@ -13,6 +13,7 @@
 extern "C"
 {
 	void hyp_on_connect( const char *socketId );
+	void hyp_on_subscribed( const char *channel );
 	void hyp_on_disconnect( );
 	void hyp_on_message( const char *event, const char *data, const char *channel );
 }
@@ -25,6 +26,7 @@ extern "C"
 	@interface HypPusherDelegate : NSObject <PTPusherDelegate>
 	{}
 	@property (nonatomic, strong) PTPusher *pusher;
+	@property (nonatomic, strong) NSString *token;
 	
 	- (PTPusher *)createInstance:(NSString*)apiKey;
 	
@@ -98,6 +100,7 @@ extern "C"
 	- (void)pusher:(PTPusher *)pusher didSubscribeToChannel:(PTPusherChannel *)channel
 	{
 		NSLog(@"[pusher-%@] Subscribed to channel %@", pusher.connection.socketID, channel);
+		hyp_on_subscribed( [channel.name UTF8String] );
 	}
 	
 	- (void)pusher:(PTPusher *)pusher didFailToSubscribeToChannel:(PTPusherChannel *)channel withError:(NSError *)error
@@ -116,6 +119,13 @@ extern "C"
 	- (void)pusher:(PTPusher *)pusher willAuthorizeChannelWithRequest:(NSMutableURLRequest *)request
 	{
 		NSLog(@"[pusher-%@] Authorizing channel access...", pusher.connection.socketID);
+		
+		if( _token != (NSString *)[NSNull null]){
+			NSMutableData *data = (NSMutableData *)[request HTTPBody];
+
+			[data appendData:[_token dataUsingEncoding:NSUTF8StringEncoding]];	
+			[request setHTTPBody:data];
+		}
 	}
 	
 	@end
@@ -136,14 +146,17 @@ namespace hyperfiction {
 		NSLog (@"pusher client created : %s ",apiKey);
 	}
 
-	void setAuthEndPoint( const char *url )
+	void setAuthEndPoint( const char *url, const char *token )
 	{
+		NSLog( @"set auth end point and token ::: ");
+		hp.token	= [NSString stringWithFormat:@"&token=%s", token];
+		
 		NSString *s	= [[NSString alloc] initWithUTF8String:url];
 		NSURL *ns	= [[NSURL alloc] initWithString:s];
 		
 		hp.pusher.authorizationURL = ns;
 		
-		NSLog (@"auth url : %s ",url);
+		NSLog ( @"auth url : %s with token : %s",url,token );
 	}
 
 	void unbindEvent( const char *event )

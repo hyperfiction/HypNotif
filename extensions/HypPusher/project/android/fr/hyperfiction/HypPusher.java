@@ -16,11 +16,12 @@ import com.justinschultz.pusherclient.PusherListener;
 public class HypPusher extends Pusher
 {
 
-	public static String TAG = "HypPusher";
+	public static String TAG = "trace";
 
 	public static native void onConnect( String socketId );
 	public static native void onDisconnect();
-	public static native void onMessage(String message);
+	public static native void onMessage(String event, String data, String channel);
+	public static native void onSubscribed(String channel);
 
 	public static GLSurfaceView mSurface;
 
@@ -57,15 +58,28 @@ public class HypPusher extends Pusher
 			}
 
 			@Override
-			public void onMessage(final String message)
+			public void onMessage(JSONObject message)
 			{
-				Log.i(TAG, "Received message from Pusher: " + message);
+				Log.i(TAG, "Received message from Pusher: " + message.toString() );
+				
+				String event;
+				String data;
+				String channel;
+				
+				event	= message.optString("event");
+				data	= message.optString("data");
+				channel	= message.optString("channel");
+
+				final String msgEvent	= event;
+				final String msgData	= data;
+				final String msgChannel	= channel;
+
 				mSurface.queueEvent(new Runnable( )
 				{
 					@Override
 					public void run()
 					{
-						HypPusher.onMessage(message);
+						HypPusher.onMessage(msgEvent, msgData, msgChannel);
 					}
 				});
 
@@ -96,15 +110,20 @@ public class HypPusher extends Pusher
 
 	public void subscribeToPublic( String channelName )
 	{
-		subscribe( channelName );
+		if( subscribe( channelName ) != null ){
+			HypPusher.onSubscribed(channelName);
+		}
 	}
 	
 	public void subscribeToPrivate( String channelName, String authToken )
 	{
-		subscribe( channelName, authToken );
+		Log.i(TAG, "[Pusher] subscribeToPrivate ::: " + channelName);
+		if( subscribe( channelName, authToken ) != null ){
+			HypPusher.onSubscribed(channelName);
+		}
 	}
 
-	public void sendEventOnChannel( String eventName, String data, String channelName )
+	public void sendEvent( String eventName, String data, String channelName )
 	{
 		Channel channel = channel(channelName);
 		JSONObject obj;
@@ -122,26 +141,43 @@ public class HypPusher extends Pusher
 		}
 	}
 
-	public void bindToEventOnChannel( final String eventName, final String channelName)
-	 {
+	public void bindToEvent( final String eventName, final String channelName)
+	{
 		Channel channel = channel(channelName);
 		if (channel != null) {
 			channel.bind(eventName, new ChannelListener()
 			{
 				@Override
-				public void onMessage(final String message)
+				public void onMessage(JSONObject message)
 				{
-					Log.i(TAG, "[Pusher] receive message ::: " + message);
+					String event;
+					String data;
+					
+					event	= message.optString("event");
+					data	= message.optString("data");
+
+					final String msgEvent	= event;
+					final String msgData	= data;
+
+					Log.i(TAG, "[Pusher] receive message ::: " + message.toString());
 					mSurface.queueEvent(new Runnable( )
 					{
 						@Override
 						public void run()
 						{
-							HypPusher.onMessage( message );
+							HypPusher.onMessage( msgEvent, msgData, channelName );
 						}
 					});
 				}
 			});
+		}
+	}
+
+	public void unbindEvent( final String eventName, final String channelName)
+	{
+		Channel channel = channel(channelName);
+		if (channel != null) {
+			channel.unbind(eventName);
 		}
 	}
 }

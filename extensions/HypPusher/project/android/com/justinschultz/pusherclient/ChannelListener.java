@@ -20,6 +20,8 @@ package com.justinschultz.pusherclient;
  *  limitations under the License. 
  */
 
+import org.json.JSONObject;
+
 public interface ChannelListener {
-	public void onMessage(String message);
+	public void onMessage(JSONObject message);
 }

@@ -20,8 +20,10 @@ package com.justinschultz.pusherclient;
  *  limitations under the License. 
  */
 
+import org.json.JSONObject;
+
 public interface PusherListener {
 	public void onConnect(String socketId);
-	public void onMessage(String message);
+	public void onMessage(JSONObject message);
 	public void onDisconnect();
 }

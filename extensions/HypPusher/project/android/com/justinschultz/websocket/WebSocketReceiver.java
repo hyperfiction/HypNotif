@@ -21,6 +21,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.util.Log;
+
 public class WebSocketReceiver
 		extends Thread
 {
@@ -51,7 +53,13 @@ public class WebSocketReceiver
 				else if (b == 0xff && frameStart == true) {
 					frameStart = false;
 					Byte[] message = messageBytes.toArray(new Byte[messageBytes.size()]);
-					eventHandler.onMessage(new WebSocketMessage(message));
+
+					WebSocketMessage msg;
+					msg = new WebSocketMessage(message);
+					Log.i("HypPusher", "message ::: "+msg.getText());
+					
+					eventHandler.onMessage(msg);
+
 					messageBytes.clear();
 				}
 				else if (frameStart == true){

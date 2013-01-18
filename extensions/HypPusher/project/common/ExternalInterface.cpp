@@ -39,6 +39,7 @@ using namespace hyperfiction;
 AutoGCRoot *_on_connect					= 0;
 AutoGCRoot *_on_disconnect				= 0;
 AutoGCRoot *_on_message					= 0;
+AutoGCRoot *_on_subscribed				= 0;
 
 extern "C"
 {
@@ -48,6 +49,57 @@ extern "C"
 		printf("HypPusher ::: register_prims() \n");
 		return 0;
 	}
+	
+// Android -------------------------------------------------------------------------------------------------------------
+
+	#ifdef ANDROID
+
+		JNIEXPORT void JNICALL Java_fr_hyperfiction_HypPusher_onConnect(JNIEnv * env, jobject  obj, jstring socketId )
+		{
+			const char *socketIdString = env->GetStringUTFChars(socketId, 0);
+	        val_call1( _on_connect -> get( ), alloc_string( socketIdString )  );
+			env->ReleaseStringUTFChars( socketId, socketIdString );
+	    }
+	    
+	    JNIEXPORT void JNICALL Java_fr_hyperfiction_HypPusher_onDisconnect(JNIEnv * env, jobject  obj )
+	    {
+	        val_call0( _on_disconnect -> get( ) );
+	    }
+		
+		JNIEXPORT void JNICALL Java_fr_hyperfiction_HypPusher_onMessage(
+		                                                                JNIEnv * env, 
+		                                                                jobject  obj, 
+		                                                                jstring event,
+		                                                                jstring data, 
+		                                                                jstring channel
+		                                                                )
+		{
+			 const char *eventString = env->GetStringUTFChars(event, 0);
+			 const char *dataString = env->GetStringUTFChars(data, 0);
+			 const char *channelString = env->GetStringUTFChars(channel, 0);
+			 
+			 val_call3( _on_message -> get( ), 
+			           alloc_string( eventString ), 
+			           alloc_string( dataString ), 
+			           alloc_string( channelString ) 
+			           );
+			 
+			 env->ReleaseStringUTFChars( event, eventString );
+			 env->ReleaseStringUTFChars( data, dataString );
+			 env->ReleaseStringUTFChars( channel, channelString );
+	    }
+
+	    JNIEXPORT void JNICALL Java_fr_hyperfiction_HypPusher_onSubscribed( 
+	                                                                       JNIEnv * env, 
+	                                                                       jobject obj, 
+	                                                                       jstring channel 
+	                                                                       )
+	    {
+			const char *channelString = env->GetStringUTFChars(channel, 0);
+	        val_call1( _on_subscribed -> get( ), alloc_string( channelString )  );
+			env->ReleaseStringUTFChars( channel, channelString );
+	    }
+	#endif
 
 // iOS -----------------------------------------------------------------------------------------------------------------
 	
@@ -56,6 +108,11 @@ extern "C"
 		void hyp_on_connect( const char *socketId )
 		{
 			val_call1( _on_connect -> get( ), alloc_string( socketId ) );
+		}
+
+		void hyp_on_subscribed( const char *channel )
+		{
+			val_call1( _on_subscribed-> get( ), alloc_string( channel ) );
 		}
 
 		void hyp_on_disconnect( )
@@ -99,11 +156,11 @@ extern "C"
 		}
 		DEFINE_PRIM( hyp_create, 1 );
 
-		void hyp_set_authurl( value url )
+		void hyp_set_authurl( value url, value token )
 		{
-			setAuthEndPoint( val_string( url ) );
+			setAuthEndPoint( val_string( url ), val_string( token ) );
 		}
-		DEFINE_PRIM( hyp_set_authurl, 1 );
+		DEFINE_PRIM( hyp_set_authurl, 2 );
 
 		void hyp_subscribe( value channel )
 		{
@@ -125,42 +182,7 @@ extern "C"
 
 	#endif
 
-// Android -------------------------------------------------------------------------------------------------------------
 
-	#ifdef ANDROID
-
-		JNIEXPORT void JNICALL Java_fr_hyperfiction_HypPusher_onConnect(JNIEnv * env, jobject  obj, jstring socketId ){
-			const char *socketIdString = env->GetStringUTFChars(socketId, 0);
-	        val_call1( _on_connect -> get( ), alloc_string( socketIdString )  );
-			env->ReleaseStringUTFChars( socketId, socketIdString );
-	    }
-	    
-	    JNIEXPORT void JNICALL Java_fr_hyperfiction_HypPusher_onDisconnect(JNIEnv * env, jobject  obj ){
-	        val_call0( _on_disconnect -> get( ) );
-	    }
-		
-		JNIEXPORT void JNICALL Java_fr_hyperfiction_HypPusher_onMessage(
-		                                                                JNIEnv * env, 
-		                                                                jobject  obj, 
-		                                                                jstring event,
-		                                                                jstring data, 
-		                                                                jstring channel,
-		                                                                ){
-			 const char *eventString = env->GetStringUTFChars(event, 0);
-			 const char *dataString = env->GetStringUTFChars(data, 0);
-			 const char *channelString = env->GetStringUTFChars(channel, 0);
-			 
-			 val_call3( _on_message -> get( ), 
-			           alloc_string( eventString ), 
-			           alloc_string( dataString ), 
-			           alloc_string( channelString ) 
-			           );
-			 
-			 env->ReleaseStringUTFChars( event, eventString );
-			 env->ReleaseStringUTFChars( data, dataString );
-			 env->ReleaseStringUTFChars( channel, channelString );
-	    }
-	#endif
 
 
 // Callbacks -----------------------------------------------------------------------------------------------------------
@@ -182,3 +204,9 @@ extern "C"
 	    return alloc_bool(true);
 	}
 	DEFINE_PRIM(hyp_cb_message,1);
+
+	static value hyp_cb_subscribed( value onCall ) {
+		_on_subscribed = new AutoGCRoot( onCall );
+	    return alloc_bool(true);
+	}
+	DEFINE_PRIM(hyp_cb_subscribed,1);

@@ -28,7 +28,7 @@ class HypPusherAuth extends EventDispatcher
 		super();
 	}
 
-	public function authenticate( socketID : String, endPoint : String, channelName : String) : Void {
+	public function authenticate( socketID : String, endPoint : String, channelName : String, token : String ) : Void {
 		
 		trace( " auth endpoint ::: "+endPoint );
 
@@ -42,6 +42,7 @@ class HypPusherAuth extends EventDispatcher
 		
 		postVars.socket_id		= socketID;
 		postVars.channel_name	= channelName;
+		postVars.token			= token;
 		
 		urlRequest.data		= postVars;	
 		urlRequest.method	= URLRequestMethod.POST;
