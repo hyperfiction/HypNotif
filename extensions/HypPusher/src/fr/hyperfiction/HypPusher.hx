@@ -168,7 +168,7 @@ import org.shoebox.utils.system.Signal3;
 		public function bind( event : String ) : Void
 		{
 			#if android
-				bindToEventOnChannel( _instance, event, _channelName );
+				bindToEvent( _instance, event, _channelName );
 			#end
 			#if ios
 				hyp_bind_event( event );
@@ -185,6 +185,7 @@ import org.shoebox.utils.system.Signal3;
 		public function unbind( event : String ) : Void
 		{
 			#if android
+				unbindEvent( _instance, event, _channelName );
 			#end
 			#if ios
 				hyp_unbind_event( event );
@@ -200,7 +201,7 @@ import org.shoebox.utils.system.Signal3;
 		* @param data optional data, json object
 		* @return	void
 		*/
-		public function sendEvent( event : String, ?data : Dynamic ) : Void
+		public function send( event : String, ?data : Dynamic ) : Void
 		{
 			if( !_subscribed ){
 				throw "cannot send event without subscribing to a channel";
@@ -222,7 +223,7 @@ import org.shoebox.utils.system.Signal3;
 			}
 
 			#if android
-				sendEventOnChannel( _instance, event, data, _channelName );
+				sendEvent( _instance, event, data, _channelName );
 			#end
 			#if ios
 				hyp_send_event( event, data, _channelName );
@@ -292,6 +293,11 @@ import org.shoebox.utils.system.Signal3;
 			}
 
 			@JNI
+			function disconnect( instance : Dynamic ) : Void
+			{
+			}
+
+			@JNI
 			function subscribeToPublic( instance : Dynamic, chan : String ) : Void
 			{
 			}
@@ -302,33 +308,23 @@ import org.shoebox.utils.system.Signal3;
 			}
 
 			@JNI
-			function bindToEventOnChannel( instance : Dynamic, event : String, chan : String ) : Void
+			function bindToEvent( instance : Dynamic, event : String, chan : String ) : Void
 			{
 			}
 
 			@JNI
-			function sendEventOnChannel( instance : Dynamic, event : String, data : String, chan : String ) : Void
+			function unbindEvent( instance : Dynamic, event : String, chan : String ) : Void
 			{
 			}
 
 			@JNI
-			function disconnect( instance : Dynamic ) : Void
+			function sendEvent( instance : Dynamic, event : String, data : String, chan : String ) : Void
 			{
 			}
 		
 		#end
 
 		#if cpp
-
-			@CPP("hyppusher")
-			function hyp_connect( ) : Void 
-			{
-			}
-
-			@CPP("hyppusher")
-			function hyp_disconnect( ) : Void 
-			{
-			}
 
 			@CPP("hyppusher")
 			function hyp_create( apiKey : String ) : Void 
@@ -341,12 +337,17 @@ import org.shoebox.utils.system.Signal3;
 			}
 
 			@CPP("hyppusher")
-			function hyp_subscribe( channel : String ) : Void 
+			function hyp_connect( ) : Void 
 			{
 			}
 
 			@CPP("hyppusher")
-			function hyp_send_event( event : String, data : String, chan : String ) : Void
+			function hyp_disconnect( ) : Void 
+			{
+			}
+
+			@CPP("hyppusher")
+			function hyp_subscribe( channel : String ) : Void 
 			{
 			}
 
@@ -357,6 +358,11 @@ import org.shoebox.utils.system.Signal3;
 
 			@CPP("hyppusher")
 			function hyp_unbind_event( event : String ) : Void
+			{
+			}
+
+			@CPP("hyppusher")
+			function hyp_send_event( event : String, data : String, chan : String ) : Void
 			{
 			}
 

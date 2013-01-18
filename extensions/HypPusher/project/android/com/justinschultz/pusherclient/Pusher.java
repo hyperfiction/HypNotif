@@ -264,6 +264,11 @@ public class Pusher {
 			channelEvents.put(eventName, channelListener);
 		}
 
+		public void unbind( String eventName )
+		{
+			channelEvents.remove(eventName);
+		}
+
 		@Override
 		public String toString() {
 			return channelName;

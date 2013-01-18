@@ -16,7 +16,7 @@ import com.justinschultz.pusherclient.PusherListener;
 public class HypPusher extends Pusher
 {
 
-	public static String TAG = "HypPusher";
+	public static String TAG = "trace";
 
 	public static native void onConnect( String socketId );
 	public static native void onDisconnect();
@@ -66,26 +66,9 @@ public class HypPusher extends Pusher
 				String data;
 				String channel;
 				
-				try{
-					event	= message.getString("event");
-				}catch(JSONException e){
-					e.printStackTrace();
-					event = "";
-				}				
-				
-				try{
-					data	= message.getString("data");
-				}catch(JSONException e){
-					e.printStackTrace();
-					data = "";
-				}				
-				
-				try{
-					channel	= message.getString("channel");
-				}catch(JSONException e){
-					e.printStackTrace();
-					channel = "";
-				}
+				event	= message.optString("event");
+				data	= message.optString("data");
+				channel	= message.optString("channel");
 
 				final String msgEvent	= event;
 				final String msgData	= data;
@@ -127,16 +110,20 @@ public class HypPusher extends Pusher
 
 	public void subscribeToPublic( String channelName )
 	{
-		subscribe( channelName );
+		if( subscribe( channelName ) != null ){
+			HypPusher.onSubscribed(channelName);
+		}
 	}
 	
 	public void subscribeToPrivate( String channelName, String authToken )
 	{
 		Log.i(TAG, "[Pusher] subscribeToPrivate ::: " + channelName);
-		subscribe( channelName, authToken );
+		if( subscribe( channelName, authToken ) != null ){
+			HypPusher.onSubscribed(channelName);
+		}
 	}
 
-	public void sendEventOnChannel( String eventName, String data, String channelName )
+	public void sendEvent( String eventName, String data, String channelName )
 	{
 		Channel channel = channel(channelName);
 		JSONObject obj;
@@ -154,8 +141,8 @@ public class HypPusher extends Pusher
 		}
 	}
 
-	public void bindToEventOnChannel( final String eventName, final String channelName)
-	 {
+	public void bindToEvent( final String eventName, final String channelName)
+	{
 		Channel channel = channel(channelName);
 		if (channel != null) {
 			channel.bind(eventName, new ChannelListener()
@@ -166,19 +153,8 @@ public class HypPusher extends Pusher
 					String event;
 					String data;
 					
-					try{
-						event	= message.getString("event");
-					}catch(JSONException e){
-						e.printStackTrace();
-						event = "";
-					}				
-					
-					try{
-						data	= message.getString("data");
-					}catch(JSONException e){
-						e.printStackTrace();
-						data = "";
-					}				
+					event	= message.optString("event");
+					data	= message.optString("data");
 
 					final String msgEvent	= event;
 					final String msgData	= data;
@@ -194,6 +170,14 @@ public class HypPusher extends Pusher
 					});
 				}
 			});
+		}
+	}
+
+	public void unbindEvent( final String eventName, final String channelName)
+	{
+		Channel channel = channel(channelName);
+		if (channel != null) {
+			channel.unbind(eventName);
 		}
 	}
 }
