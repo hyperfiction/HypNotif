@@ -13,17 +13,35 @@ import org.shoebox.utils.system.Signal3;
 
 
 /**
+*	HypPusher, NME native extension for pusher service.
+*	See <a href="http://pusher.com/docs">pusher documentation</a>
+*	
+*	Use <a href="https://github.com/jmschultz/JavaPusherClient">JavaPusherClient</a> for Android
+*	Use <a href="https://github.com/lukeredpath/libPusher">LibPusher</a> for iOS
+*
+* 	Default is to use wss://, on port 443 as it works better on mobile connection
+*
+* 	In order to use private channel, you need to provide an end point url to authenticate
+*
+* 	Limitations : only one channel at a time for now, no presence channel
+* 	TODO : better handling of connection / reconnection
 * 
 * @author LouisBL
 */
 
 @:build( org.shoebox.utils.NativeMirror.build() )class HypPusher
 {
-
+	// Emit the socketID once connected to pusher
 	public var onConnect			: Signal1<String>;
+
+	// Emit once disconnected
 	public var onDisconnect			: Signal;
+	
+	// Emit the channel name once subscribed
 	public var onSubscribed			: Signal1<String>;
-	public var onMessage			: Signal3<String, String, Dynamic>;
+	
+	// Emit message with the event name, a JSON object for data, the channel name
+	public var onMessage			: Signal3<String, Dynamic, String >;
 
 	var _socketId 			: String;
 	var _channelName		: String;
@@ -33,26 +51,22 @@ import org.shoebox.utils.system.Signal3;
 	var _subscribed			: Bool;
 
 	#if android
-	var _instance 			: Dynamic;
+		var _instance 			: Dynamic;
 	#end
 
 	// -------o constructor
 
 		/**
-		* Constructor, instantiate apusher client. No auto connect.
-		* @see connectToServer to connect to the pusher server
-		*
-		* @public
-		* @param apiKey Pusher api Key
-		* @param authEndPoint url used to authenticate private channel
-		* @param token a token used to authenticate against the authendPoint
-		* @return	void
-		*/
+		 * Constructor, instantiate a pusher client, wihtout autoconnect.
+		 * @see connectToServer to connect to the pusher server
+		 * 
+		 * @param apiKey        : String Pusher API Key
+		 * @param ?authEndPoint : String url used to authenticate private/presence channel
+		 * @param ?token        : String a token used to authenticate with the authEndPoint
+		 * @return Void
+		 */
 		public function new( apiKey : String, ?authEndPoint : String, ?token : String ) : Void
 		{
-
-			trace( "HypPusher constructor ::: " );
-			
 			onConnect		= new Signal1<String>();
 			onDisconnect	= new Signal();
 			onSubscribed 	= new Signal1<String>();
@@ -89,7 +103,7 @@ import org.shoebox.utils.system.Signal3;
 		* default uses secure connection over 443 port.
 		* 
 		* @public
-		* @return	void
+		* @return	Void
 		*/
 		public function connectToServer( ) : Void
 		{
@@ -105,7 +119,7 @@ import org.shoebox.utils.system.Signal3;
 		* disconnectFromServer
 		* 
 		* @public
-		* @return	void
+		* @return	Void
 		*/
 		public function disconnectFromServer( ) : Void
 		{
@@ -126,7 +140,7 @@ import org.shoebox.utils.system.Signal3;
 		* 
 		* @public
 		* @param channelName the name of the channel to subscribe to.
-		* @return	void
+		* @return	Void
 		*/
 		public function setChannel( channelName : String ) : Void
 		{
@@ -135,7 +149,7 @@ import org.shoebox.utils.system.Signal3;
 
 			if( StringTools.startsWith( channelName, "private-" ) ){
 				if( _authEndPoint == null || _token == null ){
-					throw "authEndPoint or token not set before subscribing to private channel";
+					throw "[HypPusher] Error ::: authEndPoint or token not set before subscribing to private channel";
 					return;
 				}else{
 					chanIsPrivate = true;
@@ -163,7 +177,7 @@ import org.shoebox.utils.system.Signal3;
 		* 
 		* @public
 		* @param event name of the event
-		* @return	void
+		* @return	Void
 		*/
 		public function bind( event : String ) : Void
 		{
@@ -180,7 +194,7 @@ import org.shoebox.utils.system.Signal3;
 		* 
 		* @public
 		* @param event the name of the event
-		* @return	void
+		* @return	Void
 		*/
 		public function unbind( event : String ) : Void
 		{
@@ -199,17 +213,15 @@ import org.shoebox.utils.system.Signal3;
 		* @public
 		* @param event the name of the event
 		* @param data optional data, json object
-		* @return	void
+		* @return	Void
 		*/
 		public function send( event : String, ?data : Dynamic ) : Void
 		{
 			if( !_subscribed ){
-				throw "cannot send event without subscribing to a channel";
+				throw "[HypPusher] Error ::: cannot send event without subscribing to a channel";
 				return;
 			}
 
-			trace('send event :::'+event+' on channel ::: '+_channelName+' with data ::: '+data);
-			
 			if( data == null ) {
 				data = {};
 			}
@@ -219,7 +231,7 @@ import org.shoebox.utils.system.Signal3;
 			try{
 				data = haxe.Json.stringify( data );
 			} catch ( e  : Dynamic ){
-				trace( "malformed Json data ::: "+data );
+				throw "[HypPusher] Error ::: malformed Json data ::: "+data;
 			}
 
 			#if android
@@ -240,7 +252,7 @@ import org.shoebox.utils.system.Signal3;
 		* the auth mechanism.
 		* 
 		* @private
-		* @return	void
+		* @return	Void
 		*/
 		function _authenticate( ) : Void
 		{
@@ -258,8 +270,6 @@ import org.shoebox.utils.system.Signal3;
 
 		function _on_auth_success( auth : String ) : Void
 		{
-			trace( "on auth success ::: " );
-
 			_auth = auth;
 
 			#if android
@@ -269,12 +279,12 @@ import org.shoebox.utils.system.Signal3;
 
 		function _on_auth_error( ) : Void
 		{
-			trace( "on auth error ::: " );
+			throw "[HypPusher] Error ::: auth error ::: ";
 		}
 
 		function _on_auth_failed( ) : Void
 		{
-			trace( "on auth failed ::: " );
+			throw "[HypPusher] Error ::: auth failed ::: ";
 		}
 
 
@@ -366,6 +376,8 @@ import org.shoebox.utils.system.Signal3;
 			{
 			}
 
+			// CPP Callbacks
+
 			@CPP("hyppusher")
 			function hyp_cb_connect( cb : Dynamic ) : Dynamic
 			{
@@ -393,44 +405,32 @@ import org.shoebox.utils.system.Signal3;
 
 		function _onConnect( socketId : String ) : Void
 		{
-			trace( "_onConnect" );
-
 			_socketId = socketId;
 			onConnect.emit( socketId );
 		}
 
 		function _onDisconnect( ) : Void
 		{
-			trace( "_onDisconnect" );
-
 			onDisconnect.emit();
 		}
 
 		function _onMessage( event : String, data : String, channel : String ) : Void
 		{
-			trace( "_onMessage ::: "+event );
-			
 			var dataObj : Dynamic;
 			dataObj = {};
 				
 			try{
 				dataObj	= haxe.Json.parse( data );
-				
-				trace( "channel ::: "+channel+" event ::: "+event+" with data ::: "+data );
-			
 			} catch( e : Dynamic ) {
-			
-				trace( "[Pusher] Error ::: "+ e + " parsing Json data ::: "+data );
+				throw "[HypPusher] Error ::: "+ e + " parsing Json data ::: "+data;
 			}
 
-			onMessage.emit( event, channel, dataObj );
+			onMessage.emit( event, dataObj, channel );
 
 		}
 
 		function _onSubscribed( channel : String ) : Void
 		{
-			trace( "_onSubscribed ::: "+channel );
-
 			_subscribed = true;
 			onSubscribed.emit( channel );
 		}

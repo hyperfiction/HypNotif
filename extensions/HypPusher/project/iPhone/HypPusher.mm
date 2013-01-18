@@ -53,7 +53,6 @@ extern "C"
 	{
 	#ifdef kLOG_ALL_EVENTS
 		PTPusherEvent *event = [note.userInfo objectForKey:PTPusherEventUserInfoKey];
-		NSLog(@"[pusher] Received event %@", event);
 	#endif
 	}
 	
@@ -142,21 +141,16 @@ namespace hyperfiction {
 		hp.pusher	= [hp createInstance:s];
 
 		bindings = [[NSMutableDictionary alloc] init];
-		
-		NSLog (@"pusher client created : %s ",apiKey);
 	}
 
 	void setAuthEndPoint( const char *url, const char *token )
 	{
-		NSLog( @"set auth end point and token ::: ");
 		hp.token	= [NSString stringWithFormat:@"&token=%s", token];
 		
 		NSString *s	= [[NSString alloc] initWithUTF8String:url];
 		NSURL *ns	= [[NSURL alloc] initWithString:s];
 		
 		hp.pusher.authorizationURL = ns;
-		
-		NSLog ( @"auth url : %s with token : %s",url,token );
 	}
 
 	void unbindEvent( const char *event )
@@ -173,7 +167,6 @@ namespace hyperfiction {
 		NSString *eventString	= [[NSString alloc] initWithUTF8String:event];
 		
 		PTPusherEventBinding *evtBind = [hp.pusher bindToEventNamed:eventString handleWithBlock:^(PTPusherEvent *event) {
-			NSLog(@"received event binded ::: %@", event );
 			NSString *data = [NSString stringWithFormat:@"%@", event.data];
 			hyp_on_message( [event.name UTF8String], [data UTF8String], [event.channel UTF8String] );
 		}];
@@ -188,8 +181,6 @@ namespace hyperfiction {
 		NSString *channelString	= [[NSString alloc] initWithUTF8String:channel];
 
 		[hp.pusher sendEventNamed: eventString data:dataString channel:channelString];
-
-		NSLog (@"send event %s on channel : %s ",event,channel);
 	}
 
 	void connect( )

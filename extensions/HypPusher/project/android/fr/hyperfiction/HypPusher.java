@@ -36,9 +36,6 @@ public class HypPusher extends Pusher
 	{
 		super( apiKey );
 
-		Log.i( TAG, "new HypPusher ::: ");
-
-		
 		mSurface = (GLSurfaceView) GameActivity.getInstance().getCurrentFocus();
 		
 		_eventListener = new PusherListener()
@@ -60,8 +57,6 @@ public class HypPusher extends Pusher
 			@Override
 			public void onMessage(JSONObject message)
 			{
-				Log.i(TAG, "Received message from Pusher: " + message.toString() );
-				
 				String event;
 				String data;
 				String channel;
@@ -110,6 +105,7 @@ public class HypPusher extends Pusher
 
 	public void subscribeToPublic( String channelName )
 	{
+		Log.i(TAG, "[Pusher] subscribeToPublic ::: " + channelName);
 		if( subscribe( channelName ) != null ){
 			HypPusher.onSubscribed(channelName);
 		}
@@ -159,7 +155,6 @@ public class HypPusher extends Pusher
 					final String msgEvent	= event;
 					final String msgData	= data;
 
-					Log.i(TAG, "[Pusher] receive message ::: " + message.toString());
 					mSurface.queueEvent(new Runnable( )
 					{
 						@Override

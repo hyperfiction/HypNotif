@@ -25,8 +25,6 @@ import java.util.HashMap;
 
 import org.json.JSONObject;
 
-import android.util.Log;
-
 import com.justinschultz.websocket.WebSocket;
 import com.justinschultz.websocket.WebSocketConnection;
 import com.justinschultz.websocket.WebSocketEventHandler;
@@ -34,7 +32,7 @@ import com.justinschultz.websocket.WebSocketMessage;
 
 public class Pusher {
 	private static final String PUSHER_CLIENT = "android-JavaPusherClient";
-	private final String VERSION = "1.12";
+	private final String VERSION = "1.11";
 	private final String PROTOCOL = "5";
 	private final String HOST = "ws.pusherapp.com";
 	private final int WS_PORT = 443;
@@ -52,8 +50,7 @@ public class Pusher {
 	}
 
 	public void connect() {
-		// String path = "/app/" + apiKey + "?client=" + PUSHER_CLIENT + "&protocol=" + PROTOCOL + "&version=" + VERSION;
-		String path = "/app/" + apiKey + "?protocol=" + PROTOCOL;
+		String path = "/app/" + apiKey + "?client=" + PUSHER_CLIENT + "&protocol=" + PROTOCOL + "&version=" + VERSION;
 
 		try {
 			URI url = new URI(PREFIX + HOST + ":" + WS_PORT + path);
@@ -71,8 +68,6 @@ public class Pusher {
 						JSONObject jsonMessage = new JSONObject(message.getText());
 						String event = jsonMessage.optString("event", null);
 				
-						Log.i( "HypPusher", jsonMessage.toString() );
-
 						if(event.equals("pusher:connection_established" ))
 						{
 							JSONObject data = new JSONObject(jsonMessage.getString("data"));
