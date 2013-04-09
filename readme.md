@@ -7,8 +7,6 @@ This native extension brings you Apple Push Notification Service for iOS and Goo
 The iOS part is based on [Easy APNs](https://github.com/manifestinteractive/easyapns).
 The Android part is based on the [GCM Demo Application](http://developer.android.com/google/gcm/demo.html)
 
-This extension has been created to work with [the HypNotif server]().
-
 Installation
 ------------
 There is an [include.nmml]() file and [ndll]() are compiled for:
@@ -40,11 +38,14 @@ When the device is registered it sends to the server the following values:
 * the device version
 * a device unique id (the register ID for android)
 * the device token (only for ios)
+* for iOS, if user allow badges, alerts and/or sounds
 * a custom user id
 
 Made at Hyperfiction
 --------------------
 [hyperfiction.fr](http://hyperfiction.fr)
+Developed by :
+- [Louis Beltramo](https://github.com/louisbl) [@louisbl](https://twitter.com/louisbl)
 
 License
 -------
