@@ -218,7 +218,7 @@ static char const * const HypNotifKey = "hypnotif";
 
 @end
 
-namespace hyperfiction {
+namespace hypnotif {
 
 	HypNotif *hn;
 

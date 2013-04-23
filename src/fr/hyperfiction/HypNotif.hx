@@ -53,7 +53,7 @@ class HypNotif {
 		#end
 
 		#if ios
-			hyp_init( _protocol, _host, _url+_register, userid );
+			hypnotif_init( _protocol, _host, _url+_register, userid );
 		#end
 	}
 
@@ -69,7 +69,7 @@ class HypNotif {
 		#end
 
 		#if ios
-			hyp_dispose( );
+			hypnotif_dispose( );
 		#end
 	}
 
@@ -82,9 +82,9 @@ class HypNotif {
 
 	#if ios
 		@CPP("hypnotif")
-		function hyp_init( protocol : String, host : String, url : String, userid : String ) : Void {}
+		function hypnotif_init( protocol : String, host : String, url : String, userid : String ) : Void {}
 
 		@CPP("hypnotif")
-		function hyp_dispose( ) : Void {}
+		function hypnotif_dispose( ) : Void {}
 	#end
 }

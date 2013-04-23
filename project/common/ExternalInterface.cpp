@@ -14,7 +14,6 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #endif
 
 #include <hx/CFFI.h>
-#include <hx/Macros.h>
 #include <stdio.h>
 #include <hxcpp.h>
 #include "HypNotif.h"
@@ -24,7 +23,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include <android/log.h>
 #endif
 
-using namespace hyperfiction;
+using namespace hypnotif;
 
 #ifdef ANDROID
 	extern JNIEnv *GetEnv();
@@ -75,17 +74,17 @@ extern "C"
 
 	#ifdef IPHONE
 
-	value hyp_init( value protocol, value host, value url, value userid ) {
+	value hypnotif_init( value protocol, value host, value url, value userid ) {
 		init( val_string( protocol ), val_string( host ), val_string( url ), val_string( userid ) );
 		return alloc_null( );
 	}
-	DEFINE_PRIM( hyp_init, 4 );
+	DEFINE_PRIM( hypnotif_init, 4 );
 
-	value hyp_dispose( ) {
+	value hypnotif_dispose( ) {
 		dispose( );
 		return alloc_null( );
 	}
-	DEFINE_PRIM( hyp_dispose, 0 );
+	DEFINE_PRIM( hypnotif_dispose, 0 );
 
 	#endif
 
