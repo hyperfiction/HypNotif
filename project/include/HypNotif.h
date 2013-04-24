@@ -14,7 +14,6 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 namespace hypnotif {
 	void init( const char *protocol, const char *host, const char *url, const char *user_id );
-	void dispose( );
 }
 
 #endif

@@ -7,9 +7,7 @@
 	<!-- android -->
 	<java path="/project/android" if="android"/>
 	<template path="/templates/android/libs/gcm.jar" rename="libs/gcm.jar" if="android"/>
-	<!--
-	<template path="/templates/android/res" rename="res" if="android"/>
-	-->
+
 	<echo value='|----------------------------------------------------------------------------|' if="android"/>
 	<echo value='|                             /!\ [HypNotif] /!\                             |' if="android"/>
 	<echo value='|----------------------------------------------------------------------------|' if="android"/>
@@ -17,6 +15,7 @@
 	<echo value='| Add "strings.xml" in res/values with sender id for GoogleCloudMessage      |' if="android"/>
 	<echo value='|                     And add this line to your nmml :                       |' if="android"/>
 	<echo value='| <template path="templates/android/res" rename="res" if="android"/>         |' if="android"/>
+	<echo value='| See the res folder in the extension templates.                             |' if="android"/>
 	<echo value="|----------------------------------------------------------------------------|" if="android"/>
 	<echo value='| Also mind to change permissions,                                           |' if="android"/>
 	<echo value='| and add the receiver and service in your AndroidManifest.xml.              |' if="android"/>

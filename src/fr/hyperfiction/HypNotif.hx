@@ -67,10 +67,6 @@ class HypNotif {
 		#if android
 			_instance = null;
 		#end
-
-		#if ios
-			hypnotif_dispose( );
-		#end
 	}
 
 	#if android
@@ -83,8 +79,5 @@ class HypNotif {
 	#if ios
 		@CPP("hypnotif")
 		function hypnotif_init( protocol : String, host : String, url : String, userid : String ) : Void {}
-
-		@CPP("hypnotif")
-		function hypnotif_dispose( ) : Void {}
 	#end
 }

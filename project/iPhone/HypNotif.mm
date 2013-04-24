@@ -141,9 +141,6 @@ static char const * const HypNotifKey = "hypnotif";
 		NSString *retour = [[NSString alloc] initWithData:returnData encoding:NSUTF8StringEncoding];
 		NSLog(@"Return Data: %@", retour);
 
-		[url release];
-		[retour release];
-
 		#endif
 	}
 
@@ -240,7 +237,4 @@ namespace hypnotif {
 		[hn register];
 	}
 
-	void dispose( ) {
-		[hn release];
-	}
 }

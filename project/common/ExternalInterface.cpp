@@ -80,12 +80,6 @@ extern "C"
 	}
 	DEFINE_PRIM( hypnotif_init, 4 );
 
-	value hypnotif_dispose( ) {
-		dispose( );
-		return alloc_null( );
-	}
-	DEFINE_PRIM( hypnotif_dispose, 0 );
-
 	#endif
 
 
