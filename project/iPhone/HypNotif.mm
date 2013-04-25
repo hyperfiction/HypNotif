@@ -94,8 +94,24 @@ static char const * const HypNotifKey = "hypnotif";
 
 		// Get the users Device Model, Display Name, Unique ID, Token & Version Number
 		UIDevice *dev = [UIDevice currentDevice];
-		// TODO: uniqueIdentifier is deprecated
-		NSString *deviceUuid = dev.uniqueIdentifier;
+
+		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+		NSString *identifierString = [defaults objectForKey:@"hypudidKey"];
+
+		if( identifierString == nil ) {
+			// Generate UDID
+				CFUUIDRef identifierObject = CFUUIDCreate(kCFAllocatorDefault);
+
+			// Convert the CFUUID to a string
+				NSString *identifierString = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, identifierObject);
+				CFRelease((CFTypeRef) identifierObject);
+
+			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+			[defaults setObject:identifierString forKey:@"hypudidKey"];
+			[defaults synchronize];
+		}
+
+		NSString *deviceUuid = identifierString;
 	    NSString *deviceName = dev.name;
 		NSString *deviceModel = dev.model;
 		NSString *deviceSystemVersion = dev.systemVersion;
@@ -166,7 +182,7 @@ static char const * const HypNotifKey = "hypnotif";
 		NSLog(@"[HypNotif] remote notification: %@",[userInfo description]);
 		NSDictionary *apsInfo = [userInfo objectForKey:@"aps"];
 
-		if( apsInfo != [NSNull null] ) {
+		if( apsInfo != (id)[NSNull null] ) {
 			NSString *alert = [apsInfo objectForKey:@"alert"];
 			NSLog(@"[HypNotif] Received Push Alert: %@", alert);
 
@@ -176,13 +192,15 @@ static char const * const HypNotifKey = "hypnotif";
 
 			NSString *badge = [apsInfo objectForKey:@"badge"];
 			NSLog(@"[HypNotif] Received Push Badge: %@", badge);
-			if( badge != [NSNull null] ) {
+			if( badge != (id)[NSNull null] ) {
 				application.applicationIconBadgeNumber = [badge integerValue];
 			}
 		}
 
 		#endif
 	}
+
+
 
 @end
 
