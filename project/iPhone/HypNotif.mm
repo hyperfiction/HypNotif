@@ -239,10 +239,10 @@ namespace hypnotif {
 
 	void init( const char *protocol, const char *host, const char *url, const char *user_id ) {
 		NSLog(@"[HypNotif] init ::: %s | %s | %s | %s ",protocol,host,url,user_id);
-		NSString *protocolString	= [NSString stringWithUTF8String:protocol];
-		NSString *hostString    	= [NSString stringWithUTF8String:host];
-		NSString *urlString     	= [NSString stringWithUTF8String:url];
-		NSString *user_idString 	= [NSString stringWithUTF8String:user_id];
+		NSString *protocolString	= [ [NSString alloc] initWithUTF8String:protocol];
+		NSString *hostString    	= [ [NSString alloc] initWithUTF8String:host];
+		NSString *urlString     	= [ [NSString alloc] initWithUTF8String:url];
+		NSString *user_idString 	= [ [NSString alloc] initWithUTF8String:user_id];
 
 		hn              	= [[HypNotif alloc] init];
 		hn.httpsString  	= protocolString;
