@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.Locale;
 
 public final class Utils
 {
@@ -65,6 +66,7 @@ public final class Utils
         Map<String, String> params  = new HashMap<String, String>();
 
         params.put("os", "and");
+        params.put("lang", Locale.getDefault().getLanguage());
         params.put("appname", "::APP_PACKAGE::");
         params.put("appversion", "::APP_VERSION::");
         params.put("deviceuid", regId);
