@@ -34,6 +34,7 @@ You pass your server URL to the constructor with:
 
 When the device is registered it sends to the server the following values:
 * the name of the OS ("and" or "ios")
+* the prefered language of the system
 * the package name of the application
 * the version of the application
 * the device name

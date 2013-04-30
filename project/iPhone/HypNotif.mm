@@ -122,7 +122,12 @@ static char const * const HypNotifKey = "hypnotif";
 			stringByReplacingOccurrencesOfString:@">" withString:@""]
 			stringByReplacingOccurrencesOfString: @" " withString: @""];
 
+		NSString *lang = @"en";
+		lang = [[NSLocale preferredLanguages] objectAtIndex:0];
+
 		NSString *postString = @"os=ios";
+		postString = [postString stringByAppendingString:@"&lang="];
+		postString = [postString stringByAppendingString:lang];
 		postString = [postString stringByAppendingString:@"&appname="];
 		postString = [postString stringByAppendingString:appName];
 		postString = [postString stringByAppendingString:@"&appversion="];
