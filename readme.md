@@ -22,8 +22,12 @@ There is an [include.nmml](https://github.com/hyperfiction/HypNotif/blob/master/
 Usage
 -----
 
+```haxe
+class TestHypNotif {
     var hn = new HypNotif( "http", "example.com", "/notification", "/register", "/unregister" );
     hn.connect( <user id> );
+}
+```
 
 You pass your server URL to the constructor with:
 * the protocol
