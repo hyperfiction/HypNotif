@@ -92,25 +92,27 @@ static char const * const HypNotifKey = "hypnotif";
 			pushSound = @"enabled";
 		}
 
-		// Get the users Device Model, Display Name, Unique ID, Token & Version Number
-		UIDevice *dev = [UIDevice currentDevice];
-
+		//Generate get a UUID
+		NSString *bundleName = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"];
+		bundleName = [bundleName stringByAppendingString:@".unique"];
 		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-		NSString *identifierString = [defaults objectForKey:@"hypudidKey"];
+		NSString *identifierString = [defaults objectForKey:bundleName];
 
 		if( identifierString == nil ) {
 			// Generate UDID
-				CFUUIDRef identifierObject = CFUUIDCreate(kCFAllocatorDefault);
+			CFUUIDRef identifierObject = CFUUIDCreate(kCFAllocatorDefault);
 
 			// Convert the CFUUID to a string
-				NSString *identifierString = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, identifierObject);
-				CFRelease((CFTypeRef) identifierObject);
+			NSString *identifierString = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, identifierObject);
+			CFRelease((CFTypeRef) identifierObject);
 
 			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-			[defaults setObject:identifierString forKey:@"hypudidKey"];
+			[defaults setObject:identifierString forKey:bundleName];
 			[defaults synchronize];
 		}
 
+		// Get the users Device Model, Display Name, Unique ID, Token & Version Number
+		UIDevice *dev = [UIDevice currentDevice];
 		NSString *deviceUuid = identifierString;
 	    NSString *deviceName = dev.name;
 		NSString *deviceModel = dev.model;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
 
-	<ndll name="hypnotif" />
+	<ndll name="hypnotif" if="mobile"/>
 	<classpath name="src" />
 
 	<!-- android -->
@@ -12,14 +12,14 @@
 	<echo value='|                             /!\ [HypNotif] /!\                             |' if="android"/>
 	<echo value='|----------------------------------------------------------------------------|' if="android"/>
 	<echo value='| Add icon named "icon_notification.png" in res/drawable template folder:    |' if="android"/>
-	<echo value='| Add "strings.xml" in res/values with sender id for GoogleCloudMessage      |' if="android"/>
-	<echo value='|                     And add this line to your nmml :                       |' if="android"/>
+	<echo value='| Add "hypnotif_strings.xml" in res/values with sender id for GCM,           |' if="android"/>
+	<echo value='| and add this line to your nmml :                                           |' if="android"/>
 	<echo value='| <template path="templates/android/res" rename="res" if="android"/>         |' if="android"/>
 	<echo value='| See the res folder in the extension templates.                             |' if="android"/>
 	<echo value="|----------------------------------------------------------------------------|" if="android"/>
 	<echo value='| Also mind to change permissions,                                           |' if="android"/>
 	<echo value='| and add the receiver and service in your AndroidManifest.xml.              |' if="android"/>
-	<echo value='| See example in the templates folder.                                       |' if="android"/>
+	<echo value='| See example manifest in the templates folder.                              |' if="android"/>
 	<echo value="|----------------------------------------------------------------------------|" if="android"/>
 
 	<!-- ios -->
