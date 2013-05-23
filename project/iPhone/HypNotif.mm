@@ -94,6 +94,7 @@ static char const * const HypNotifKey = "hypnotif";
 
 		//Generate get a UUID
 		NSString *bundleName = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"];
+		bundleName = [bundleName stringByAppendingString:@".unique"];
 		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 		NSString *identifierString = [defaults objectForKey:bundleName];
 
