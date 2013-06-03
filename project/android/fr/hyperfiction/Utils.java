@@ -15,6 +15,7 @@ import com.google.android.gcm.GCMRegistrar;
 
 import android.content.Context;
 import android.util.Log;
+import android.os.AsyncTask;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -50,14 +51,40 @@ public final class Utils
 
     private static final String TAG = "trace";
 
+    private static AsyncTask<Void,Void,Void> registerTask;
+
     /**
      * Register this account/device pair within the server.
      *
      * @return whether the registration succeeded or not.
      */
-    public static boolean register(final Context context, final String regId)
+    public static void register(final Context context, final String regId)
     {
 
+        registerTask = new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                registerOnServer(context, regId);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void result) {
+                registerTask = null;
+            }
+
+        };
+        registerTask.execute(null, null, null);
+    }
+
+    public static void dispose( ) {
+        if( registerTask != null ) {
+            registerTask.cancel( true );
+        }
+    }
+
+    protected static boolean registerOnServer( final Context context, final String regId ) {
         Log.i(TAG, "registering device (regId = " + regId + ")");
 
         String serverUrl  = SERVER_URL + REGISTER_URL;
@@ -94,9 +121,6 @@ public final class Utils
                 return true;
 
             } catch (IOException e) {
-                // Here we are simplifying and retrying on any error; in a real
-                // application, it should retry only on unrecoverable errors
-                // (like HTTP error code 503).
 
                 Log.e(TAG, "Failed to register on attempt " + i, e);
                 if (i == MAX_ATTEMPTS) {

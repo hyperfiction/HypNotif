@@ -29,7 +29,7 @@ public class HypNotif
 		System.loadLibrary( "hypnotif" );
 	}
 
-	public HypNotif( String server_url, boolean debug_check ){
+	protected static void register( String server_url, boolean debug_check ){
 		if( debug_check ) {
 			GCMRegistrar.checkDevice( GameActivity.getInstance() );
 			GCMRegistrar.checkManifest( GameActivity.getInstance());
@@ -45,17 +45,22 @@ public class HypNotif
 
 	}
 
-	public void removeNotif( ) {
+	public static void dispose( ) {
+		Utils.dispose( );
+		GCMRegistrar.onDestroy( GameActivity.getInstance( ) );
+	}
+
+	public static void removeNotif( ) {
 		GCMRegistrar.unregister( GameActivity.getInstance() );
 	}
 
-	public static HypNotif init( String server_url, String register_url, String unregister_url, String user_id, boolean debug_check ) {
+	public static void init( String server_url, String register_url, String unregister_url, String user_id, boolean debug_check ) {
 		Utils.SERVER_URL    	= server_url;
 		Utils.REGISTER_URL  	= register_url;
 		Utils.UNREGISTER_URL	= unregister_url;
 		Utils.USER_ID       	= user_id;
 
-		return new HypNotif( server_url, debug_check );
+		register( server_url, debug_check );
 	}
 
 }
