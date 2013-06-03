@@ -40,15 +40,15 @@ class HypNotif {
 		_url       	= url;
 		_register  	= register;
 		_unregister	= unregister;
-		_server = _protocol + "://" + _host + _url;
+		_server    	= _protocol + "://" + _host + _url;
 	}
 
 	public function connect( userid : String = "" ) : Void {
 		#if android
 			#if debug
-				_instance = init( _server, _register, _unregister, userid, true );
+				init( _server, _register, _unregister, userid, true );
 			#else
-				_instance = init( _server, _register, _unregister, userid, false );
+				init( _server, _register, _unregister, userid, false );
 			#end
 		#end
 
@@ -59,21 +59,15 @@ class HypNotif {
 
 	public function stopNotif( ) : Void{
 		#if android
-			removeNotif( _instance );
-		#end
-	}
-
-	public function dispose( ) : Void {
-		#if android
-			_instance = null;
+			removeNotif( );
 		#end
 	}
 
 	#if android
 		@JNI
-		static function init( server : String, register : String, unregister : String, userid : String, debug_check : Bool ) : HypNotif {}
+		static function init( server : String, register : String, unregister : String, userid : String, debug_check : Bool ) : Void {}
 		@JNI
-		function removeNotif( instance : Dynamic ) : Void{}
+		static function removeNotif( ) : Void{}
 	#end
 
 	#if ios
