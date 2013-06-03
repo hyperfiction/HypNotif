@@ -47,7 +47,11 @@ public class HypNotif
 
 	public static void dispose( ) {
 		Utils.dispose( );
-		GCMRegistrar.onDestroy( GameActivity.getInstance( ) );
+		try{
+			GCMRegistrar.onDestroy( GameActivity.getInstance( ) );
+		} catch ( Exception e ) {
+			e.printStackTrace( );
+		}
 	}
 
 	public static void removeNotif( ) {

@@ -85,10 +85,11 @@ public final class Utils
     }
 
     protected static boolean registerOnServer( final Context context, final String regId ) {
-        Log.i(TAG, "registering device (regId = " + regId + ")");
+        // Log.i(TAG, "registering device (regId = " + regId + ")");
+        Log.i(TAG, "registering device");
 
         String serverUrl  = SERVER_URL + REGISTER_URL;
-        Log.i(TAG,serverUrl);
+        // Log.i(TAG,serverUrl);
 
         Map<String, String> params  = new HashMap<String, String>();
 
@@ -102,7 +103,7 @@ public final class Utils
         params.put("devicemodel", android.os.Build.MODEL);
         params.put("deviceversion", android.os.Build.VERSION.RELEASE);
 
-        Log.i(TAG,params.toString());
+        // Log.i(TAG,params.toString());
 
         long backoff = BACKOFF_MILLI_SECONDS + random.nextInt(1000);
 
@@ -215,7 +216,7 @@ public final class Utils
 
         String body = bodyBuilder.toString();
 
-        Log.v(TAG, "Posting '" + body + "' to " + url);
+        // Log.v(TAG, "Posting '" + body + "' to " + url);
 
 		byte[] bytes			= body.getBytes();
 		HttpURLConnection conn	= null;

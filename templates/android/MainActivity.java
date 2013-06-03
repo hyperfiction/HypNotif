@@ -20,7 +20,7 @@ public class MainActivity extends org.haxe.nme.GameActivity {
 
 	@Override
 	protected void onDestroy( ) {
-		Log.w("trace", "onDestroy...");
+		Log.i("trace", "onDestroy...");
 		HypNotif.dispose( );
 		super.onDestroy( );
 	}
