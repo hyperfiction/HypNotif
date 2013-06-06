@@ -7,6 +7,7 @@
 	<!-- android -->
 	<java path="/project/android" if="android"/>
 	<template path="/templates/android/libs/gcm.jar" rename="libs/gcm.jar" if="android"/>
+	<template path="/templates/android/libs/android-support-v4.jar" rename="libs/android-support-v4.jar" if="android"/>
 
 	<echo value='|----------------------------------------------------------------------------|' if="android"/>
 	<echo value='|                             /!\ [HypNotif] /!\                             |' if="android"/>

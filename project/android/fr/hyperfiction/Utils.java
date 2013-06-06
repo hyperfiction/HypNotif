@@ -216,7 +216,7 @@ public final class Utils
 
         String body = bodyBuilder.toString();
 
-        // Log.v(TAG, "Posting '" + body + "' to " + url);
+        Log.v(TAG, "Posting '" + body + "' to " + url);
 
 		byte[] bytes			= body.getBytes();
 		HttpURLConnection conn	= null;

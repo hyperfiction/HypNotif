@@ -23,7 +23,11 @@ import ::APP_PACKAGE::.R;
 
 public class HypNotif
 {
-    private static final String TAG = "trace";
+    private static final String TAG      	= "trace";
+    public static final String EXTRA_NAME	= "hypnotif_goto";
+    public static final String MESSAGE   	= "message";
+    public static final String TITLE     	= "title";
+    public static final String DATA      	= "data";
 
 	static{
 		System.loadLibrary( "hypnotif" );
