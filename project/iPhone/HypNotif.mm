@@ -93,7 +93,7 @@ static char const * const HypNotifKey = "hypnotif";
 		}
 
 		//Generate get a UUID
-		NSString *bundleName = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleName"];
+		NSString *bundleName = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleIdentifier"];
 		bundleName = [bundleName stringByAppendingString:@".unique"];
 		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 		NSString *identifierString = [defaults objectForKey:bundleName];
@@ -103,7 +103,7 @@ static char const * const HypNotifKey = "hypnotif";
 			CFUUIDRef identifierObject = CFUUIDCreate(kCFAllocatorDefault);
 
 			// Convert the CFUUID to a string
-			NSString *identifierString = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, identifierObject);
+			identifierString = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, identifierObject);
 			CFRelease((CFTypeRef) identifierObject);
 
 			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
