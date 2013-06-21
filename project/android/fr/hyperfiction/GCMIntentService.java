@@ -11,7 +11,6 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
  */
 package ::APP_PACKAGE::;
 
-import fr.hyperfiction.Utils;
 import ::APP_PACKAGE::.MainActivity;
 import ::APP_PACKAGE::.R;
 
@@ -22,9 +21,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import android.support.v4.app.NotificationCompat;
+
 import com.google.android.gcm.GCMBaseIntentService;
 import com.google.android.gcm.GCMRegistrar;
 
+import fr.hyperfiction.Utils;
+import fr.hyperfiction.HypNotif;
 
 public class GCMIntentService extends GCMBaseIntentService {
 
@@ -33,6 +36,13 @@ public class GCMIntentService extends GCMBaseIntentService {
 
     public GCMIntentService() {
         super( String.valueOf(R.string.senderid) );
+    }
+
+    @Override
+    protected String[] getSenderIds( Context context ) {
+        String sender_id = String.valueOf(R.string.senderid);
+        String[] sender_ids = new String[] {sender_id};
+        return sender_ids;
     }
 
     @Override
@@ -56,53 +66,55 @@ public class GCMIntentService extends GCMBaseIntentService {
     @Override
     protected void onMessage(Context context, Intent intent) {
         Log.i(TAG, "Received message");
-        String message = intent.getStringExtra("message") ;
+        String message = intent.getStringExtra(HypNotif.MESSAGE);
+        String title = intent.getStringExtra(HypNotif.TITLE);
 
-        generateNotification(context, message);
+        generateNotification(context, message, title );
     }
 
     @Override
     protected void onDeletedMessages(Context context, int total) {
         Log.i(TAG, "Received deleted messages notification");
-        String message = "From GCM: server deleted pending messages!";
-
-        // generateNotification(context, message);
     }
 
     @Override
     public void onError(Context context, String errorId) {
-        Log.i(TAG, "Received error: " + errorId);
+        Log.e(TAG, "Received error: " + errorId);
     }
 
     @Override
     protected boolean onRecoverableError(Context context, String errorId) {
-        Log.i(TAG, "Received recoverable error: " + errorId);
+        Log.w(TAG, "Received recoverable error: " + errorId);
         return super.onRecoverableError(context, errorId);
     }
 
     /**
      * Issues a notification to inform the user that server has sent a message.
      */
-    private static void generateNotification(Context context, String message) {
+    private static void generateNotification(Context context, String message, String title ) {
         int icon  = R.drawable.icon_notification;
         long when = System.currentTimeMillis();
 
         NotificationManager notificationManager;
-        Notification notification;
-        String title;
+        NotificationCompat.Builder builder;
         Intent notificationIntent;
 
+        title = title == null ? "::APP_TITLE::" : title;
+
         notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notification        = new Notification(icon, message, when);
-        title               = "::APP_TITLE::";
         notificationIntent  = new Intent(context, MainActivity.class);
+        builder = new NotificationCompat.Builder( context )
+            .setSmallIcon( icon )
+            .setContentText( message )
+            .setContentTitle( title );
 
         // set intent so it does not start a new activity
         notificationIntent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP );
         PendingIntent intent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+        builder.setContentIntent( intent );
 
-        notification.setLatestEventInfo( context, title, message, intent );
-        notification.flags |= Notification.FLAG_AUTO_CANCEL;
-        notificationManager.notify( 0, notification );
+        // notification.setLatestEventInfo( context, title, message, intent );
+        // notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        notificationManager.notify( 0, builder.build( ) );
     }
 }
