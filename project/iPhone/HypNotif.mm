@@ -160,9 +160,21 @@ static char const * const HypNotifKey = "hypnotif";
 	    [request setHTTPMethod:@"POST"];
 	    [request setHTTPBody:[postString dataUsingEncoding:NSUTF8StringEncoding]];
 		NSLog(@"URL request: %@", request);
-		NSData *returnData = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
-		NSString *retour = [[NSString alloc] initWithData:returnData encoding:NSUTF8StringEncoding];
-		NSLog(@"Return Data: %@", retour);
+
+		[NSURLConnection sendAsynchronousRequest:request
+			queue:[[NSOperationQueue alloc] init]
+			completionHandler:^(NSURLResponse *response,
+								NSData *data,
+								NSError *error) {
+			if ([data length] >0 && error == nil) {
+				NSString *retour = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+				NSLog(@"Return Data: %@", retour);
+			} else if ([data length] == 0 && error == nil) {
+				NSLog(@"Nothing was downloaded.");
+			} else if (error != nil){
+				NSLog(@"Error = %@", error);
+			}
+		}];
 
 		#endif
 	}
