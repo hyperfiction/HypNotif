@@ -15,7 +15,7 @@ package fr.hyperfiction;
  *
  * @author louisbl
  */
-@:build( org.shoebox.utils.NativeMirror.build() )
+@:build( ShortCuts.mirrors() )
 class HypNotif {
 
 	var _server    	: String;
