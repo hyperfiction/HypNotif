@@ -106,7 +106,7 @@ static char const * const HypNotifKey = "hypnotif";
 			identifierString = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, identifierObject);
 			CFRelease((CFTypeRef) identifierObject);
 
-			NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+			defaults = [NSUserDefaults standardUserDefaults];
 			[defaults setObject:identifierString forKey:bundleName];
 			[defaults synchronize];
 		}
